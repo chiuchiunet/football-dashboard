@@ -385,7 +385,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
 def main():
     predictions = get_predictions(days_ahead=7)
     html = generate_html(predictions)
-    output = Path(__file__).resolve().parent / "predictions.html"
+    output = Path(__file__).resolve().parent / "web" / "index.html"
     output.write_text(html, encoding="utf-8")
     print(f"✅ Dashboard written to: {output}")
     print(f"📊 Total matches: {len(predictions)}")
