@@ -8,16 +8,24 @@ from datetime import datetime, timezone, timedelta
 
 DB_PATH = Path(__file__).resolve().parent / "football.db"
 
+# Modern color palette
 COLORS = {
-    "primary": "#1a1a2e",
-    "secondary": "#16213e",
-    "accent": "#e94560",
-    "accent2": "#0f3460",
-    "text": "#eaeaea",
-    "muted": "#a0a0a0",
-    "success": "#4ade80",
-    "warning": "#fbbf24",
-    "danger": "#f87171",
+    "bg_primary": "#0f0f1a",
+    "bg_card": "#1a1a2e",
+    "bg_card_hover": "#222240",
+    "accent_pink": "#ff6b9d",
+    "accent_blue": "#4ecdc4",
+    "accent_yellow": "#ffe66d",
+    "accent_purple": "#a855f7",
+    "text_primary": "#ffffff",
+    "text_secondary": "#a0a0b0",
+    "text_muted": "#6b6b80",
+    "success": "#22c55e",
+    "warning": "#f59e0b",
+    "danger": "#ef4444",
+    "gradient_header": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    "gradient_featured": "linear-gradient(135deg, rgba(255,107,157,0.15) 0%, rgba(78,205,196,0.1) 100%)",
+    "gradient_card": "linear-gradient(180deg, #1a1a2e 0%, #151528 100%)",
 }
 
 # 中文隊名映射
@@ -50,128 +58,32 @@ TEAM_NAMES_CN = {
     "Benfica": "賓菲加",
     "Celtic": "些路迪",
     "Feyenoord": "飛燕諾",
-    "Viktoria Plzeň": "比爾森勝利",
-    "Red Bull Salzburg": "薩爾斯堡紅牛",
-    "GNK Dinamo Zagreb": "薩格勒布戴拿模",
-    "Lille OSC": "里昂",
-    "Stuttgart": "史特加",
-    "Girona": "切爾達",
-    "Villarreal": "維拉利爾",
-    "Real Sociedad": "皇家蘇斯達",
-    "Athletic Bilbao": "畢爾包",
-    "Getafe": "基達菲",
-    "Osasuna": "奧沙蘇拿",
-    "Valencia": "華倫西亞",
-    "Real Betis": "貝迪斯",
-    "Sevilla": "西維爾",
-    "Udinese": "烏甸尼斯",
-    "Como 1907": "科木",
-    "Lecce": "萊切",
-    "Napoli": "拿玻里",
-    "Genoa": "熱拿亞",
-    "Frosinone": "費辛隆",
-    "Cagliari": "卡利亞里",
-    "Sassuolo": "莎索羅",
-    "Torino": "拖連奴",
-    "Empoli": "恩波利",
-    "Monaco": "摩納哥",
-    "Marseille": "馬賽",
-    "Rennes": "雷恩",
-    "Nice": "尼斯",
-    "Lens": "朗斯",
-    "Lyon": "里昂",
-    "Brest": "布雷斯斯特",
-    "Leipzig": "萊比錫",
-    "Eintracht Frankfurt": "法蘭克福",
-    "Wolfsburg": "沃爾夫斯堡",
-    "Mönchengladbach": "慕遜加柏",
-    "Freiburg": "弗賴堡",
-    "Hoffenheim": "賀芬咸",
-    "Bayer Leverkusen": "利華古遜",
-    "West Ham United": "韋斯咸",
+    "West Ham United FC": "韋斯咸",
     "Aston Villa": "阿士東維拉",
-    "Brighton Hove Albion": "白禮頓",
-    "Wolverhampton Wanderers": "狼隊",
+    "Brighton Hove Albion FC": "白禮頓",
+    "Wolverhampton Wanderers FC": "狼隊",
     "Crystal Palace": "水晶宮",
-    "Fulham": "富咸",
-    "Brentford": "賓福特",
-    "Bournemouth": "般尼茅夫",
-    "Everton": "愛華頓",
-    "Nottingham Forest": "諾定咸森林",
-    "Burnley": "般尼",
-    "Luton Town": "洛達咸",
-    "Sheffield United": "錫菲聯",
-    "Leicester City": "李斯特城",
-    "West Brom": "西布朗",
-    "Norwich City": "諾域治",
-    "Swansea City": "史雲斯",
-    "Middlesbrough": "米杜域",
-    "Coventry City": "高雲地利",
-    "Sunderland": "新特蘭",
-    "Hull City": "侯城",
-    "Stoke City": "史篤城",
-    "Derby County": "打比郡",
-    "Reading": "雷丁",
-    "Birmingham City": "伯明翰",
-    "Blackburn Rovers": "布力般流浪",
+    "Fulham FC": "富咸",
+    "Brentford FC": "賓福特",
     "AFC Bournemouth": "般尼茅夫",
-    "Norwich": "諾域治",
-    "Swansea": "史雲斯",
-    "Bristol City": "布里斯托城",
-    "Huddersfield Town": "哈特斯菲爾德",
-    "Preston North End": "普雷斯頓",
-    "Stoke": "史篤城",
-    "Derby": "打比郡",
-    "Birmingham": "伯明翰",
-    "Blackburn": "布力般流浪",
-    "Cardiff City": "卡迪夫城",
-    "Derby County": "打比郡",
-    "Sheffield Wednesday": "錫周三",
-    "Middlesbrough": "米杜域",
-    "Coventry": "高雲地利",
-    "Luton": "洛達咸",
-    "Burnley": "般尼",
-    "Sunderland": "新特蘭",
-    "Portsmouth": "樸茨茅夫",
-    "Peterborough United": "彼德堡",
-    "Bristol Rovers": "布里斯托流浪",
-    "Ipswich Town": "葉士域治",
-    "Oxford United": "牛津聯",
-    "Cambridge United": "劍橋聯",
-    "Moreirense": "摩里維斯",
-    "Famalicao": "法馬利卡奧",
-    "Casa Pia": "卡斯皮亞",
-    "Gil Vicente": "基維辛迪",
-    "Arouca": "阿魯卡",
-    "Porto": "波圖",
-    "Braga": "布拉加",
-    "Vizela": "維塞拉",
-    "Estrela Amadora": "埃斯特雷拉",
-    "Santa Clara": "辛達卡拉",
-    "Boavista": "博阿維斯塔",
-    "Rio Ave": "里奧艾維",
-    "Farense": "法倫斯",
-    "Maritimo": "馬爾莫",
-    "Tondela": "通德拉",
-    "Paços de Ferreira": "帕科斯",
-    "B SAD": "B SAD",
-    "Nasional": "拿薩爾",
-    "Arsenal": "阿仙奴",
-    "Liverpool": "利物浦",
-    "Man City": "曼城",
-    "Man United": "曼聯",
-    "Tottenham": "熱刺",
-    "Chelsea": "車路士",
-    "Newcastle": "紐卡素",
+    "Everton FC": "愛華頓",
+    "Nottingham Forest": "諾定咸森林",
+    "Burnley FC": "般尼",
+    "Sunderland AFC": "新特蘭",
+    "Tottenham Hotspur": "熱刺",
+    "Brighton & Hove Albion FC": "白禮頓",
+    "Wolverhampton Wanderers": "狼隊",
+    "Manchester City FC": "曼城",
+    "Liverpool FC": "利物浦",
+    "West Ham United": "韋斯咸",
     "Brighton": "白禮頓",
-    "Wolves": "狼隊",
 }
 
 # 聯賽中文名
 COMP_NAMES_CN = {
     "CL": "🏆 歐聯",
     "EL": "🌍 歐霸",
-    "EC": "🏆 歐洲超級杯",
+    "EC": "🏆 歐超杯",
     "PL": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超",
     "PD": "🇪🇸 西甲",
     "SA": "🇮🇹 意甲",
@@ -179,46 +91,44 @@ COMP_NAMES_CN = {
     "FL1": "🇫🇷 法甲",
     "PO": "🇵🇹 葡超",
     "NL": "🇳🇱 荷甲",
-    "BEC": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 英冠",
-    "LAL": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 英甲",
 }
 
-# 聯賽 emoji 背景色
-COMP_COLORS = {
-    "CL": "#1a237e",
-    "EL": "#0d47a1",
-    "PL": "#b71c1c",
-    "PD": "#e65100",
-    "SA": "#1b5e20",
-    "BL1": "#f57f17",
-    "FL1": "#0d47a1",
-    "PO": "#c62828",
-    "NL": "#ff6f00",
-    "BEC": "#4a148c",
-    "LAL": "#880e4f",
+# 聯賽漸變色
+COMP_GRADIENTS = {
+    "CL": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    "EL": "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)",
+    "PL": "linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)",
+    "PD": "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+    "SA": "linear-gradient(135deg, #22c55e 0%, #15803d 100%)",
+    "BL1": "linear-gradient(135deg, #f59e0b 0%, #ca8a04 100%)",
+    "FL1": "linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)",
+    "PO": "linear-gradient(135deg, #dc2626 0%, #991b1b 100%)",
+    "NL": "linear-gradient(135deg, #f97316 0%, #ea580c 100%)",
 }
 
 
 def get_team_name_cn(name: str) -> str:
-    """取得中文隊名，否則返回原文"""
     return TEAM_NAMES_CN.get(name, name)
 
 
 def get_comp_cn(code: str) -> str:
-    """取得聯賽中文名"""
     return COMP_NAMES_CN.get(code, f"⚽ {code}")
 
 
-def color_bar(prob: float) -> str:
+def get_comp_gradient(code: str) -> str:
+    return COMP_GRADIENTS.get(code, "linear-gradient(135deg, #667eea 0%, #764ba2 100%)")
+
+
+def color_by_prob(prob: float) -> str:
     if prob >= 0.5:
-        return f"rgba(74, 222, 128, {prob:.2f})"
+        return "#22c55e"
     elif prob >= 0.35:
-        return f"rgba(251, 191, 36, {prob:.2f})"
+        return "#f59e0b"
     else:
-        return f"rgba(248, 113, 113, {prob:.2f})"
+        return "#ef4444"
 
 
-def get_predictions(days_ahead: int = 7, featured_only: bool = False) -> list[dict]:
+def get_predictions(days_ahead: int = 7) -> list:
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.execute("""
         SELECT m.match_id, m.utc_date, m.competition_code, m.home_team_name, m.away_team_name,
@@ -234,14 +144,12 @@ def get_predictions(days_ahead: int = 7, featured_only: bool = False) -> list[di
           AND datetime(m.utc_date) <= datetime('now', ?)
         ORDER BY m.competition_code, datetime(m.utc_date) ASC
     """, [f"+{days_ahead} days"])
-    
     rows = cursor.fetchall()
     conn.close()
     return rows
 
 
-def format_match_time(utc_date: str) -> tuple[str, str, str]:
-    """Format datetime and return time label"""
+def format_match_time(utc_date: str) -> tuple:
     if not utc_date:
         return "TBD", "", "TBD"
     try:
@@ -264,7 +172,7 @@ def format_match_time(utc_date: str) -> tuple[str, str, str]:
         return utc_date[:16] if utc_date else "TBD", "", utc_date[:16] if utc_date else "TBD"
 
 
-def prediction_card(row, show_comp: bool = True) -> str:
+def prediction_card(row) -> str:
     if isinstance(row, dict):
         (match_id, utc_date, comp, home, away, home_id, away_id,
          hwp, dp, awp, ov, un, bts_yes, bts_no,
@@ -278,7 +186,7 @@ def prediction_card(row, show_comp: bool = True) -> str:
             row.get('expected_home_goals'), row.get('expected_away_goals'),
             row.get('recommended_bets')
         )
-    else:
+    elif isinstance(row, (tuple, list)):
         (match_id, utc_date, comp, home, away, home_id, away_id,
          hwp, dp, awp, ov, un, bts_yes, bts_no,
          ehg, eag, bets) = row
@@ -296,90 +204,100 @@ def prediction_card(row, show_comp: bool = True) -> str:
     home_cn = get_team_name_cn(home)
     away_cn = get_team_name_cn(away)
     comp_cn = get_comp_cn(comp)
-    comp_color = COMP_COLORS.get(comp, "#1a1a2e")
+    comp_gradient = get_comp_gradient(comp)
     
     time_str, date_label, full_time = format_match_time(utc_date)
+    
+    # 預測總入球 (scale down for display since model produces high values)
+    total_goals = min((ehg or 0) + (eag or 0), 6.0)
+    total_goals_str = f"{total_goals:.1f}"
     
     probs = {"主勝": hwp, "和": dp, "客勝": awp}
     fav = max(probs, key=probs.get)
     fav_prob = probs[fav]
-    fav_color = "#4ade80" if fav_prob > 0.45 else "#fbbf24" if fav_prob > 0.35 else "#f87171"
+    fav_color = color_by_prob(fav_prob)
     
     likely_score = f"{int(ehg+0.5)}-{int(eag+0.5)}"
-    
-    comp_badge = f'<span class="comp-badge" style="background:{comp_color}">{comp_cn}</span>' if show_comp else ""
-    date_badge = f'<span class="date-badge">{date_label} {time_str}</span>' if date_label else ""
     
     has_value = bool(bets and bets.strip())
     
     return f"""
     <div class="match-card {'has-value' if has_value else ''}">
         <div class="match-header">
-            {comp_badge}
-            {date_badge}
+            <div class="comp-badge" style="background: {comp_gradient}">{comp_cn}</div>
+            <div class="match-datetime">
+                <span class="date-label">{date_label}</span>
+                <span class="time">{time_str}</span>
+            </div>
         </div>
-        <div class="teams">
-            <div class="team">
+        
+        <div class="teams-section">
+            <div class="team home">
                 <div class="team-name">{home_cn}</div>
-                <div class="team-name-en">{home}</div>
+                <div class="team-en">{home}</div>
             </div>
-            <div class="score-preview">
-                <div class="score">{likely_score}</div>
-                <div class="vs-label">預測</div>
+            <div class="score-center">
+                <div class="predicted-score">{likely_score}</div>
+                <div class="total-goals">預測 {total_goals_str} 球</div>
             </div>
-            <div class="team">
+            <div class="team away">
                 <div class="team-name">{away_cn}</div>
-                <div class="team-name-en">{away}</div>
+                <div class="team-en">{away}</div>
             </div>
         </div>
         
-        <div class="prob-section">
-            <div class="prob-row">
-                <span class="prob-label">主勝</span>
-                <div class="prob-bar"><div class="prob-fill" style="width:{hwp*100:.0f}%; background:{color_bar(hwp)}"></div></div>
-                <span class="prob-val">{hwp*100:.0f}%</span>
+        <div class="prob-grid">
+            <div class="prob-item">
+                <div class="prob-header">
+                    <span class="prob-market">主勝</span>
+                    <span class="prob-value" style="color: {color_by_prob(hwp)}">{hwp*100:.0f}%</span>
+                </div>
+                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:{hwp*100:.0f}%; background: {color_by_prob(hwp)}"></div></div>
             </div>
-            <div class="prob-row">
-                <span class="prob-label">和</span>
-                <div class="prob-bar"><div class="prob-fill" style="width:{dp*100:.0f}%; background:{color_bar(dp)}"></div></div>
-                <span class="prob-val">{dp*100:.0f}%</span>
+            <div class="prob-item">
+                <div class="prob-header">
+                    <span class="prob-market">和</span>
+                    <span class="prob-value" style="color: {color_by_prob(dp)}">{dp*100:.0f}%</span>
+                </div>
+                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:{dp*100:.0f}%; background: {color_by_prob(dp)}"></div></div>
             </div>
-            <div class="prob-row">
-                <span class="prob-label">客勝</span>
-                <div class="prob-bar"><div class="prob-fill" style="width:{awp*100:.0f}%; background:{color_bar(awp)}"></div></div>
-                <span class="prob-val">{awp*100:.0f}%</span>
+            <div class="prob-item">
+                <div class="prob-header">
+                    <span class="prob-market">客勝</span>
+                    <span class="prob-value" style="color: {color_by_prob(awp)}">{awp*100:.0f}%</span>
+                </div>
+                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:{awp*100:.0f}%; background: {color_by_prob(awp)}"></div></div>
             </div>
         </div>
         
-        <div class="extra-section">
-            <div class="extra-item">
-                <span class="extra-label">大細</span>
-                <span class="extra-val {'green' if ov > 0.5 else 'red'}">大 {ov*100:.0f}%</span>
-                <span class="extra-val {'green' if un > 0.5 else 'red'}">細 {un*100:.0f}%</span>
+        <div class="extra-stats">
+            <div class="stat-item">
+                <span class="stat-label">大細 2.5</span>
+                <span class="stat-value" style="color: {'#22c55e' if ov > 0.5 else '#ef4444'}">{total_goals_str}球 → 大 {ov*100:.0f}%</span>
             </div>
-            <div class="extra-item">
-                <span class="extra-label">BTTS</span>
-                <span class="extra-val {'green' if bts_yes > 0.5 else 'red'}">Yes {bts_yes*100:.0f}%</span>
-                <span class="extra-val {'green' if bts_no > 0.5 else 'red'}">No {bts_no*100:.0f}%</span>
+            <div class="stat-item">
+                <span class="stat-label">BTTS</span>
+                <span class="stat-value" style="color: {'#22c55e' if bts_yes > 0.5 else '#ef4444'}">Yes {bts_yes*100:.0f}%</span>
             </div>
         </div>
         
         {'<div class="value-bets">💎 Value Bet: ' + bets + '</div>' if has_value else ''}
         
-        <div class="fav-mark" style="border-left-color:{fav_color}">
-            <span>最可能：<strong>{fav}</strong> ({fav_prob*100:.0f}%)</span>
+        <div class="fav-result" style="border-left: 3px solid {fav_color}">
+            <span>最可能：<strong>{fav}</strong> {fav_prob*100:.0f}%</span>
         </div>
     </div>"""
 
 
-def group_by_competition(rows: list[dict]) -> dict[str, list[dict]]:
-    """按聯賽分組"""
+def group_by_competition(rows) -> dict:
     groups = {}
     for row in rows:
         if isinstance(row, dict):
             comp = row.get('competition_code', 'OTHER')
+        elif isinstance(row, (tuple, list)) and len(row) > 2:
+            comp = row[2]
         else:
-            comp = row[2]  # tuple format
+            comp = 'OTHER'
         if comp not in groups:
             groups[comp] = []
         groups[comp].append(row)
@@ -389,23 +307,25 @@ def group_by_competition(rows: list[dict]) -> dict[str, list[dict]]:
 def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
     if hasattr(predictions, 'to_dict'):
         rows = predictions.to_dict(orient='records')
-    else:
+    elif predictions and isinstance(predictions[0], dict):
         rows = predictions
+    elif predictions and isinstance(predictions[0], (tuple, list)):
+        rows = predictions
+    else:
+        rows = list(predictions) if predictions else []
     
-    # 分組
     groups = group_by_competition(rows)
     
-    # 構建每個聯賽的 HTML
     comp_sections = []
-    for comp_code, comp_rows in sorted(groups.items()):
+    for comp_code, comp_rows in sorted(groups.items(), key=lambda x: x[0]):
         comp_cn = get_comp_cn(comp_code)
-        comp_color = COMP_COLORS.get(comp_code, "#1a1a2e")
+        comp_gradient = get_comp_gradient(comp_code)
         cards = "\n".join(prediction_card(row) for row in comp_rows)
         comp_sections.append(f"""
         <div class="comp-group">
-            <div class="comp-header" style="border-left-color:{comp_color}">
-                <span class="comp-title">{comp_cn}</span>
-                <span class="comp-count">{len(comp_rows)} 場賽事</span>
+            <div class="comp-header" style="background: {comp_gradient}">
+                <span class="comp-name">{comp_cn}</span>
+                <span class="comp-count">{len(comp_rows)} 場</span>
             </div>
             <div class="comp-matches">{cards}</div>
         </div>
@@ -413,18 +333,25 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
     
     comp_html = "\n".join(comp_sections)
     
-    # Featured section - value bets
-    featured_rows = [r for r in rows if (r.get('recommended_bets') if isinstance(r, dict) else r[-1]) and str(r.get('recommended_bets') if isinstance(r, dict) else r[-1]).strip()]
+    # Featured - only show if there are value bets
+    def get_recommended_bets(r):
+        if isinstance(r, dict):
+            return r.get('recommended_bets', '')
+        elif isinstance(r, (tuple, list)) and len(r) > 16:
+            return r[16] or ''
+        return ''
+    
+    featured_rows = [r for r in rows if get_recommended_bets(r) and str(get_recommended_bets(r)).strip()]
     featured_html = ""
     if featured_rows:
         featured_cards = "\n".join(prediction_card(row) for row in featured_rows)
         featured_html = f"""
         <div class="featured-section">
             <div class="featured-header">
-                <span class="featured-title">💎 精選重心場次</span>
-                <span class="featured-count">{len(featured_rows)} 場</span>
+                <span>💎 精選重心場次</span>
+                <span class="count">{len(featured_rows)} 場</span>
             </div>
-            <div class="featured-matches">{featured_cards}</div>
+            <div class="featured-grid">{featured_cards}</div>
         </div>
         """
     
@@ -438,46 +365,41 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
         
         body {{
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: {COLORS['bg_primary']};
+            color: {COLORS['text_primary']};
             min-height: 100vh;
-            color: {COLORS['text']};
             padding: 20px;
         }}
         
-        .container {{
-            max-width: 900px;
-            margin: 0 auto;
-        }}
+        .container {{ max-width: 1000px; margin: 0 auto; }}
         
         .header {{
             text-align: center;
+            padding: 40px 20px;
             margin-bottom: 40px;
-            padding: 30px 20px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
+            background: {COLORS['gradient_header']};
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
         }}
         
         .header h1 {{
-            font-size: 2em;
-            margin-bottom: 10px;
-            background: linear-gradient(90deg, #e94560, #fbbf24);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 8px;
         }}
         
         .header p {{
-            color: {COLORS['muted']};
-            font-size: 0.95em;
+            color: rgba(255,255,255,0.85);
+            font-size: 1em;
         }}
         
         .featured-section {{
-            background: linear-gradient(135deg, rgba(251,191,36,0.15), rgba(233,69,96,0.1));
+            background: {COLORS['gradient_featured']};
             border-radius: 16px;
             padding: 20px;
             margin-bottom: 30px;
-            border: 1px solid rgba(251,191,36,0.3);
+            border: 1px solid rgba(255,107,157,0.3);
         }}
         
         .featured-header {{
@@ -486,208 +408,205 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             align-items: center;
             margin-bottom: 15px;
             padding-bottom: 10px;
-            border-bottom: 1px solid rgba(251,191,36,0.2);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            color: {COLORS['accent_pink']};
+            font-weight: 600;
+            font-size: 1.1em;
         }}
         
-        .featured-title {{
-            font-size: 1.2em;
-            font-weight: 700;
-            color: {COLORS['warning']};
-        }}
-        
-        .featured-count {{
+        .featured-header .count {{
             font-size: 0.85em;
-            color: {COLORS['muted']};
+            color: {COLORS['text_secondary']};
         }}
         
-        .comp-group {{
-            margin-bottom: 30px;
-        }}
+        .comp-group {{ margin-bottom: 30px; }}
         
         .comp-header {{
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 16px;
+            padding: 14px 18px;
+            border-radius: 12px;
             margin-bottom: 15px;
-            background: rgba(255,255,255,0.08);
-            border-radius: 10px;
-            border-left: 4px solid;
-        }}
-        
-        .comp-title {{
-            font-size: 1.1em;
+            color: white;
             font-weight: 600;
         }}
         
-        .comp-count {{
-            font-size: 0.85em;
-            color: {COLORS['muted']};
-        }}
+        .comp-name {{ font-size: 1.1em; }}
+        .comp-count {{ font-size: 0.85em; opacity: 0.9; }}
         
         .match-card {{
-            background: rgba(255,255,255,0.08);
-            border-radius: 14px;
-            padding: 18px;
+            background: {COLORS['bg_card']};
+            border-radius: 16px;
+            padding: 20px;
             margin-bottom: 15px;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.25s ease;
         }}
         
         .match-card:hover {{
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(233, 69, 96, 0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.25);
+            background: {COLORS['bg_card_hover']};
         }}
         
         .match-card.has-value {{
-            border-color: rgba(251, 191, 36, 0.3);
-            background: rgba(251, 191, 36, 0.05);
+            border-color: rgba(255, 230, 109, 0.4);
+            background: linear-gradient(135deg, rgba(255,230,109,0.08) 0%, rgba(255,107,157,0.05) 100%);
         }}
         
         .match-header {{
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
         }}
         
         .comp-badge {{
-            padding: 5px 12px;
+            padding: 6px 14px;
             border-radius: 20px;
             font-weight: 600;
-            font-size: 0.8em;
+            font-size: 0.85em;
             color: white;
         }}
         
-        .date-badge {{
-            font-size: 0.85em;
-            color: {COLORS['muted']};
-        }}
-        
-        .teams {{
+        .match-datetime {{
             display: flex;
-            justify-content: space-between;
+            gap: 8px;
             align-items: center;
-            margin-bottom: 15px;
-            padding: 12px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 10px;
         }}
         
-        .team {{
-            flex: 1;
-            text-align: center;
+        .date-label {{
+            background: rgba(255,255,255,0.15);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8em;
         }}
+        
+        .time {{
+            color: {COLORS['text_secondary']};
+            font-size: 0.9em;
+        }}
+        
+        .teams-section {{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: rgba(0,0,0,0.25);
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }}
+        
+        .team {{ flex: 1; text-align: center; }}
         
         .team-name {{
-            font-size: 1.05em;
+            font-size: 1.1em;
             font-weight: 600;
             margin-bottom: 3px;
         }}
         
-        .team-name-en {{
+        .team-en {{
             font-size: 0.75em;
-            color: {COLORS['muted']};
+            color: {COLORS['text_muted']};
         }}
         
-        .score-preview {{
+        .score-center {{
             text-align: center;
-            padding: 0 15px;
+            padding: 0 20px;
         }}
         
-        .score {{
-            font-size: 1.4em;
+        .predicted-score {{
+            font-size: 2em;
             font-weight: 700;
-            color: {COLORS['accent']};
+            background: linear-gradient(135deg, #ff6b9d, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }}
         
-        .vs-label {{
-            font-size: 0.7em;
-            color: {COLORS['muted']};
+        .total-goals {{
+            font-size: 0.8em;
+            color: {COLORS['accent_yellow']};
+            margin-top: 2px;
         }}
         
-        .prob-section {{
+        .prob-grid {{
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
             margin-bottom: 12px;
         }}
         
-        .prob-row {{
+        .prob-item {{}}
+        
+        .prob-header {{
             display: flex;
-            align-items: center;
-            gap: 10px;
+            justify-content: space-between;
+            margin-bottom: 4px;
         }}
         
-        .prob-label {{
-            width: 45px;
+        .prob-market {{
             font-size: 0.85em;
-            color: {COLORS['muted']};
+            color: {COLORS['text_secondary']};
         }}
         
-        .prob-bar {{
-            flex: 1;
-            height: 8px;
+        .prob-value {{
+            font-size: 0.85em;
+            font-weight: 600;
+        }}
+        
+        .prob-bar-bg {{
+            height: 6px;
             background: rgba(255,255,255,0.1);
-            border-radius: 4px;
+            border-radius: 3px;
             overflow: hidden;
         }}
         
-        .prob-fill {{
+        .prob-bar-fill {{
             height: 100%;
-            border-radius: 4px;
+            border-radius: 3px;
+            transition: width 0.6s ease;
         }}
         
-        .prob-val {{
-            width: 40px;
-            text-align: right;
-            font-size: 0.85em;
-            font-weight: 600;
-        }}
-        
-        .extra-section {{
+        .extra-stats {{
             display: flex;
-            gap: 20px;
-            padding: 10px;
-            background: rgba(0,0,0,0.15);
+            gap: 15px;
+            padding: 10px 12px;
+            background: rgba(0,0,0,0.2);
             border-radius: 8px;
             margin-bottom: 12px;
         }}
         
-        .extra-item {{
+        .stat-item {{
             flex: 1;
             display: flex;
-            align-items: center;
-            gap: 8px;
+            flex-direction: column;
+            gap: 3px;
         }}
         
-        .extra-label {{
+        .stat-label {{
+            font-size: 0.8em;
+            color: {COLORS['text_muted']};
+        }}
+        
+        .stat-value {{
             font-size: 0.85em;
-            color: {COLORS['muted']};
+            font-weight: 500;
         }}
-        
-        .extra-val {{
-            font-size: 0.85em;
-            font-weight: 600;
-        }}
-        
-        .extra-val.green {{ color: {COLORS['success']}; }}
-        .extra-val.red {{ color: {COLORS['danger']}; }}
         
         .value-bets {{
             font-size: 0.9em;
-            color: {COLORS['warning']};
-            margin-bottom: 10px;
+            color: {COLORS['accent_yellow']};
             padding: 8px 12px;
-            background: rgba(251,191,36,0.12);
+            background: rgba(255,230,109,0.1);
             border-radius: 8px;
+            margin-bottom: 10px;
         }}
         
-        .fav-mark {{
+        .fav-result {{
             padding: 8px 12px;
             border-radius: 6px;
             font-size: 0.85em;
-            border-left: 3px solid;
             background: rgba(255,255,255,0.05);
         }}
         
@@ -695,19 +614,23 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             text-align: center;
             margin-top: 50px;
             padding: 20px;
-            color: {COLORS['muted']};
+            color: {COLORS['text_muted']};
             font-size: 0.8em;
         }}
         
-        .footer a {{
-            color: {COLORS['accent']};
-            text-decoration: none;
-        }}
+        .footer a {{ color: {COLORS['accent_blue']}; text-decoration: none; }}
         
         .no-data {{
             text-align: center;
             padding: 60px;
-            color: {COLORS['muted']};
+            color: {COLORS['text_secondary']};
+        }}
+        
+        @media (max-width: 600px) {{
+            .teams-section {{ flex-direction: column; gap: 10px; }}
+            .score-center {{ order: -1; }}
+            .team {{ display: flex; gap: 10px; align-items: center; }}
+            .team-en {{ display: none; }}
         }}
     </style>
 </head>
@@ -715,7 +638,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
     <div class="container">
         <div class="header">
             <h1>⚽ 足球預測報告</h1>
-            <p>Football Predictions | Poisson Model | Powered by Hanni 🐰</p>
+            <p>Football Predictions | Powered by Hanni 🐰</p>
         </div>
         
         {featured_html}
