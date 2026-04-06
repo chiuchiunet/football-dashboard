@@ -240,8 +240,10 @@ def get_predictions(days_ahead: int = 7, featured_only: bool = False) -> list[di
     return rows
 
 
-def format_match_time(utc_date: str) -> tuple[str, str]:
+def format_match_time(utc_date: str) -> tuple[str, str, str]:
     """Format datetime and return time label"""
+    if not utc_date:
+        return "TBD", "", "TBD"
     try:
         dt = datetime.fromisoformat(utc_date.replace("Z", "+00:00"))
         hkt = dt.astimezone(timezone(timedelta(hours=8)))
@@ -259,13 +261,27 @@ def format_match_time(utc_date: str) -> tuple[str, str]:
         
         return time_str, label, hkt.strftime("%Y-%m-%d %H:%M")
     except:
-        return utc_date[:16], "", utc_date[:16]
+        return utc_date[:16] if utc_date else "TBD", "", utc_date[:16] if utc_date else "TBD"
 
 
-def prediction_card(row: tuple, show_comp: bool = True) -> str:
-    (match_id, utc_date, comp, home, away, home_id, away_id,
-     hwp, dp, awp, ov, un, bts_yes, bts_no,
-     ehg, eag, bets) = row
+def prediction_card(row, show_comp: bool = True) -> str:
+    if isinstance(row, dict):
+        (match_id, utc_date, comp, home, away, home_id, away_id,
+         hwp, dp, awp, ov, un, bts_yes, bts_no,
+         ehg, eag, bets) = (
+            row.get('match_id'), row.get('utc_date'), row.get('competition_code'),
+            row.get('home_team_name'), row.get('away_team_name'),
+            row.get('home_team_id'), row.get('away_team_id'),
+            row.get('home_win_prob'), row.get('draw_prob'), row.get('away_win_prob'),
+            row.get('over_2_5_prob'), row.get('under_2_5_prob'),
+            row.get('btts_yes_prob'), row.get('btts_no_prob'),
+            row.get('expected_home_goals'), row.get('expected_away_goals'),
+            row.get('recommended_bets')
+        )
+    else:
+        (match_id, utc_date, comp, home, away, home_id, away_id,
+         hwp, dp, awp, ov, un, bts_yes, bts_no,
+         ehg, eag, bets) = row
     
     hwp = hwp or 0
     dp = dp or 0
@@ -360,7 +376,10 @@ def group_by_competition(rows: list[dict]) -> dict[str, list[dict]]:
     """按聯賽分組"""
     groups = {}
     for row in rows:
-        comp = row[2]  # competition_code
+        if isinstance(row, dict):
+            comp = row.get('competition_code', 'OTHER')
+        else:
+            comp = row[2]  # tuple format
         if comp not in groups:
             groups[comp] = []
         groups[comp].append(row)
@@ -395,7 +414,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
     comp_html = "\n".join(comp_sections)
     
     # Featured section - value bets
-    featured_rows = [r for r in rows if r[-1] and str(r[-1]).strip()]
+    featured_rows = [r for r in rows if (r.get('recommended_bets') if isinstance(r, dict) else r[-1]) and str(r.get('recommended_bets') if isinstance(r, dict) else r[-1]).strip()]
     featured_html = ""
     if featured_rows:
         featured_cards = "\n".join(prediction_card(row) for row in featured_rows)
