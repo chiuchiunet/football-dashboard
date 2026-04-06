@@ -171,66 +171,105 @@
             margin-top: 2px;
         }
         
-        .prob-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 12px;
+        /* Stacked Bar Section */
+        .stacked-bar-section {
+            margin-bottom: 15px;
         }
         
-        .prob-header {
+        .stacked-bar {
+            display: flex;
+            height: 28px;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        
+        .bar-segment {
+            height: 100%;
+            transition: width 0.6s ease;
+        }
+        
+        .bar-home {
+            background: linear-gradient(90deg, #22c55e 0%, #4ade80 100%);
+            border-radius: 14px 0 0 14px;
+        }
+        
+        .bar-draw {
+            background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%);
+        }
+        
+        .bar-away {
+            background: linear-gradient(90deg, #ef4444 0%, #f87171 100%);
+            border-radius: 0 14px 14px 0;
+        }
+        
+        .stacked-bar-labels {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 4px;
-        }
-        
-        .prob-market {
-            font-size: 0.85em;
-            color: #a0a0b0;
-        }
-        
-        .prob-value {
             font-size: 0.85em;
             font-weight: 600;
         }
         
-        .prob-bar-bg {
-            height: 6px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 3px;
-            overflow: hidden;
-        }
+        .label-home { color: #4ade80; }
+        .label-draw { color: #fbbf24; }
+        .label-away { color: #f87171; }
         
-        .prob-bar-fill {
-            height: 100%;
-            border-radius: 3px;
-            transition: width 0.6s ease;
-        }
-        
-        .extra-stats {
-            display: flex;
-            gap: 15px;
-            padding: 10px 12px;
+        /* Stats Container */
+        .stats-container {
             background: rgba(0,0,0,0.2);
-            border-radius: 8px;
+            border-radius: 10px;
+            padding: 12px;
             margin-bottom: 12px;
         }
         
-        .stat-item {
-            flex: 1;
+        .stat-row {
             display: flex;
-            flex-direction: column;
-            gap: 3px;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
         }
+        
+        .stat-row:last-child { margin-bottom: 0; }
         
         .stat-label {
-            font-size: 0.8em;
-            color: #6b6b80;
+            width: 60px;
+            font-size: 0.85em;
+            color: #a0a0b0;
         }
         
-        .stat-value {
+        .stat-bars {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .mini-bar {
+            flex: 1;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .mini-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+        
+        .mini-fill.green {
+            background: linear-gradient(90deg, #22c55e, #4ade80);
+        }
+        
+        .mini-fill.pink {
+            background: linear-gradient(90deg, #ff6b9d, #ff8fab);
+        }
+        
+        .stat-val {
             font-size: 0.85em;
-            font-weight: 500;
+            font-weight: 600;
+            color: #ffffff;
+            min-width: 70px;
         }
         
         .value-bets {
@@ -240,16 +279,31 @@
             background: rgba(255,230,109,0.1);
             border-radius: 8px;
             margin-bottom: 10px;
+            font-weight: 500;
         }
         
         .fav-result {
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 0.85em;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 0.9em;
             background: rgba(255,255,255,0.05);
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+        
+        .fav-main {
+            padding-left: 10px;
+        }
+        
+        .fav-main span { color: #a0a0b0; }
+        .fav-main strong { color: #ffffff; font-weight: 700; }
+        
+        .conf-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
         }
         
         .footer {
@@ -273,6 +327,8 @@
             .score-center { order: -1; }
             .team { display: flex; gap: 10px; align-items: center; }
             .team-en { display: none; }
+            .stacked-bar-labels { flex-wrap: wrap; gap: 5px; }
+            .stacked-bar-labels span { font-size: 0.8em; }
         }
     </style>
 </head>
@@ -294,8 +350,8 @@
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">🏆 歐聯</div>
             <div class="match-datetime">
-                <span class="date-label"> TBD</span>
-                <span class="date-full">TBD HKT</span>
+                <span class="date-label">04/08 11:00</span>
+                <span class="date-full">2026/04/08 11:00 HKT</span>
             </div>
         </div>
         
@@ -314,46 +370,45 @@
             </div>
         </div>
         
-        <div class="prob-grid">
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">主勝</span>
-                    <span class="prob-value" style="color: #ef4444">3%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:3%; background: #ef4444"></div></div>
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:3%"></div>
+                <div class="bar-segment bar-draw" style="width:4%"></div>
+                <div class="bar-segment bar-away" style="width:63%"></div>
             </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">和</span>
-                    <span class="prob-value" style="color: #ef4444">4%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:4%; background: #ef4444"></div></div>
-            </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">客勝</span>
-                    <span class="prob-value" style="color: #22c55e">63%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:63%; background: #22c55e"></div></div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 3%</span>
+                <span class="label-draw">和 4%</span>
+                <span class="label-away">客勝 63%</span>
             </div>
         </div>
         
-        <div class="extra-stats">
-            <div class="stat-item">
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
                 <span class="stat-label">大細 2.5</span>
-                <span class="stat-value" style="color: #22c55e">6.0球 → 大 69%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:69%"></div></div>
+                    <span class="stat-val">大 69%</span>
+                </div>
             </div>
-            <div class="stat-item">
+            <div class="stat-row">
                 <span class="stat-label">BTTS</span>
-                <span class="stat-value" style="color: #22c55e">Yes 59%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:59%"></div></div>
+                    <span class="stat-val">Yes 59%</span>
+                </div>
             </div>
         </div>
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
-        <div class="fav-result" style="border-left: 3px solid #22c55e">
-            <span>最可能：<strong>客勝</strong> 63%</span>
-            <span class="conf-badge" style="background:#22c55e20; color:#22c55e; padding: 2px 8px; border-radius: 10px; font-size: 0.8em">高信心</span>
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #ef4444">
+                <span>最可能：<strong>客勝</strong> 63%</span>
+            </div>
+            <span class="conf-badge" style="background:#22c55e20; color:#22c55e">高信心</span>
         </div>
     </div>
 
@@ -361,8 +416,8 @@
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
-                <span class="date-label"> TBD</span>
-                <span class="date-full">TBD HKT</span>
+                <span class="date-label">04/11 11:00</span>
+                <span class="date-full">2026/04/11 11:00 HKT</span>
             </div>
         </div>
         
@@ -381,46 +436,45 @@
             </div>
         </div>
         
-        <div class="prob-grid">
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">主勝</span>
-                    <span class="prob-value" style="color: #22c55e">53%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:53%; background: #22c55e"></div></div>
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:53%"></div>
+                <div class="bar-segment bar-draw" style="width:15%"></div>
+                <div class="bar-segment bar-away" style="width:27%"></div>
             </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">和</span>
-                    <span class="prob-value" style="color: #ef4444">15%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:15%; background: #ef4444"></div></div>
-            </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">客勝</span>
-                    <span class="prob-value" style="color: #ef4444">27%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:27%; background: #ef4444"></div></div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 53%</span>
+                <span class="label-draw">和 15%</span>
+                <span class="label-away">客勝 27%</span>
             </div>
         </div>
         
-        <div class="extra-stats">
-            <div class="stat-item">
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
                 <span class="stat-label">大細 2.5</span>
-                <span class="stat-value" style="color: #22c55e">6.0球 → 大 91%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:91%"></div></div>
+                    <span class="stat-val">大 91%</span>
+                </div>
             </div>
-            <div class="stat-item">
+            <div class="stat-row">
                 <span class="stat-label">BTTS</span>
-                <span class="stat-value" style="color: #22c55e">Yes 87%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:87%"></div></div>
+                    <span class="stat-val">Yes 87%</span>
+                </div>
             </div>
         </div>
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
-        <div class="fav-result" style="border-left: 3px solid #22c55e">
-            <span>最可能：<strong>主勝</strong> 53%</span>
-            <span class="conf-badge" style="background:#f59e0b20; color:#f59e0b; padding: 2px 8px; border-radius: 10px; font-size: 0.8em">中信心</span>
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #22c55e">
+                <span>最可能：<strong>主勝</strong> 53%</span>
+            </div>
+            <span class="conf-badge" style="background:#f59e0b20; color:#f59e0b">中信心</span>
         </div>
     </div>
 
@@ -428,8 +482,8 @@
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
-                <span class="date-label"> TBD</span>
-                <span class="date-full">TBD HKT</span>
+                <span class="date-label">04/12 03:30</span>
+                <span class="date-full">2026/04/12 03:30 HKT</span>
             </div>
         </div>
         
@@ -448,46 +502,45 @@
             </div>
         </div>
         
-        <div class="prob-grid">
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">主勝</span>
-                    <span class="prob-value" style="color: #22c55e">61%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:61%; background: #22c55e"></div></div>
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:61%"></div>
+                <div class="bar-segment bar-draw" style="width:4%"></div>
+                <div class="bar-segment bar-away" style="width:3%"></div>
             </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">和</span>
-                    <span class="prob-value" style="color: #ef4444">4%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:4%; background: #ef4444"></div></div>
-            </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">客勝</span>
-                    <span class="prob-value" style="color: #ef4444">3%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:3%; background: #ef4444"></div></div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 61%</span>
+                <span class="label-draw">和 4%</span>
+                <span class="label-away">客勝 3%</span>
             </div>
         </div>
         
-        <div class="extra-stats">
-            <div class="stat-item">
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
                 <span class="stat-label">大細 2.5</span>
-                <span class="stat-value" style="color: #22c55e">6.0球 → 大 66%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:66%"></div></div>
+                    <span class="stat-val">大 66%</span>
+                </div>
             </div>
-            <div class="stat-item">
+            <div class="stat-row">
                 <span class="stat-label">BTTS</span>
-                <span class="stat-value" style="color: #22c55e">Yes 56%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:56%"></div></div>
+                    <span class="stat-val">Yes 56%</span>
+                </div>
             </div>
         </div>
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
-        <div class="fav-result" style="border-left: 3px solid #22c55e">
-            <span>最可能：<strong>主勝</strong> 61%</span>
-            <span class="conf-badge" style="background:#22c55e20; color:#22c55e; padding: 2px 8px; border-radius: 10px; font-size: 0.8em">高信心</span>
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #22c55e">
+                <span>最可能：<strong>主勝</strong> 61%</span>
+            </div>
+            <span class="conf-badge" style="background:#22c55e20; color:#22c55e">高信心</span>
         </div>
     </div>
 
@@ -495,8 +548,8 @@
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
-                <span class="date-label"> TBD</span>
-                <span class="date-full">TBD HKT</span>
+                <span class="date-label">04/12 06:00</span>
+                <span class="date-full">2026/04/12 06:00 HKT</span>
             </div>
         </div>
         
@@ -515,46 +568,45 @@
             </div>
         </div>
         
-        <div class="prob-grid">
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">主勝</span>
-                    <span class="prob-value" style="color: #ef4444">8%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:8%; background: #ef4444"></div></div>
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:8%"></div>
+                <div class="bar-segment bar-draw" style="width:8%"></div>
+                <div class="bar-segment bar-away" style="width:70%"></div>
             </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">和</span>
-                    <span class="prob-value" style="color: #ef4444">8%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:8%; background: #ef4444"></div></div>
-            </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">客勝</span>
-                    <span class="prob-value" style="color: #22c55e">70%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:70%; background: #22c55e"></div></div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 8%</span>
+                <span class="label-draw">和 8%</span>
+                <span class="label-away">客勝 70%</span>
             </div>
         </div>
         
-        <div class="extra-stats">
-            <div class="stat-item">
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
                 <span class="stat-label">大細 2.5</span>
-                <span class="stat-value" style="color: #22c55e">6.0球 → 大 82%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:82%"></div></div>
+                    <span class="stat-val">大 82%</span>
+                </div>
             </div>
-            <div class="stat-item">
+            <div class="stat-row">
                 <span class="stat-label">BTTS</span>
-                <span class="stat-value" style="color: #22c55e">Yes 73%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:73%"></div></div>
+                    <span class="stat-val">Yes 73%</span>
+                </div>
             </div>
         </div>
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
-        <div class="fav-result" style="border-left: 3px solid #22c55e">
-            <span>最可能：<strong>客勝</strong> 70%</span>
-            <span class="conf-badge" style="background:#22c55e20; color:#22c55e; padding: 2px 8px; border-radius: 10px; font-size: 0.8em">高信心</span>
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #ef4444">
+                <span>最可能：<strong>客勝</strong> 70%</span>
+            </div>
+            <span class="conf-badge" style="background:#22c55e20; color:#22c55e">高信心</span>
         </div>
     </div>
 
@@ -562,8 +614,8 @@
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
-                <span class="date-label"> TBD</span>
-                <span class="date-full">TBD HKT</span>
+                <span class="date-label">04/13 05:00</span>
+                <span class="date-full">2026/04/13 05:00 HKT</span>
             </div>
         </div>
         
@@ -582,46 +634,45 @@
             </div>
         </div>
         
-        <div class="prob-grid">
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">主勝</span>
-                    <span class="prob-value" style="color: #22c55e">63%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:63%; background: #22c55e"></div></div>
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:63%"></div>
+                <div class="bar-segment bar-draw" style="width:15%"></div>
+                <div class="bar-segment bar-away" style="width:20%"></div>
             </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">和</span>
-                    <span class="prob-value" style="color: #ef4444">15%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:15%; background: #ef4444"></div></div>
-            </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">客勝</span>
-                    <span class="prob-value" style="color: #ef4444">20%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:20%; background: #ef4444"></div></div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 63%</span>
+                <span class="label-draw">和 15%</span>
+                <span class="label-away">客勝 20%</span>
             </div>
         </div>
         
-        <div class="extra-stats">
-            <div class="stat-item">
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
                 <span class="stat-label">大細 2.5</span>
-                <span class="stat-value" style="color: #22c55e">5.5球 → 大 88%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:88%"></div></div>
+                    <span class="stat-val">大 88%</span>
+                </div>
             </div>
-            <div class="stat-item">
+            <div class="stat-row">
                 <span class="stat-label">BTTS</span>
-                <span class="stat-value" style="color: #22c55e">Yes 82%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:82%"></div></div>
+                    <span class="stat-val">Yes 82%</span>
+                </div>
             </div>
         </div>
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
-        <div class="fav-result" style="border-left: 3px solid #22c55e">
-            <span>最可能：<strong>主勝</strong> 63%</span>
-            <span class="conf-badge" style="background:#22c55e20; color:#22c55e; padding: 2px 8px; border-radius: 10px; font-size: 0.8em">高信心</span>
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #22c55e">
+                <span>最可能：<strong>主勝</strong> 63%</span>
+            </div>
+            <span class="conf-badge" style="background:#22c55e20; color:#22c55e">高信心</span>
         </div>
     </div>
 
@@ -629,8 +680,8 @@
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
-                <span class="date-label"> TBD</span>
-                <span class="date-full">TBD HKT</span>
+                <span class="date-label">04/13 05:00</span>
+                <span class="date-full">2026/04/13 05:00 HKT</span>
             </div>
         </div>
         
@@ -649,46 +700,45 @@
             </div>
         </div>
         
-        <div class="prob-grid">
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">主勝</span>
-                    <span class="prob-value" style="color: #ef4444">27%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:27%; background: #ef4444"></div></div>
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:27%"></div>
+                <div class="bar-segment bar-draw" style="width:17%"></div>
+                <div class="bar-segment bar-away" style="width:54%"></div>
             </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">和</span>
-                    <span class="prob-value" style="color: #ef4444">17%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:17%; background: #ef4444"></div></div>
-            </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">客勝</span>
-                    <span class="prob-value" style="color: #22c55e">54%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:54%; background: #22c55e"></div></div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 27%</span>
+                <span class="label-draw">和 17%</span>
+                <span class="label-away">客勝 54%</span>
             </div>
         </div>
         
-        <div class="extra-stats">
-            <div class="stat-item">
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
                 <span class="stat-label">大細 2.5</span>
-                <span class="stat-value" style="color: #22c55e">5.3球 → 大 88%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:88%"></div></div>
+                    <span class="stat-val">大 88%</span>
+                </div>
             </div>
-            <div class="stat-item">
+            <div class="stat-row">
                 <span class="stat-label">BTTS</span>
-                <span class="stat-value" style="color: #22c55e">Yes 84%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:84%"></div></div>
+                    <span class="stat-val">Yes 84%</span>
+                </div>
             </div>
         </div>
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
-        <div class="fav-result" style="border-left: 3px solid #22c55e">
-            <span>最可能：<strong>客勝</strong> 54%</span>
-            <span class="conf-badge" style="background:#f59e0b20; color:#f59e0b; padding: 2px 8px; border-radius: 10px; font-size: 0.8em">中信心</span>
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #ef4444">
+                <span>最可能：<strong>客勝</strong> 54%</span>
+            </div>
+            <span class="conf-badge" style="background:#f59e0b20; color:#f59e0b">中信心</span>
         </div>
     </div>
 
@@ -696,8 +746,8 @@
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
-                <span class="date-label"> TBD</span>
-                <span class="date-full">TBD HKT</span>
+                <span class="date-label">04/13 07:30</span>
+                <span class="date-full">2026/04/13 07:30 HKT</span>
             </div>
         </div>
         
@@ -711,51 +761,50 @@
                 <div class="total-goals">預測 6.0 球</div>
             </div>
             <div class="team away">
-                <div class="team-name">Manchester City FC</div>
+                <div class="team-name">曼城</div>
                 <div class="team-en">Manchester City FC</div>
             </div>
         </div>
         
-        <div class="prob-grid">
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">主勝</span>
-                    <span class="prob-value" style="color: #ef4444">17%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:17%; background: #ef4444"></div></div>
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:17%"></div>
+                <div class="bar-segment bar-draw" style="width:11%"></div>
+                <div class="bar-segment bar-away" style="width:59%"></div>
             </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">和</span>
-                    <span class="prob-value" style="color: #ef4444">11%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:11%; background: #ef4444"></div></div>
-            </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">客勝</span>
-                    <span class="prob-value" style="color: #22c55e">59%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:59%; background: #22c55e"></div></div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 17%</span>
+                <span class="label-draw">和 11%</span>
+                <span class="label-away">客勝 59%</span>
             </div>
         </div>
         
-        <div class="extra-stats">
-            <div class="stat-item">
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
                 <span class="stat-label">大細 2.5</span>
-                <span class="stat-value" style="color: #22c55e">6.0球 → 大 86%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:86%"></div></div>
+                    <span class="stat-val">大 86%</span>
+                </div>
             </div>
-            <div class="stat-item">
+            <div class="stat-row">
                 <span class="stat-label">BTTS</span>
-                <span class="stat-value" style="color: #22c55e">Yes 82%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:82%"></div></div>
+                    <span class="stat-val">Yes 82%</span>
+                </div>
             </div>
         </div>
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
-        <div class="fav-result" style="border-left: 3px solid #22c55e">
-            <span>最可能：<strong>客勝</strong> 59%</span>
-            <span class="conf-badge" style="background:#22c55e20; color:#22c55e; padding: 2px 8px; border-radius: 10px; font-size: 0.8em">高信心</span>
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #ef4444">
+                <span>最可能：<strong>客勝</strong> 59%</span>
+            </div>
+            <span class="conf-badge" style="background:#22c55e20; color:#22c55e">高信心</span>
         </div>
     </div></div>
         </div>
@@ -773,8 +822,8 @@
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">🏆 歐聯</div>
             <div class="match-datetime">
-                <span class="date-label"> TBD</span>
-                <span class="date-full">TBD HKT</span>
+                <span class="date-label">04/08 11:00</span>
+                <span class="date-full">2026/04/08 11:00 HKT</span>
             </div>
         </div>
         
@@ -793,46 +842,45 @@
             </div>
         </div>
         
-        <div class="prob-grid">
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">主勝</span>
-                    <span class="prob-value" style="color: #ef4444">15%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:15%; background: #ef4444"></div></div>
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:15%"></div>
+                <div class="bar-segment bar-draw" style="width:9%"></div>
+                <div class="bar-segment bar-away" style="width:36%"></div>
             </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">和</span>
-                    <span class="prob-value" style="color: #ef4444">9%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:9%; background: #ef4444"></div></div>
-            </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">客勝</span>
-                    <span class="prob-value" style="color: #f59e0b">36%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:36%; background: #f59e0b"></div></div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 15%</span>
+                <span class="label-draw">和 9%</span>
+                <span class="label-away">客勝 36%</span>
             </div>
         </div>
         
-        <div class="extra-stats">
-            <div class="stat-item">
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
                 <span class="stat-label">大細 2.5</span>
-                <span class="stat-value" style="color: #22c55e">6.0球 → 大 60%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:60%"></div></div>
+                    <span class="stat-val">大 60%</span>
+                </div>
             </div>
-            <div class="stat-item">
+            <div class="stat-row">
                 <span class="stat-label">BTTS</span>
-                <span class="stat-value" style="color: #22c55e">Yes 59%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:59%"></div></div>
+                    <span class="stat-val">Yes 59%</span>
+                </div>
             </div>
         </div>
         
         
         
-        <div class="fav-result" style="border-left: 3px solid #f59e0b">
-            <span>最可能：<strong>客勝</strong> 36%</span>
-            <span class="conf-badge" style="background:#6b6b8020; color:#6b6b80; padding: 2px 8px; border-radius: 10px; font-size: 0.8em">一般</span>
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #ef4444">
+                <span>最可能：<strong>客勝</strong> 36%</span>
+            </div>
+            <span class="conf-badge" style="background:#6b6b8020; color:#6b6b80">一般</span>
         </div>
     </div>
 
@@ -840,8 +888,8 @@
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">🏆 歐聯</div>
             <div class="match-datetime">
-                <span class="date-label"> TBD</span>
-                <span class="date-full">TBD HKT</span>
+                <span class="date-label">04/08 11:00</span>
+                <span class="date-full">2026/04/08 11:00 HKT</span>
             </div>
         </div>
         
@@ -860,46 +908,45 @@
             </div>
         </div>
         
-        <div class="prob-grid">
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">主勝</span>
-                    <span class="prob-value" style="color: #ef4444">3%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:3%; background: #ef4444"></div></div>
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:3%"></div>
+                <div class="bar-segment bar-draw" style="width:4%"></div>
+                <div class="bar-segment bar-away" style="width:63%"></div>
             </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">和</span>
-                    <span class="prob-value" style="color: #ef4444">4%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:4%; background: #ef4444"></div></div>
-            </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">客勝</span>
-                    <span class="prob-value" style="color: #22c55e">63%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:63%; background: #22c55e"></div></div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 3%</span>
+                <span class="label-draw">和 4%</span>
+                <span class="label-away">客勝 63%</span>
             </div>
         </div>
         
-        <div class="extra-stats">
-            <div class="stat-item">
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
                 <span class="stat-label">大細 2.5</span>
-                <span class="stat-value" style="color: #22c55e">6.0球 → 大 69%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:69%"></div></div>
+                    <span class="stat-val">大 69%</span>
+                </div>
             </div>
-            <div class="stat-item">
+            <div class="stat-row">
                 <span class="stat-label">BTTS</span>
-                <span class="stat-value" style="color: #22c55e">Yes 59%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:59%"></div></div>
+                    <span class="stat-val">Yes 59%</span>
+                </div>
             </div>
         </div>
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
-        <div class="fav-result" style="border-left: 3px solid #22c55e">
-            <span>最可能：<strong>客勝</strong> 63%</span>
-            <span class="conf-badge" style="background:#22c55e20; color:#22c55e; padding: 2px 8px; border-radius: 10px; font-size: 0.8em">高信心</span>
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #ef4444">
+                <span>最可能：<strong>客勝</strong> 63%</span>
+            </div>
+            <span class="conf-badge" style="background:#22c55e20; color:#22c55e">高信心</span>
         </div>
     </div>
 
@@ -907,8 +954,8 @@
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">🏆 歐聯</div>
             <div class="match-datetime">
-                <span class="date-label"> TBD</span>
-                <span class="date-full">TBD HKT</span>
+                <span class="date-label">04/09 11:00</span>
+                <span class="date-full">2026/04/09 11:00 HKT</span>
             </div>
         </div>
         
@@ -927,46 +974,45 @@
             </div>
         </div>
         
-        <div class="prob-grid">
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">主勝</span>
-                    <span class="prob-value" style="color: #ef4444">24%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:24%; background: #ef4444"></div></div>
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:24%"></div>
+                <div class="bar-segment bar-draw" style="width:12%"></div>
+                <div class="bar-segment bar-away" style="width:38%"></div>
             </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">和</span>
-                    <span class="prob-value" style="color: #ef4444">12%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:12%; background: #ef4444"></div></div>
-            </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">客勝</span>
-                    <span class="prob-value" style="color: #f59e0b">38%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:38%; background: #f59e0b"></div></div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 24%</span>
+                <span class="label-draw">和 12%</span>
+                <span class="label-away">客勝 38%</span>
             </div>
         </div>
         
-        <div class="extra-stats">
-            <div class="stat-item">
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
                 <span class="stat-label">大細 2.5</span>
-                <span class="stat-value" style="color: #22c55e">6.0球 → 大 74%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:74%"></div></div>
+                    <span class="stat-val">大 74%</span>
+                </div>
             </div>
-            <div class="stat-item">
+            <div class="stat-row">
                 <span class="stat-label">BTTS</span>
-                <span class="stat-value" style="color: #22c55e">Yes 73%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:73%"></div></div>
+                    <span class="stat-val">Yes 73%</span>
+                </div>
             </div>
         </div>
         
         
         
-        <div class="fav-result" style="border-left: 3px solid #f59e0b">
-            <span>最可能：<strong>客勝</strong> 38%</span>
-            <span class="conf-badge" style="background:#6b6b8020; color:#6b6b80; padding: 2px 8px; border-radius: 10px; font-size: 0.8em">一般</span>
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #ef4444">
+                <span>最可能：<strong>客勝</strong> 38%</span>
+            </div>
+            <span class="conf-badge" style="background:#6b6b8020; color:#6b6b80">一般</span>
         </div>
     </div>
 
@@ -974,8 +1020,8 @@
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">🏆 歐聯</div>
             <div class="match-datetime">
-                <span class="date-label"> TBD</span>
-                <span class="date-full">TBD HKT</span>
+                <span class="date-label">04/09 11:00</span>
+                <span class="date-full">2026/04/09 11:00 HKT</span>
             </div>
         </div>
         
@@ -994,46 +1040,45 @@
             </div>
         </div>
         
-        <div class="prob-grid">
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">主勝</span>
-                    <span class="prob-value" style="color: #ef4444">15%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:15%; background: #ef4444"></div></div>
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:15%"></div>
+                <div class="bar-segment bar-draw" style="width:5%"></div>
+                <div class="bar-segment bar-away" style="width:6%"></div>
             </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">和</span>
-                    <span class="prob-value" style="color: #ef4444">5%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:5%; background: #ef4444"></div></div>
-            </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">客勝</span>
-                    <span class="prob-value" style="color: #ef4444">6%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:6%; background: #ef4444"></div></div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 15%</span>
+                <span class="label-draw">和 5%</span>
+                <span class="label-away">客勝 6%</span>
             </div>
         </div>
         
-        <div class="extra-stats">
-            <div class="stat-item">
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
                 <span class="stat-label">大細 2.5</span>
-                <span class="stat-value" style="color: #ef4444">6.0球 → 大 26%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:26%"></div></div>
+                    <span class="stat-val">大 26%</span>
+                </div>
             </div>
-            <div class="stat-item">
+            <div class="stat-row">
                 <span class="stat-label">BTTS</span>
-                <span class="stat-value" style="color: #ef4444">Yes 26%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:26%"></div></div>
+                    <span class="stat-val">Yes 26%</span>
+                </div>
             </div>
         </div>
         
         
         
-        <div class="fav-result" style="border-left: 3px solid #ef4444">
-            <span>最可能：<strong>主勝</strong> 15%</span>
-            <span class="conf-badge" style="background:#6b6b8020; color:#6b6b80; padding: 2px 8px; border-radius: 10px; font-size: 0.8em">一般</span>
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #22c55e">
+                <span>最可能：<strong>主勝</strong> 15%</span>
+            </div>
+            <span class="conf-badge" style="background:#6b6b8020; color:#6b6b80">一般</span>
         </div>
     </div></div>
         </div>
@@ -1049,8 +1094,8 @@
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
-                <span class="date-label"> TBD</span>
-                <span class="date-full">TBD HKT</span>
+                <span class="date-label">04/11 11:00</span>
+                <span class="date-full">2026/04/11 11:00 HKT</span>
             </div>
         </div>
         
@@ -1069,46 +1114,45 @@
             </div>
         </div>
         
-        <div class="prob-grid">
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">主勝</span>
-                    <span class="prob-value" style="color: #22c55e">53%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:53%; background: #22c55e"></div></div>
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:53%"></div>
+                <div class="bar-segment bar-draw" style="width:15%"></div>
+                <div class="bar-segment bar-away" style="width:27%"></div>
             </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">和</span>
-                    <span class="prob-value" style="color: #ef4444">15%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:15%; background: #ef4444"></div></div>
-            </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">客勝</span>
-                    <span class="prob-value" style="color: #ef4444">27%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:27%; background: #ef4444"></div></div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 53%</span>
+                <span class="label-draw">和 15%</span>
+                <span class="label-away">客勝 27%</span>
             </div>
         </div>
         
-        <div class="extra-stats">
-            <div class="stat-item">
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
                 <span class="stat-label">大細 2.5</span>
-                <span class="stat-value" style="color: #22c55e">6.0球 → 大 91%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:91%"></div></div>
+                    <span class="stat-val">大 91%</span>
+                </div>
             </div>
-            <div class="stat-item">
+            <div class="stat-row">
                 <span class="stat-label">BTTS</span>
-                <span class="stat-value" style="color: #22c55e">Yes 87%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:87%"></div></div>
+                    <span class="stat-val">Yes 87%</span>
+                </div>
             </div>
         </div>
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
-        <div class="fav-result" style="border-left: 3px solid #22c55e">
-            <span>最可能：<strong>主勝</strong> 53%</span>
-            <span class="conf-badge" style="background:#f59e0b20; color:#f59e0b; padding: 2px 8px; border-radius: 10px; font-size: 0.8em">中信心</span>
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #22c55e">
+                <span>最可能：<strong>主勝</strong> 53%</span>
+            </div>
+            <span class="conf-badge" style="background:#f59e0b20; color:#f59e0b">中信心</span>
         </div>
     </div>
 
@@ -1116,8 +1160,8 @@
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
-                <span class="date-label"> TBD</span>
-                <span class="date-full">TBD HKT</span>
+                <span class="date-label">04/12 03:30</span>
+                <span class="date-full">2026/04/12 03:30 HKT</span>
             </div>
         </div>
         
@@ -1136,46 +1180,45 @@
             </div>
         </div>
         
-        <div class="prob-grid">
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">主勝</span>
-                    <span class="prob-value" style="color: #22c55e">61%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:61%; background: #22c55e"></div></div>
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:61%"></div>
+                <div class="bar-segment bar-draw" style="width:4%"></div>
+                <div class="bar-segment bar-away" style="width:3%"></div>
             </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">和</span>
-                    <span class="prob-value" style="color: #ef4444">4%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:4%; background: #ef4444"></div></div>
-            </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">客勝</span>
-                    <span class="prob-value" style="color: #ef4444">3%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:3%; background: #ef4444"></div></div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 61%</span>
+                <span class="label-draw">和 4%</span>
+                <span class="label-away">客勝 3%</span>
             </div>
         </div>
         
-        <div class="extra-stats">
-            <div class="stat-item">
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
                 <span class="stat-label">大細 2.5</span>
-                <span class="stat-value" style="color: #22c55e">6.0球 → 大 66%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:66%"></div></div>
+                    <span class="stat-val">大 66%</span>
+                </div>
             </div>
-            <div class="stat-item">
+            <div class="stat-row">
                 <span class="stat-label">BTTS</span>
-                <span class="stat-value" style="color: #22c55e">Yes 56%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:56%"></div></div>
+                    <span class="stat-val">Yes 56%</span>
+                </div>
             </div>
         </div>
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
-        <div class="fav-result" style="border-left: 3px solid #22c55e">
-            <span>最可能：<strong>主勝</strong> 61%</span>
-            <span class="conf-badge" style="background:#22c55e20; color:#22c55e; padding: 2px 8px; border-radius: 10px; font-size: 0.8em">高信心</span>
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #22c55e">
+                <span>最可能：<strong>主勝</strong> 61%</span>
+            </div>
+            <span class="conf-badge" style="background:#22c55e20; color:#22c55e">高信心</span>
         </div>
     </div>
 
@@ -1183,8 +1226,8 @@
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
-                <span class="date-label"> TBD</span>
-                <span class="date-full">TBD HKT</span>
+                <span class="date-label">04/12 06:00</span>
+                <span class="date-full">2026/04/12 06:00 HKT</span>
             </div>
         </div>
         
@@ -1203,46 +1246,45 @@
             </div>
         </div>
         
-        <div class="prob-grid">
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">主勝</span>
-                    <span class="prob-value" style="color: #f59e0b">42%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:42%; background: #f59e0b"></div></div>
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:42%"></div>
+                <div class="bar-segment bar-draw" style="width:16%"></div>
+                <div class="bar-segment bar-away" style="width:39%"></div>
             </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">和</span>
-                    <span class="prob-value" style="color: #ef4444">16%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:16%; background: #ef4444"></div></div>
-            </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">客勝</span>
-                    <span class="prob-value" style="color: #f59e0b">39%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:39%; background: #f59e0b"></div></div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 42%</span>
+                <span class="label-draw">和 16%</span>
+                <span class="label-away">客勝 39%</span>
             </div>
         </div>
         
-        <div class="extra-stats">
-            <div class="stat-item">
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
                 <span class="stat-label">大細 2.5</span>
-                <span class="stat-value" style="color: #22c55e">6.0球 → 大 92%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:92%"></div></div>
+                    <span class="stat-val">大 92%</span>
+                </div>
             </div>
-            <div class="stat-item">
+            <div class="stat-row">
                 <span class="stat-label">BTTS</span>
-                <span class="stat-value" style="color: #22c55e">Yes 89%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:89%"></div></div>
+                    <span class="stat-val">Yes 89%</span>
+                </div>
             </div>
         </div>
         
         
         
-        <div class="fav-result" style="border-left: 3px solid #f59e0b">
-            <span>最可能：<strong>主勝</strong> 42%</span>
-            <span class="conf-badge" style="background:#6b6b8020; color:#6b6b80; padding: 2px 8px; border-radius: 10px; font-size: 0.8em">一般</span>
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #22c55e">
+                <span>最可能：<strong>主勝</strong> 42%</span>
+            </div>
+            <span class="conf-badge" style="background:#6b6b8020; color:#6b6b80">一般</span>
         </div>
     </div>
 
@@ -1250,8 +1292,8 @@
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
-                <span class="date-label"> TBD</span>
-                <span class="date-full">TBD HKT</span>
+                <span class="date-label">04/12 06:00</span>
+                <span class="date-full">2026/04/12 06:00 HKT</span>
             </div>
         </div>
         
@@ -1270,46 +1312,45 @@
             </div>
         </div>
         
-        <div class="prob-grid">
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">主勝</span>
-                    <span class="prob-value" style="color: #ef4444">8%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:8%; background: #ef4444"></div></div>
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:8%"></div>
+                <div class="bar-segment bar-draw" style="width:8%"></div>
+                <div class="bar-segment bar-away" style="width:70%"></div>
             </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">和</span>
-                    <span class="prob-value" style="color: #ef4444">8%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:8%; background: #ef4444"></div></div>
-            </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">客勝</span>
-                    <span class="prob-value" style="color: #22c55e">70%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:70%; background: #22c55e"></div></div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 8%</span>
+                <span class="label-draw">和 8%</span>
+                <span class="label-away">客勝 70%</span>
             </div>
         </div>
         
-        <div class="extra-stats">
-            <div class="stat-item">
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
                 <span class="stat-label">大細 2.5</span>
-                <span class="stat-value" style="color: #22c55e">6.0球 → 大 82%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:82%"></div></div>
+                    <span class="stat-val">大 82%</span>
+                </div>
             </div>
-            <div class="stat-item">
+            <div class="stat-row">
                 <span class="stat-label">BTTS</span>
-                <span class="stat-value" style="color: #22c55e">Yes 73%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:73%"></div></div>
+                    <span class="stat-val">Yes 73%</span>
+                </div>
             </div>
         </div>
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
-        <div class="fav-result" style="border-left: 3px solid #22c55e">
-            <span>最可能：<strong>客勝</strong> 70%</span>
-            <span class="conf-badge" style="background:#22c55e20; color:#22c55e; padding: 2px 8px; border-radius: 10px; font-size: 0.8em">高信心</span>
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #ef4444">
+                <span>最可能：<strong>客勝</strong> 70%</span>
+            </div>
+            <span class="conf-badge" style="background:#22c55e20; color:#22c55e">高信心</span>
         </div>
     </div>
 
@@ -1317,8 +1358,8 @@
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
-                <span class="date-label"> TBD</span>
-                <span class="date-full">TBD HKT</span>
+                <span class="date-label">04/12 08:30</span>
+                <span class="date-full">2026/04/12 08:30 HKT</span>
             </div>
         </div>
         
@@ -1337,46 +1378,45 @@
             </div>
         </div>
         
-        <div class="prob-grid">
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">主勝</span>
-                    <span class="prob-value" style="color: #f59e0b">47%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:47%; background: #f59e0b"></div></div>
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:47%"></div>
+                <div class="bar-segment bar-draw" style="width:13%"></div>
+                <div class="bar-segment bar-away" style="width:26%"></div>
             </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">和</span>
-                    <span class="prob-value" style="color: #ef4444">13%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:13%; background: #ef4444"></div></div>
-            </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">客勝</span>
-                    <span class="prob-value" style="color: #ef4444">26%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:26%; background: #ef4444"></div></div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 47%</span>
+                <span class="label-draw">和 13%</span>
+                <span class="label-away">客勝 26%</span>
             </div>
         </div>
         
-        <div class="extra-stats">
-            <div class="stat-item">
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
                 <span class="stat-label">大細 2.5</span>
-                <span class="stat-value" style="color: #22c55e">6.0球 → 大 85%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:85%"></div></div>
+                    <span class="stat-val">大 85%</span>
+                </div>
             </div>
-            <div class="stat-item">
+            <div class="stat-row">
                 <span class="stat-label">BTTS</span>
-                <span class="stat-value" style="color: #22c55e">Yes 83%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:83%"></div></div>
+                    <span class="stat-val">Yes 83%</span>
+                </div>
             </div>
         </div>
         
         
         
-        <div class="fav-result" style="border-left: 3px solid #f59e0b">
-            <span>最可能：<strong>主勝</strong> 47%</span>
-            <span class="conf-badge" style="background:#f59e0b20; color:#f59e0b; padding: 2px 8px; border-radius: 10px; font-size: 0.8em">中信心</span>
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #22c55e">
+                <span>最可能：<strong>主勝</strong> 47%</span>
+            </div>
+            <span class="conf-badge" style="background:#f59e0b20; color:#f59e0b">中信心</span>
         </div>
     </div>
 
@@ -1384,8 +1424,8 @@
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
-                <span class="date-label"> TBD</span>
-                <span class="date-full">TBD HKT</span>
+                <span class="date-label">04/13 05:00</span>
+                <span class="date-full">2026/04/13 05:00 HKT</span>
             </div>
         </div>
         
@@ -1404,46 +1444,45 @@
             </div>
         </div>
         
-        <div class="prob-grid">
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">主勝</span>
-                    <span class="prob-value" style="color: #22c55e">63%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:63%; background: #22c55e"></div></div>
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:63%"></div>
+                <div class="bar-segment bar-draw" style="width:15%"></div>
+                <div class="bar-segment bar-away" style="width:20%"></div>
             </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">和</span>
-                    <span class="prob-value" style="color: #ef4444">15%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:15%; background: #ef4444"></div></div>
-            </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">客勝</span>
-                    <span class="prob-value" style="color: #ef4444">20%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:20%; background: #ef4444"></div></div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 63%</span>
+                <span class="label-draw">和 15%</span>
+                <span class="label-away">客勝 20%</span>
             </div>
         </div>
         
-        <div class="extra-stats">
-            <div class="stat-item">
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
                 <span class="stat-label">大細 2.5</span>
-                <span class="stat-value" style="color: #22c55e">5.5球 → 大 88%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:88%"></div></div>
+                    <span class="stat-val">大 88%</span>
+                </div>
             </div>
-            <div class="stat-item">
+            <div class="stat-row">
                 <span class="stat-label">BTTS</span>
-                <span class="stat-value" style="color: #22c55e">Yes 82%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:82%"></div></div>
+                    <span class="stat-val">Yes 82%</span>
+                </div>
             </div>
         </div>
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
-        <div class="fav-result" style="border-left: 3px solid #22c55e">
-            <span>最可能：<strong>主勝</strong> 63%</span>
-            <span class="conf-badge" style="background:#22c55e20; color:#22c55e; padding: 2px 8px; border-radius: 10px; font-size: 0.8em">高信心</span>
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #22c55e">
+                <span>最可能：<strong>主勝</strong> 63%</span>
+            </div>
+            <span class="conf-badge" style="background:#22c55e20; color:#22c55e">高信心</span>
         </div>
     </div>
 
@@ -1451,8 +1490,8 @@
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
-                <span class="date-label"> TBD</span>
-                <span class="date-full">TBD HKT</span>
+                <span class="date-label">04/13 05:00</span>
+                <span class="date-full">2026/04/13 05:00 HKT</span>
             </div>
         </div>
         
@@ -1471,46 +1510,45 @@
             </div>
         </div>
         
-        <div class="prob-grid">
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">主勝</span>
-                    <span class="prob-value" style="color: #f59e0b">44%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:44%; background: #f59e0b"></div></div>
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:44%"></div>
+                <div class="bar-segment bar-draw" style="width:16%"></div>
+                <div class="bar-segment bar-away" style="width:36%"></div>
             </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">和</span>
-                    <span class="prob-value" style="color: #ef4444">16%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:16%; background: #ef4444"></div></div>
-            </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">客勝</span>
-                    <span class="prob-value" style="color: #f59e0b">36%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:36%; background: #f59e0b"></div></div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 44%</span>
+                <span class="label-draw">和 16%</span>
+                <span class="label-away">客勝 36%</span>
             </div>
         </div>
         
-        <div class="extra-stats">
-            <div class="stat-item">
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
                 <span class="stat-label">大細 2.5</span>
-                <span class="stat-value" style="color: #22c55e">6.0球 → 大 92%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:92%"></div></div>
+                    <span class="stat-val">大 92%</span>
+                </div>
             </div>
-            <div class="stat-item">
+            <div class="stat-row">
                 <span class="stat-label">BTTS</span>
-                <span class="stat-value" style="color: #22c55e">Yes 89%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:89%"></div></div>
+                    <span class="stat-val">Yes 89%</span>
+                </div>
             </div>
         </div>
         
         
         
-        <div class="fav-result" style="border-left: 3px solid #f59e0b">
-            <span>最可能：<strong>主勝</strong> 44%</span>
-            <span class="conf-badge" style="background:#6b6b8020; color:#6b6b80; padding: 2px 8px; border-radius: 10px; font-size: 0.8em">一般</span>
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #22c55e">
+                <span>最可能：<strong>主勝</strong> 44%</span>
+            </div>
+            <span class="conf-badge" style="background:#6b6b8020; color:#6b6b80">一般</span>
         </div>
     </div>
 
@@ -1518,8 +1556,8 @@
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
-                <span class="date-label"> TBD</span>
-                <span class="date-full">TBD HKT</span>
+                <span class="date-label">04/13 05:00</span>
+                <span class="date-full">2026/04/13 05:00 HKT</span>
             </div>
         </div>
         
@@ -1538,46 +1576,45 @@
             </div>
         </div>
         
-        <div class="prob-grid">
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">主勝</span>
-                    <span class="prob-value" style="color: #ef4444">27%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:27%; background: #ef4444"></div></div>
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:27%"></div>
+                <div class="bar-segment bar-draw" style="width:17%"></div>
+                <div class="bar-segment bar-away" style="width:54%"></div>
             </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">和</span>
-                    <span class="prob-value" style="color: #ef4444">17%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:17%; background: #ef4444"></div></div>
-            </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">客勝</span>
-                    <span class="prob-value" style="color: #22c55e">54%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:54%; background: #22c55e"></div></div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 27%</span>
+                <span class="label-draw">和 17%</span>
+                <span class="label-away">客勝 54%</span>
             </div>
         </div>
         
-        <div class="extra-stats">
-            <div class="stat-item">
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
                 <span class="stat-label">大細 2.5</span>
-                <span class="stat-value" style="color: #22c55e">5.3球 → 大 88%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:88%"></div></div>
+                    <span class="stat-val">大 88%</span>
+                </div>
             </div>
-            <div class="stat-item">
+            <div class="stat-row">
                 <span class="stat-label">BTTS</span>
-                <span class="stat-value" style="color: #22c55e">Yes 84%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:84%"></div></div>
+                    <span class="stat-val">Yes 84%</span>
+                </div>
             </div>
         </div>
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
-        <div class="fav-result" style="border-left: 3px solid #22c55e">
-            <span>最可能：<strong>客勝</strong> 54%</span>
-            <span class="conf-badge" style="background:#f59e0b20; color:#f59e0b; padding: 2px 8px; border-radius: 10px; font-size: 0.8em">中信心</span>
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #ef4444">
+                <span>最可能：<strong>客勝</strong> 54%</span>
+            </div>
+            <span class="conf-badge" style="background:#f59e0b20; color:#f59e0b">中信心</span>
         </div>
     </div>
 
@@ -1585,8 +1622,8 @@
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
-                <span class="date-label"> TBD</span>
-                <span class="date-full">TBD HKT</span>
+                <span class="date-label">04/13 07:30</span>
+                <span class="date-full">2026/04/13 07:30 HKT</span>
             </div>
         </div>
         
@@ -1600,51 +1637,50 @@
                 <div class="total-goals">預測 6.0 球</div>
             </div>
             <div class="team away">
-                <div class="team-name">Manchester City FC</div>
+                <div class="team-name">曼城</div>
                 <div class="team-en">Manchester City FC</div>
             </div>
         </div>
         
-        <div class="prob-grid">
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">主勝</span>
-                    <span class="prob-value" style="color: #ef4444">17%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:17%; background: #ef4444"></div></div>
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:17%"></div>
+                <div class="bar-segment bar-draw" style="width:11%"></div>
+                <div class="bar-segment bar-away" style="width:59%"></div>
             </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">和</span>
-                    <span class="prob-value" style="color: #ef4444">11%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:11%; background: #ef4444"></div></div>
-            </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">客勝</span>
-                    <span class="prob-value" style="color: #22c55e">59%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:59%; background: #22c55e"></div></div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 17%</span>
+                <span class="label-draw">和 11%</span>
+                <span class="label-away">客勝 59%</span>
             </div>
         </div>
         
-        <div class="extra-stats">
-            <div class="stat-item">
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
                 <span class="stat-label">大細 2.5</span>
-                <span class="stat-value" style="color: #22c55e">6.0球 → 大 86%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:86%"></div></div>
+                    <span class="stat-val">大 86%</span>
+                </div>
             </div>
-            <div class="stat-item">
+            <div class="stat-row">
                 <span class="stat-label">BTTS</span>
-                <span class="stat-value" style="color: #22c55e">Yes 82%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:82%"></div></div>
+                    <span class="stat-val">Yes 82%</span>
+                </div>
             </div>
         </div>
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
-        <div class="fav-result" style="border-left: 3px solid #22c55e">
-            <span>最可能：<strong>客勝</strong> 59%</span>
-            <span class="conf-badge" style="background:#22c55e20; color:#22c55e; padding: 2px 8px; border-radius: 10px; font-size: 0.8em">高信心</span>
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #ef4444">
+                <span>最可能：<strong>客勝</strong> 59%</span>
+            </div>
+            <span class="conf-badge" style="background:#22c55e20; color:#22c55e">高信心</span>
         </div>
     </div></div>
         </div>

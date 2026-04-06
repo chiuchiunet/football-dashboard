@@ -23,6 +23,9 @@ COLORS = {
     "success": "#22c55e",
     "warning": "#f59e0b",
     "danger": "#ef4444",
+    "home_color": "#22c55e",
+    "draw_color": "#f59e0b", 
+    "away_color": "#ef4444",
 }
 
 # 中文隊名映射
@@ -53,6 +56,10 @@ TEAM_NAMES_CN = {
     "Newcastle United": "紐卡素",
     "Atalanta": "阿特蘭大",
     "Benfica": "賓菲加",
+    "Tottenham Hotspur": "熱刺",
+    "Manchester City FC": "曼城",
+    "Manchester United FC": "曼聯",
+    "Liverpool FC": "利物浦",
 }
 
 # 聯賽中文名
@@ -95,16 +102,8 @@ def get_comp_gradient(code: str) -> str:
     return COMP_GRADIENTS.get(code, "linear-gradient(135deg, #667eea 0%, #764ba2 100%)")
 
 
-def color_by_prob(prob: float) -> str:
-    if prob >= 0.5:
-        return "#22c55e"
-    elif prob >= 0.35:
-        return "#f59e0b"
-    else:
-        return "#ef4444"
-
-
 def get_predictions(days_ahead: int = 7) -> list:
+    """Fetch predictions directly from database as tuples."""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.execute("""
         SELECT m.match_id, m.utc_date, m.competition_code, m.home_team_name, m.away_team_name,
@@ -143,48 +142,58 @@ def format_match_time(utc_date: str) -> tuple:
         else:
             label = hkt.strftime("%m/%d")
         
-        # Full date in HK timezone
         full_date = hkt.strftime("%Y/%m/%d %H:%M")
         return time_str, label, full_date
     except:
         return utc_date[:16] if utc_date else "TBD", "", utc_date[:16] if utc_date else "TBD"
 
 
-def prediction_card(row) -> str:
-    # Handle both dict and tuple
-    if isinstance(row, dict):
-        match_id = row.get('match_id')
-        utc_date = row.get('utc_date')
-        comp = row.get('competition_code')
-        home = row.get('home_team_name')
-        away = row.get('away_team_name')
-        home_id = row.get('home_team_id')
-        away_id = row.get('away_team_id')
-        hwp = row.get('home_win_prob') or 0
-        dp = row.get('draw_prob') or 0
-        awp = row.get('away_win_prob') or 0
-        ov = row.get('over_2_5_prob') or 0
-        un = row.get('under_2_5_prob') or 0
-        bts_yes = row.get('btts_yes_prob') or 0
-        bts_no = row.get('btts_no_prob') or 0
-        ehg = row.get('expected_home_goals') or 0
-        eag = row.get('expected_away_goals') or 0
-        bets = row.get('recommended_bets') or ""
-    else:
-        (match_id, utc_date, comp, home, away, home_id, away_id,
-         hwp, dp, awp, ov, un, bts_yes, bts_no,
-         ehg, eag, bets) = row
-        hwp = hwp or 0
-        dp = dp or 0
-        awp = awp or 0
-        ov = ov or 0
-        un = un or 0
-        bts_yes = bts_yes or 0
-        bts_no = bts_no or 0
-        ehg = ehg or 0
-        eag = eag or 0
-        bets = bets or ""
+def prediction_card_from_dict(row: dict) -> str:
+    """Build card from dict (DataFrame row)."""
+    utc_date = row.get('utc_date') or row.get('kickoff_hk', '')
+    match_id = row.get('match_id')
+    comp = row.get('competition_code')
+    home = row.get('home_team_name')
+    away = row.get('away_team_name')
+    home_id = row.get('home_team_id', 0)
+    away_id = row.get('away_team_id', 0)
+    hwp = row.get('home_win_prob') or 0
+    dp = row.get('draw_prob') or 0
+    awp = row.get('away_win_prob') or 0
+    ov = row.get('over_2_5_prob') or 0
+    un = row.get('under_2_5_prob') or 0
+    bts_yes = row.get('btts_yes_prob') or 0
+    bts_no = row.get('btts_no_prob') or 0
+    ehg = row.get('expected_home_goals') or 0
+    eag = row.get('expected_away_goals') or 0
+    bets = row.get('recommended_bets') or ""
     
+    return _build_card(utc_date, comp, home, away, hwp, dp, awp, ov, un, bts_yes, bts_no, ehg, eag, bets)
+
+
+def prediction_card_from_tuple(row: tuple) -> str:
+    """Build card from tuple (DB row)."""
+    (match_id, utc_date, comp, home, away, home_id, away_id,
+     hwp, dp, awp, ov, un, bts_yes, bts_no,
+     ehg, eag, bets) = row
+    
+    hwp = hwp or 0
+    dp = dp or 0
+    awp = awp or 0
+    ov = ov or 0
+    un = un or 0
+    bts_yes = bts_yes or 0
+    bts_no = bts_no or 0
+    ehg = ehg or 0
+    eag = eag or 0
+    bets = bets or ""
+    
+    return _build_card(utc_date, comp, home, away, hwp, dp, awp, ov, un, bts_yes, bts_no, ehg, eag, bets)
+
+
+def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: float, awp: float, 
+                 ov: float, un: float, bts_yes: float, bts_no: float, ehg: float, eag: float, bets: str) -> str:
+    """Common card building logic."""
     home_cn = get_team_name_cn(home)
     away_cn = get_team_name_cn(away)
     comp_cn = get_comp_cn(comp)
@@ -198,14 +207,18 @@ def prediction_card(row) -> str:
     probs = {"主勝": hwp, "和": dp, "客勝": awp}
     fav = max(probs, key=probs.get)
     fav_prob = probs[fav]
-    fav_color = color_by_prob(fav_prob)
-    
-    likely_score = f"{int(ehg+0.5)}-{int(eag+0.5)}"
     
     max_prob = max(hwp, dp, awp)
     is_confident = max_prob > 0.50
     conf_level = "高信心" if max_prob > 0.55 else "中信心" if max_prob > 0.45 else "一般"
     conf_color = "#22c55e" if max_prob > 0.55 else "#f59e0b" if max_prob > 0.45 else "#6b6b80"
+    
+    if hwp >= dp and hwp >= awp:
+        primary_color = COLORS["home_color"]
+    elif awp >= dp:
+        primary_color = COLORS["away_color"]
+    else:
+        primary_color = COLORS["draw_color"]
     
     return f"""
     <div class="match-card">
@@ -223,7 +236,7 @@ def prediction_card(row) -> str:
                 <div class="team-en">{home}</div>
             </div>
             <div class="score-center">
-                <div class="predicted-score">{likely_score}</div>
+                <div class="predicted-score">{int(ehg+0.5)}-{int(eag+0.5)}</div>
                 <div class="total-goals">預測 {total_goals_str} 球</div>
             </div>
             <div class="team away">
@@ -232,46 +245,45 @@ def prediction_card(row) -> str:
             </div>
         </div>
         
-        <div class="prob-grid">
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">主勝</span>
-                    <span class="prob-value" style="color: {color_by_prob(hwp)}">{hwp*100:.0f}%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:{hwp*100:.0f}%; background: {color_by_prob(hwp)}"></div></div>
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:{hwp*100:.0f}%"></div>
+                <div class="bar-segment bar-draw" style="width:{dp*100:.0f}%"></div>
+                <div class="bar-segment bar-away" style="width:{awp*100:.0f}%"></div>
             </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">和</span>
-                    <span class="prob-value" style="color: {color_by_prob(dp)}">{dp*100:.0f}%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:{dp*100:.0f}%; background: {color_by_prob(dp)}"></div></div>
-            </div>
-            <div class="prob-item">
-                <div class="prob-header">
-                    <span class="prob-market">客勝</span>
-                    <span class="prob-value" style="color: {color_by_prob(awp)}">{awp*100:.0f}%</span>
-                </div>
-                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:{awp*100:.0f}%; background: {color_by_prob(awp)}"></div></div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 {hwp*100:.0f}%</span>
+                <span class="label-draw">和 {dp*100:.0f}%</span>
+                <span class="label-away">客勝 {awp*100:.0f}%</span>
             </div>
         </div>
         
-        <div class="extra-stats">
-            <div class="stat-item">
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
                 <span class="stat-label">大細 2.5</span>
-                <span class="stat-value" style="color: {'#22c55e' if ov > 0.5 else '#ef4444'}">{total_goals_str}球 → 大 {ov*100:.0f}%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:{ov*100:.0f}%"></div></div>
+                    <span class="stat-val">大 {ov*100:.0f}%</span>
+                </div>
             </div>
-            <div class="stat-item">
+            <div class="stat-row">
                 <span class="stat-label">BTTS</span>
-                <span class="stat-value" style="color: {'#22c55e' if bts_yes > 0.5 else '#ef4444'}">Yes {bts_yes*100:.0f}%</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:{bts_yes*100:.0f}%"></div></div>
+                    <span class="stat-val">Yes {bts_yes*100:.0f}%</span>
+                </div>
             </div>
         </div>
         
         {'<div class="value-bets">⭐ 模型高信心揀選</div>' if is_confident else ''}
         
-        <div class="fav-result" style="border-left: 3px solid {fav_color}">
-            <span>最可能：<strong>{fav}</strong> {fav_prob*100:.0f}%</span>
-            <span class="conf-badge" style="background:{conf_color}20; color:{conf_color}; padding: 2px 8px; border-radius: 10px; font-size: 0.8em">{conf_level}</span>
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid {primary_color}">
+                <span>最可能：<strong>{fav}</strong> {fav_prob*100:.0f}%</span>
+            </div>
+            <span class="conf-badge" style="background:{conf_color}20; color:{conf_color}">{conf_level}</span>
         </div>
     </div>"""
 
@@ -289,12 +301,21 @@ def group_by_competition(rows) -> dict:
     return groups
 
 
+def prediction_card(row) -> str:
+    """Generic prediction card builder."""
+    if isinstance(row, dict):
+        return prediction_card_from_dict(row)
+    else:
+        return prediction_card_from_tuple(row)
+
+
 def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
-    # Handle both DataFrame and list of tuples
+    # Handle both DataFrame and tuple list
     if hasattr(predictions, 'to_dict'):
         rows = predictions.to_dict(orient='records')
     else:
         rows = predictions
+    
     groups = group_by_competition(rows)
     
     comp_sections = []
@@ -507,66 +528,105 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             margin-top: 2px;
         }}
         
-        .prob-grid {{
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 12px;
+        /* Stacked Bar Section */
+        .stacked-bar-section {{
+            margin-bottom: 15px;
         }}
         
-        .prob-header {{
+        .stacked-bar {{
+            display: flex;
+            height: 28px;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }}
+        
+        .bar-segment {{
+            height: 100%;
+            transition: width 0.6s ease;
+        }}
+        
+        .bar-home {{
+            background: linear-gradient(90deg, #22c55e 0%, #4ade80 100%);
+            border-radius: 14px 0 0 14px;
+        }}
+        
+        .bar-draw {{
+            background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%);
+        }}
+        
+        .bar-away {{
+            background: linear-gradient(90deg, #ef4444 0%, #f87171 100%);
+            border-radius: 0 14px 14px 0;
+        }}
+        
+        .stacked-bar-labels {{
             display: flex;
             justify-content: space-between;
-            margin-bottom: 4px;
-        }}
-        
-        .prob-market {{
-            font-size: 0.85em;
-            color: {COLORS['text_secondary']};
-        }}
-        
-        .prob-value {{
             font-size: 0.85em;
             font-weight: 600;
         }}
         
-        .prob-bar-bg {{
-            height: 6px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 3px;
-            overflow: hidden;
-        }}
+        .label-home {{ color: #4ade80; }}
+        .label-draw {{ color: #fbbf24; }}
+        .label-away {{ color: #f87171; }}
         
-        .prob-bar-fill {{
-            height: 100%;
-            border-radius: 3px;
-            transition: width 0.6s ease;
-        }}
-        
-        .extra-stats {{
-            display: flex;
-            gap: 15px;
-            padding: 10px 12px;
+        /* Stats Container */
+        .stats-container {{
             background: rgba(0,0,0,0.2);
-            border-radius: 8px;
+            border-radius: 10px;
+            padding: 12px;
             margin-bottom: 12px;
         }}
         
-        .stat-item {{
-            flex: 1;
+        .stat-row {{
             display: flex;
-            flex-direction: column;
-            gap: 3px;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
         }}
+        
+        .stat-row:last-child {{ margin-bottom: 0; }}
         
         .stat-label {{
-            font-size: 0.8em;
-            color: {COLORS['text_muted']};
+            width: 60px;
+            font-size: 0.85em;
+            color: {COLORS['text_secondary']};
         }}
         
-        .stat-value {{
+        .stat-bars {{
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }}
+        
+        .mini-bar {{
+            flex: 1;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }}
+        
+        .mini-fill {{
+            height: 100%;
+            border-radius: 4px;
+        }}
+        
+        .mini-fill.green {{
+            background: linear-gradient(90deg, #22c55e, #4ade80);
+        }}
+        
+        .mini-fill.pink {{
+            background: linear-gradient(90deg, #ff6b9d, #ff8fab);
+        }}
+        
+        .stat-val {{
             font-size: 0.85em;
-            font-weight: 500;
+            font-weight: 600;
+            color: {COLORS['text_primary']};
+            min-width: 70px;
         }}
         
         .value-bets {{
@@ -576,16 +636,31 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             background: rgba(255,230,109,0.1);
             border-radius: 8px;
             margin-bottom: 10px;
+            font-weight: 500;
         }}
         
         .fav-result {{
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 0.85em;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 0.9em;
             background: rgba(255,255,255,0.05);
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }}
+        
+        .fav-main {{
+            padding-left: 10px;
+        }}
+        
+        .fav-main span {{ color: {COLORS['text_secondary']}; }}
+        .fav-main strong {{ color: {COLORS['text_primary']}; font-weight: 700; }}
+        
+        .conf-badge {{
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
         }}
         
         .footer {{
@@ -609,6 +684,8 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             .score-center {{ order: -1; }}
             .team {{ display: flex; gap: 10px; align-items: center; }}
             .team-en {{ display: none; }}
+            .stacked-bar-labels {{ flex-wrap: wrap; gap: 5px; }}
+            .stacked-bar-labels span {{ font-size: 0.8em; }}
         }}
     </style>
 </head>
