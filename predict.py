@@ -117,7 +117,7 @@ def main() -> None:
     if args.html:
         from generate_html import generate_html as gen_html
         html = gen_html(predictions, title="⚽ 足球預測報告")
-        output_path = Path(__file__).resolve().parent / "predictions.html"
+        output_path = Path(__file__).resolve().parent / "web" / "index.html"
         output_path.write_text(html, encoding="utf-8")
         print(f"✅ HTML Dashboard written to: {output_path}")
         print(f"📊 Total predictions: {len(predictions)}")

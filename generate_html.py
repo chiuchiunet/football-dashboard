@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Generate HTML dashboard for football predictions."""
+"""Generate HTML dashboard for football predictions - Enhanced Version."""
 
 from __future__ import annotations
 import sqlite3
 from pathlib import Path
+from datetime import datetime, timezone, timedelta
 
 DB_PATH = Path(__file__).resolve().parent / "football.db"
 
@@ -19,15 +20,206 @@ COLORS = {
     "danger": "#f87171",
 }
 
-COMP_EMOJI = {
-    "CL": "🏆", "PL": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "PD": "🇪🇸", "SA": "🇮🇹",
-    "BL1": "🇩🇪", "FL1": "🇫🇷", "EL": "🇪🇺", "EC": "🏆",
+# 中文隊名映射
+TEAM_NAMES_CN = {
+    "Real Madrid CF": "皇家馬德里",
+    "FC Bayern München": "拜仁慕尼黑",
+    "Arsenal FC": "阿仙奴",
+    "Liverpool FC": "利物浦",
+    "Paris Saint-Germain FC": "巴黎聖日耳門",
+    "FC Barcelona": "巴塞隆拿",
+    "Club Atlético de Madrid": "馬德里體育會",
+    "Sporting Clube de Portugal": "士砵亭",
+    "Manchester City": "曼城",
+    "Manchester United": "曼聯",
+    "Chelsea FC": "車路士",
+    "Tottenham Hotspur FC": "熱刺",
+    "Inter Milan": "國際米蘭",
+    "AC Milan": "AC米蘭",
+    "Juventus FC": "祖雲達斯",
+    "Borussia Dortmund": "多蒙特",
+    "RB Leipzig": "RB萊比錫",
+    "Bayern Munich": "拜仁慕尼黑",
+    "Sporting CP": "士砵亭",
+    "PSG": "巴黎聖日耳門",
+    "Barça": "巴塞隆拿",
+    "Atleti": "馬德里體育會",
+    "Leverkusen": "利華古遜",
+    "Newcastle United": "紐卡素",
+    "Atalanta": "阿特蘭大",
+    "Benfica": "賓菲加",
+    "Celtic": "些路迪",
+    "Feyenoord": "飛燕諾",
+    "Viktoria Plzeň": "比爾森勝利",
+    "Red Bull Salzburg": "薩爾斯堡紅牛",
+    "GNK Dinamo Zagreb": "薩格勒布戴拿模",
+    "Lille OSC": "里昂",
+    "Stuttgart": "史特加",
+    "Girona": "切爾達",
+    "Villarreal": "維拉利爾",
+    "Real Sociedad": "皇家蘇斯達",
+    "Athletic Bilbao": "畢爾包",
+    "Getafe": "基達菲",
+    "Osasuna": "奧沙蘇拿",
+    "Valencia": "華倫西亞",
+    "Real Betis": "貝迪斯",
+    "Sevilla": "西維爾",
+    "Udinese": "烏甸尼斯",
+    "Como 1907": "科木",
+    "Lecce": "萊切",
+    "Napoli": "拿玻里",
+    "Genoa": "熱拿亞",
+    "Frosinone": "費辛隆",
+    "Cagliari": "卡利亞里",
+    "Sassuolo": "莎索羅",
+    "Torino": "拖連奴",
+    "Empoli": "恩波利",
+    "Monaco": "摩納哥",
+    "Marseille": "馬賽",
+    "Rennes": "雷恩",
+    "Nice": "尼斯",
+    "Lens": "朗斯",
+    "Lyon": "里昂",
+    "Brest": "布雷斯斯特",
+    "Leipzig": "萊比錫",
+    "Eintracht Frankfurt": "法蘭克福",
+    "Wolfsburg": "沃爾夫斯堡",
+    "Mönchengladbach": "慕遜加柏",
+    "Freiburg": "弗賴堡",
+    "Hoffenheim": "賀芬咸",
+    "Bayer Leverkusen": "利華古遜",
+    "West Ham United": "韋斯咸",
+    "Aston Villa": "阿士東維拉",
+    "Brighton Hove Albion": "白禮頓",
+    "Wolverhampton Wanderers": "狼隊",
+    "Crystal Palace": "水晶宮",
+    "Fulham": "富咸",
+    "Brentford": "賓福特",
+    "Bournemouth": "般尼茅夫",
+    "Everton": "愛華頓",
+    "Nottingham Forest": "諾定咸森林",
+    "Burnley": "般尼",
+    "Luton Town": "洛達咸",
+    "Sheffield United": "錫菲聯",
+    "Leicester City": "李斯特城",
+    "West Brom": "西布朗",
+    "Norwich City": "諾域治",
+    "Swansea City": "史雲斯",
+    "Middlesbrough": "米杜域",
+    "Coventry City": "高雲地利",
+    "Sunderland": "新特蘭",
+    "Hull City": "侯城",
+    "Stoke City": "史篤城",
+    "Derby County": "打比郡",
+    "Reading": "雷丁",
+    "Birmingham City": "伯明翰",
+    "Blackburn Rovers": "布力般流浪",
+    "AFC Bournemouth": "般尼茅夫",
+    "Norwich": "諾域治",
+    "Swansea": "史雲斯",
+    "Bristol City": "布里斯托城",
+    "Huddersfield Town": "哈特斯菲爾德",
+    "Preston North End": "普雷斯頓",
+    "Stoke": "史篤城",
+    "Derby": "打比郡",
+    "Birmingham": "伯明翰",
+    "Blackburn": "布力般流浪",
+    "Cardiff City": "卡迪夫城",
+    "Derby County": "打比郡",
+    "Sheffield Wednesday": "錫周三",
+    "Middlesbrough": "米杜域",
+    "Coventry": "高雲地利",
+    "Luton": "洛達咸",
+    "Burnley": "般尼",
+    "Sunderland": "新特蘭",
+    "Portsmouth": "樸茨茅夫",
+    "Peterborough United": "彼德堡",
+    "Bristol Rovers": "布里斯托流浪",
+    "Ipswich Town": "葉士域治",
+    "Oxford United": "牛津聯",
+    "Cambridge United": "劍橋聯",
+    "Moreirense": "摩里維斯",
+    "Famalicao": "法馬利卡奧",
+    "Casa Pia": "卡斯皮亞",
+    "Gil Vicente": "基維辛迪",
+    "Arouca": "阿魯卡",
+    "Porto": "波圖",
+    "Braga": "布拉加",
+    "Vizela": "維塞拉",
+    "Estrela Amadora": "埃斯特雷拉",
+    "Santa Clara": "辛達卡拉",
+    "Boavista": "博阿維斯塔",
+    "Rio Ave": "里奧艾維",
+    "Farense": "法倫斯",
+    "Maritimo": "馬爾莫",
+    "Tondela": "通德拉",
+    "Paços de Ferreira": "帕科斯",
+    "B SAD": "B SAD",
+    "Nasional": "拿薩爾",
+    "Arsenal": "阿仙奴",
+    "Liverpool": "利物浦",
+    "Man City": "曼城",
+    "Man United": "曼聯",
+    "Tottenham": "熱刺",
+    "Chelsea": "車路士",
+    "Newcastle": "紐卡素",
+    "Brighton": "白禮頓",
+    "Wolves": "狼隊",
+}
+
+# 聯賽中文名
+COMP_NAMES_CN = {
+    "CL": "🏆 歐聯",
+    "EL": "🌍 歐霸",
+    "EC": "🏆 歐洲超級杯",
+    "PL": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超",
+    "PD": "🇪🇸 西甲",
+    "SA": "🇮🇹 意甲",
+    "BL1": "🇩🇪 德甲",
+    "FL1": "🇫🇷 法甲",
+    "PO": "🇵🇹 葡超",
+    "NL": "🇳🇱 荷甲",
+    "BEC": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 英冠",
+    "LAL": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 英甲",
+}
+
+# 聯賽 emoji 背景色
+COMP_COLORS = {
+    "CL": "#1a237e",
+    "EL": "#0d47a1",
+    "PL": "#b71c1c",
+    "PD": "#e65100",
+    "SA": "#1b5e20",
+    "BL1": "#f57f17",
+    "FL1": "#0d47a1",
+    "PO": "#c62828",
+    "NL": "#ff6f00",
+    "BEC": "#4a148c",
+    "LAL": "#880e4f",
 }
 
 
-def get_predictions(days_ahead: int = 7) -> list[dict]:
+def get_team_name_cn(name: str) -> str:
+    """取得中文隊名，否則返回原文"""
+    return TEAM_NAMES_CN.get(name, name)
+
+
+def get_comp_cn(code: str) -> str:
+    """取得聯賽中文名"""
+    return COMP_NAMES_CN.get(code, f"⚽ {code}")
+
+
+def color_bar(prob: float) -> str:
+    if prob >= 0.5:
+        return f"rgba(74, 222, 128, {prob:.2f})"
+    elif prob >= 0.35:
+        return f"rgba(251, 191, 36, {prob:.2f})"
+    else:
+        return f"rgba(248, 113, 113, {prob:.2f})"
+
+
+def get_predictions(days_ahead: int = 7, featured_only: bool = False) -> list[dict]:
     conn = sqlite3.connect(DB_PATH)
-    conn.create_function("REGEXP", 2, lambda p, s: bool(__import__("re").search(p, s or "")))
     cursor = conn.execute("""
         SELECT m.match_id, m.utc_date, m.competition_code, m.home_team_name, m.away_team_name,
                m.home_team_id, m.away_team_id,
@@ -40,7 +232,7 @@ def get_predictions(days_ahead: int = 7) -> list[dict]:
         LEFT JOIN predictions p ON p.match_id = m.match_id
         WHERE m.status IN ('SCHEDULED', 'TIMED')
           AND datetime(m.utc_date) <= datetime('now', ?)
-        ORDER BY datetime(m.utc_date) ASC
+        ORDER BY m.competition_code, datetime(m.utc_date) ASC
     """, [f"+{days_ahead} days"])
     
     rows = cursor.fetchall()
@@ -48,121 +240,174 @@ def get_predictions(days_ahead: int = 7) -> list[dict]:
     return rows
 
 
-def color_bar(prob: float) -> str:
-    if prob >= 0.5:
-        return f"rgba(74, 222, 128, {prob:.2f})"
-    elif prob >= 0.35:
-        return f"rgba(251, 191, 36, {prob:.2f})"
-    else:
-        return f"rgba(248, 113, 113, {prob:.2f})"
+def format_match_time(utc_date: str) -> tuple[str, str]:
+    """Format datetime and return time label"""
+    try:
+        dt = datetime.fromisoformat(utc_date.replace("Z", "+00:00"))
+        hkt = dt.astimezone(timezone(timedelta(hours=8)))
+        now_utc = datetime.now(timezone.utc)
+        today_hkt = now_utc.astimezone(timezone(timedelta(hours=8))).date()
+        match_date = hkt.date()
+        
+        time_str = hkt.strftime("%H:%M")
+        if match_date == today_hkt:
+            label = "今日"
+        elif match_date == today_hkt + timedelta(days=1):
+            label = "明日"
+        else:
+            label = hkt.strftime("%m/%d")
+        
+        return time_str, label, hkt.strftime("%Y-%m-%d %H:%M")
+    except:
+        return utc_date[:16], "", utc_date[:16]
 
 
-def team_badge(home_name: str, away_name: str) -> str:
-    return f"""
-    <div class="team-badge">
-        <div class="team-name">{home_name}</div>
-        <div class="vs">vs</div>
-        <div class="team-name">{away_name}</div>
-    </div>"""
-
-
-def prediction_card(row: dict) -> str:
-    utc_date = row.get('utc_date', '')
-    comp = row.get('competition_code', '')
-    home = row.get('home_team_name', '')
-    away = row.get('away_team_name', '')
-    home_id = row.get('home_team_id', 0)
-    away_id = row.get('away_team_id', 0)
-    hwp = row.get('home_win_prob') or 0
-    dp = row.get('draw_prob') or 0
-    awp = row.get('away_win_prob') or 0
-    ov = row.get('over_2_5_prob') or 0
-    un = row.get('under_2_5_prob') or 0
-    bts_yes = row.get('btts_yes_prob') or 0
-    bts_no = row.get('btts_no_prob') or 0
-    ehg = row.get('expected_home_goals') or 0
-    eag = row.get('expected_away_goals') or 0
-    bets = row.get('recommended_bets', '')
+def prediction_card(row: tuple, show_comp: bool = True) -> str:
+    (match_id, utc_date, comp, home, away, home_id, away_id,
+     hwp, dp, awp, ov, un, bts_yes, bts_no,
+     ehg, eag, bets) = row
     
-    # Format date
-    dt = utc_date.replace("T", " ").replace("Z", "")[:16]
-    emoji = COMP_EMOJI.get(comp, "⚽")
+    hwp = hwp or 0
+    dp = dp or 0
+    awp = awp or 0
+    ov = ov or 0
+    un = un or 0
+    bts_yes = bts_yes or 0
+    bts_no = bts_no or 0
+    ehg = ehg or 0
+    eag = eag or 0
     
-    # Determine favorite
+    home_cn = get_team_name_cn(home)
+    away_cn = get_team_name_cn(away)
+    comp_cn = get_comp_cn(comp)
+    comp_color = COMP_COLORS.get(comp, "#1a1a2e")
+    
+    time_str, date_label, full_time = format_match_time(utc_date)
+    
     probs = {"主勝": hwp, "和": dp, "客勝": awp}
     fav = max(probs, key=probs.get)
     fav_prob = probs[fav]
     fav_color = "#4ade80" if fav_prob > 0.45 else "#fbbf24" if fav_prob > 0.35 else "#f87171"
     
-    # Expected score
-    score = f"{ehg:.1f} - {eag:.1f}"
     likely_score = f"{int(ehg+0.5)}-{int(eag+0.5)}"
     
+    comp_badge = f'<span class="comp-badge" style="background:{comp_color}">{comp_cn}</span>' if show_comp else ""
+    date_badge = f'<span class="date-badge">{date_label} {time_str}</span>' if date_label else ""
+    
+    has_value = bool(bets and bets.strip())
+    
     return f"""
-    <div class="match-card">
+    <div class="match-card {'has-value' if has_value else ''}">
         <div class="match-header">
-            <span class="comp-badge">{emoji} {comp}</span>
-            <span class="match-time">📅 {dt} UTC</span>
+            {comp_badge}
+            {date_badge}
         </div>
         <div class="teams">
-            <div class="team {home}">{home}</div>
-            <div class="score-preview">⚽ {likely_score}</div>
-            <div class="team {away}">{away}</div>
-        </div>
-        
-        <div class="prob-grid">
-            <div class="prob-bar-container">
-                <div class="prob-label">主勝 {hwp*100:.0f}%</div>
-                <div class="prob-bar">
-                    <div class="prob-fill" style="width:{hwp*100:.0f}%; background:{color_bar(hwp)}"></div>
-                </div>
+            <div class="team">
+                <div class="team-name">{home_cn}</div>
+                <div class="team-name-en">{home}</div>
             </div>
-            <div class="prob-bar-container">
-                <div class="prob-label">和 {dp*100:.0f}%</div>
-                <div class="prob-bar">
-                    <div class="prob-fill" style="width:{dp*100:.0f}%; background:{color_bar(dp)}"></div>
-                </div>
+            <div class="score-preview">
+                <div class="score">{likely_score}</div>
+                <div class="vs-label">預測</div>
             </div>
-            <div class="prob-bar-container">
-                <div class="prob-label">客勝 {awp*100:.0f}%</div>
-                <div class="prob-bar">
-                    <div class="prob-fill" style="width:{awp*100:.0f}%; background:{color_bar(awp)}"></div>
-                </div>
+            <div class="team">
+                <div class="team-name">{away_cn}</div>
+                <div class="team-name-en">{away}</div>
             </div>
         </div>
         
-        <div class="secondary-preds">
-            <div class="sec-item">
-                <span class="sec-label">大細 2.5</span>
-                <span class="sec-val" style="color:{'#4ade80' if ov > 0.5 else '#f87171'}">大 {ov*100:.0f}%</span>
-                <span class="sec-val" style="color:{'#4ade80' if un > 0.5 else '#f87171'}">細 {un*100:.0f}%</span>
+        <div class="prob-section">
+            <div class="prob-row">
+                <span class="prob-label">主勝</span>
+                <div class="prob-bar"><div class="prob-fill" style="width:{hwp*100:.0f}%; background:{color_bar(hwp)}"></div></div>
+                <span class="prob-val">{hwp*100:.0f}%</span>
             </div>
-            <div class="sec-item">
-                <span class="sec-label">BTTS</span>
-                <span class="sec-val" style="color:{'#4ade80' if bts_yes > 0.5 else '#f87171'}">Yes {bts_yes*100:.0f}%</span>
-                <span class="sec-val" style="color:{'#4ade80' if bts_no > 0.5 else '#f87171'}">No {bts_no*100:.0f}%</span>
+            <div class="prob-row">
+                <span class="prob-label">和</span>
+                <div class="prob-bar"><div class="prob-fill" style="width:{dp*100:.0f}%; background:{color_bar(dp)}"></div></div>
+                <span class="prob-val">{dp*100:.0f}%</span>
+            </div>
+            <div class="prob-row">
+                <span class="prob-label">客勝</span>
+                <div class="prob-bar"><div class="prob-fill" style="width:{awp*100:.0f}%; background:{color_bar(awp)}"></div></div>
+                <span class="prob-val">{awp*100:.0f}%</span>
             </div>
         </div>
         
-        <div class="value-bets">
-            💎 Value Bets: {bets or '暫無'}
+        <div class="extra-section">
+            <div class="extra-item">
+                <span class="extra-label">大細</span>
+                <span class="extra-val {'green' if ov > 0.5 else 'red'}">大 {ov*100:.0f}%</span>
+                <span class="extra-val {'green' if un > 0.5 else 'red'}">細 {un*100:.0f}%</span>
+            </div>
+            <div class="extra-item">
+                <span class="extra-label">BTTS</span>
+                <span class="extra-val {'green' if bts_yes > 0.5 else 'red'}">Yes {bts_yes*100:.0f}%</span>
+                <span class="extra-val {'green' if bts_no > 0.5 else 'red'}">No {bts_no*100:.0f}%</span>
+            </div>
         </div>
         
-        <div class="fav-badge" style="background:{fav_color}20; border-left: 3px solid {fav_color}">
-            最可能結果：<strong>{fav}</strong> ({fav_prob*100:.0f}%)
+        {'<div class="value-bets">💎 Value Bet: ' + bets + '</div>' if has_value else ''}
+        
+        <div class="fav-mark" style="border-left-color:{fav_color}">
+            <span>最可能：<strong>{fav}</strong> ({fav_prob*100:.0f}%)</span>
         </div>
-    </div>
-    """
+    </div>"""
+
+
+def group_by_competition(rows: list[dict]) -> dict[str, list[dict]]:
+    """按聯賽分組"""
+    groups = {}
+    for row in rows:
+        comp = row[2]  # competition_code
+        if comp not in groups:
+            groups[comp] = []
+        groups[comp].append(row)
+    return groups
 
 
 def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
-    # Accept both DataFrame and list of tuples/dicts
     if hasattr(predictions, 'to_dict'):
         rows = predictions.to_dict(orient='records')
     else:
         rows = predictions
     
-    cards_html = "\n".join(prediction_card(row) for row in rows)
+    # 分組
+    groups = group_by_competition(rows)
+    
+    # 構建每個聯賽的 HTML
+    comp_sections = []
+    for comp_code, comp_rows in sorted(groups.items()):
+        comp_cn = get_comp_cn(comp_code)
+        comp_color = COMP_COLORS.get(comp_code, "#1a1a2e")
+        cards = "\n".join(prediction_card(row) for row in comp_rows)
+        comp_sections.append(f"""
+        <div class="comp-group">
+            <div class="comp-header" style="border-left-color:{comp_color}">
+                <span class="comp-title">{comp_cn}</span>
+                <span class="comp-count">{len(comp_rows)} 場賽事</span>
+            </div>
+            <div class="comp-matches">{cards}</div>
+        </div>
+        """)
+    
+    comp_html = "\n".join(comp_sections)
+    
+    # Featured section - value bets
+    featured_rows = [r for r in rows if r[-1] and str(r[-1]).strip()]
+    featured_html = ""
+    if featured_rows:
+        featured_cards = "\n".join(prediction_card(row) for row in featured_rows)
+        featured_html = f"""
+        <div class="featured-section">
+            <div class="featured-header">
+                <span class="featured-title">💎 精選重心場次</span>
+                <span class="featured-count">{len(featured_rows)} 場</span>
+            </div>
+            <div class="featured-matches">{featured_cards}</div>
+        </div>
+        """
     
     return f"""<!DOCTYPE html>
 <html lang="zh-Hant">
@@ -208,151 +453,236 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             font-size: 0.95em;
         }}
         
-        .match-card {{
-            background: rgba(255,255,255,0.08);
+        .featured-section {{
+            background: linear-gradient(135deg, rgba(251,191,36,0.15), rgba(233,69,96,0.1));
             border-radius: 16px;
             padding: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(251,191,36,0.3);
+        }}
+        
+        .featured-header {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(251,191,36,0.2);
+        }}
+        
+        .featured-title {{
+            font-size: 1.2em;
+            font-weight: 700;
+            color: {COLORS['warning']};
+        }}
+        
+        .featured-count {{
+            font-size: 0.85em;
+            color: {COLORS['muted']};
+        }}
+        
+        .comp-group {{
+            margin-bottom: 30px;
+        }}
+        
+        .comp-header {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            margin-bottom: 15px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
+            border-left: 4px solid;
+        }}
+        
+        .comp-title {{
+            font-size: 1.1em;
+            font-weight: 600;
+        }}
+        
+        .comp-count {{
+            font-size: 0.85em;
+            color: {COLORS['muted']};
+        }}
+        
+        .match-card {{
+            background: rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 15px;
             border: 1px solid rgba(255,255,255,0.1);
             transition: transform 0.2s, box-shadow 0.2s;
         }}
         
         .match-card:hover {{
             transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(233, 69, 96, 0.2);
+            box-shadow: 0 6px 25px rgba(233, 69, 96, 0.15);
+        }}
+        
+        .match-card.has-value {{
+            border-color: rgba(251, 191, 36, 0.3);
+            background: rgba(251, 191, 36, 0.05);
         }}
         
         .match-header {{
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }}
         
         .comp-badge {{
-            background: {COLORS['accent']};
             padding: 5px 12px;
             border-radius: 20px;
             font-weight: 600;
-            font-size: 0.85em;
+            font-size: 0.8em;
+            color: white;
         }}
         
-        .match-time {{
-            color: {COLORS['muted']};
+        .date-badge {{
             font-size: 0.85em;
+            color: {COLORS['muted']};
         }}
         
         .teams {{
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding: 15px;
+            margin-bottom: 15px;
+            padding: 12px;
             background: rgba(0,0,0,0.2);
-            border-radius: 12px;
+            border-radius: 10px;
         }}
         
         .team {{
-            font-size: 1.1em;
-            font-weight: 600;
             flex: 1;
             text-align: center;
         }}
         
-        .team:first-child {{ text-align: left; }}
-        .team:last-child {{ text-align: right; }}
+        .team-name {{
+            font-size: 1.05em;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }}
         
-        .vs {{
+        .team-name-en {{
+            font-size: 0.75em;
             color: {COLORS['muted']};
-            font-size: 0.8em;
-            padding: 0 15px;
         }}
         
         .score-preview {{
-            font-size: 1.2em;
-            color: {COLORS['accent']};
-            font-weight: 700;
+            text-align: center;
+            padding: 0 15px;
         }}
         
-        .prob-grid {{
+        .score {{
+            font-size: 1.4em;
+            font-weight: 700;
+            color: {COLORS['accent']};
+        }}
+        
+        .vs-label {{
+            font-size: 0.7em;
+            color: {COLORS['muted']};
+        }}
+        
+        .prob-section {{
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 8px;
+            margin-bottom: 12px;
         }}
         
-        .prob-bar-container {{
+        .prob-row {{
             display: flex;
             align-items: center;
             gap: 10px;
         }}
         
         .prob-label {{
-            width: 70px;
+            width: 45px;
             font-size: 0.85em;
             color: {COLORS['muted']};
         }}
         
         .prob-bar {{
             flex: 1;
-            height: 10px;
+            height: 8px;
             background: rgba(255,255,255,0.1);
-            border-radius: 5px;
+            border-radius: 4px;
             overflow: hidden;
         }}
         
         .prob-fill {{
             height: 100%;
-            border-radius: 5px;
-            transition: width 0.5s ease;
+            border-radius: 4px;
         }}
         
-        .secondary-preds {{
+        .prob-val {{
+            width: 40px;
+            text-align: right;
+            font-size: 0.85em;
+            font-weight: 600;
+        }}
+        
+        .extra-section {{
             display: flex;
             gap: 20px;
-            margin-bottom: 15px;
             padding: 10px;
             background: rgba(0,0,0,0.15);
-            border-radius: 10px;
+            border-radius: 8px;
+            margin-bottom: 12px;
         }}
         
-        .sec-item {{
+        .extra-item {{
             flex: 1;
             display: flex;
             align-items: center;
             gap: 8px;
         }}
         
-        .sec-label {{
+        .extra-label {{
             font-size: 0.85em;
             color: {COLORS['muted']};
         }}
         
-        .sec-val {{
+        .extra-val {{
             font-size: 0.85em;
             font-weight: 600;
         }}
         
+        .extra-val.green {{ color: {COLORS['success']}; }}
+        .extra-val.red {{ color: {COLORS['danger']}; }}
+        
         .value-bets {{
             font-size: 0.9em;
             color: {COLORS['warning']};
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             padding: 8px 12px;
-            background: rgba(251,191,36,0.1);
+            background: rgba(251,191,36,0.12);
             border-radius: 8px;
         }}
         
-        .fav-badge {{
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-size: 0.9em;
+        .fav-mark {{
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            border-left: 3px solid;
+            background: rgba(255,255,255,0.05);
         }}
         
         .footer {{
             text-align: center;
-            margin-top: 40px;
+            margin-top: 50px;
+            padding: 20px;
             color: {COLORS['muted']};
             font-size: 0.8em;
+        }}
+        
+        .footer a {{
+            color: {COLORS['accent']};
+            text-decoration: none;
         }}
         
         .no-data {{
@@ -366,11 +696,13 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
     <div class="container">
         <div class="header">
             <h1>⚽ 足球預測報告</h1>
-            <p>Football Match Predictions | Poisson Model</p>
+            <p>Football Predictions | Poisson Model | Powered by Hanni 🐰</p>
         </div>
         
-        <div class="matches">
-            {cards_html if cards_html else '<div class="no-data">⚠️ 暫時冇可用預測數據</div>'}
+        {featured_html}
+        
+        <div class="all-matches">
+            {comp_html if comp_html else '<div class="no-data">⚠️ 暫時冇可用預測數據</div>'}
         </div>
         
         <div class="footer">
