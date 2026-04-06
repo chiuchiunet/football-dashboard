@@ -219,6 +219,13 @@ def prediction_card(row) -> str:
     
     likely_score = f"{int(ehg+0.5)}-{int(eag+0.5)}"
     
+    # Show confidence level instead of value bets (since no odds data)
+    conf_level = "高信心" if fav_prob > 0.55 else "中信心" if fav_prob > 0.45 else "一般"
+    
+    # Show confidence badge
+    conf_color = "#4ade80" if fav_prob > 0.55 else "#fbbf24" if fav_prob > 0.45 else "#6b6b80"
+    conf_badge = f'<span class="conf-badge" style="background:{conf_color}20; color:{conf_color}">{conf_level}</span>'
+    
     has_value = bool(bets and bets.strip())
     
     return f"""
@@ -281,10 +288,11 @@ def prediction_card(row) -> str:
             </div>
         </div>
         
-        {'<div class="value-bets">💎 Value Bet: ' + bets + '</div>' if has_value else ''}
+        {'<div class="value-bets">⭐ 模型高信心揀選</div>' if max(hwp, dp, awp) > 0.50 else ''}
         
         <div class="fav-result" style="border-left: 3px solid {fav_color}">
             <span>最可能：<strong>{fav}</strong> {fav_prob*100:.0f}%</span>
+            <span class="conf-badge" style="background:{conf_color}20; color:{conf_color}; padding: 2px 8px; border-radius: 10px; font-size: 0.8em">{conf_level}</span>
         </div>
     </div>"""
 
@@ -333,22 +341,16 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
     
     comp_html = "\n".join(comp_sections)
     
-    # Featured - only show if there are value bets
-    def get_recommended_bets(r):
-        if isinstance(r, dict):
-            return r.get('recommended_bets', '')
-        elif isinstance(r, (tuple, list)) and len(r) > 16:
-            return r[16] or ''
-        return ''
-    
-    featured_rows = [r for r in rows if get_recommended_bets(r) and str(get_recommended_bets(r)).strip()]
+    # Featured - model confidence based picks (no bookmaker odds needed)
+    # Show matches where model probability > 50% (high confidence predictions)
+    featured_rows = [r for r in rows if isinstance(r, (tuple, list)) and len(r) > 8 and max(r[7] or 0, r[8] or 0, r[9] or 0) > 0.50]
     featured_html = ""
     if featured_rows:
         featured_cards = "\n".join(prediction_card(row) for row in featured_rows)
         featured_html = f"""
         <div class="featured-section">
             <div class="featured-header">
-                <span>💎 精選重心場次</span>
+                <span>⭐ 精選信心場次</span>
                 <span class="count">{len(featured_rows)} 場</span>
             </div>
             <div class="featured-grid">{featured_cards}</div>
