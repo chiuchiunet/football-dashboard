@@ -248,9 +248,9 @@ def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: 
         <!-- Stacked Bar for Win/Draw/Win probabilities -->
         <div class="stacked-bar-section">
             <div class="stacked-bar">
-                <div class="bar-segment bar-home" style="width:{hwp*100:.0f}%"></div>
-                <div class="bar-segment bar-draw" style="width:{dp*100:.0f}%"></div>
-                <div class="bar-segment bar-away" style="width:{awp*100:.0f}%"></div>
+                <div class="bar-segment bar-home" style="width:{hwp*100/max(hwp+dp+awp, 0.001):.0f}%"></div>
+                <div class="bar-segment bar-draw" style="width:{dp*100/max(hwp+dp+awp, 0.001):.0f}%"></div>
+                <div class="bar-segment bar-away" style="width:{awp*100/max(hwp+dp+awp, 0.001):.0f}%"></div>
             </div>
             <div class="stacked-bar-labels">
                 <span class="label-home">主勝 {hwp*100:.0f}%</span>
@@ -539,7 +539,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             border-radius: 16px;
             overflow: hidden;
             margin-bottom: 8px;
-            background: rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.06);
         }}
         
         .bar-segment {{
@@ -548,6 +548,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             display: flex;
             align-items: center;
             justify-content: center;
+            min-width: 0;
         }}
         
         .bar-home {{
