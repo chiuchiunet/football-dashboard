@@ -90,7 +90,30 @@ COMP_GRADIENTS = {
 }
 
 
+# Cache for team Chinese names from DB
+_TEAM_CN_CACHE = None
+
+
+def _load_team_cn_cache():
+    """Load Chinese team names from database."""
+    global _TEAM_CN_CACHE
+    if _TEAM_CN_CACHE is None:
+        _TEAM_CN_CACHE = {}
+        try:
+            conn = sqlite3.connect(DB_PATH)
+            rows = conn.execute("SELECT name, name_cn FROM teams WHERE name_cn IS NOT NULL").fetchall()
+            for name, name_cn in rows:
+                _TEAM_CN_CACHE[name] = name_cn
+            conn.close()
+        except:
+            pass
+    return _TEAM_CN_CACHE
+
+
 def get_team_name_cn(name: str) -> str:
+    cache = _load_team_cn_cache()
+    if name in cache:
+        return cache[name]
     return TEAM_NAMES_CN.get(name, name)
 
 
