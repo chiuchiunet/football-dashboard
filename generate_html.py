@@ -535,55 +535,59 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
         
         .stacked-bar {{
             display: flex;
-            height: 28px;
-            border-radius: 14px;
+            height: 32px;
+            border-radius: 16px;
             overflow: hidden;
             margin-bottom: 8px;
+            background: rgba(255,255,255,0.08);
         }}
         
         .bar-segment {{
             height: 100%;
             transition: width 0.6s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }}
         
         .bar-home {{
-            background: linear-gradient(90deg, #22c55e 0%, #4ade80 100%);
-            border-radius: 14px 0 0 14px;
+            background: #3a3a4a;
+            border-radius: 16px 0 0 16px;
         }}
         
         .bar-draw {{
-            background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%);
+            background: #4a4a5a;
         }}
         
         .bar-away {{
-            background: linear-gradient(90deg, #ef4444 0%, #f87171 100%);
-            border-radius: 0 14px 14px 0;
+            background: linear-gradient(135deg, #a855f7 0%, #c084fc 100%);
+            border-radius: 0 16px 16px 0;
         }}
         
         .stacked-bar-labels {{
             display: flex;
             justify-content: space-between;
-            font-size: 0.85em;
-            font-weight: 600;
+            font-size: 0.9em;
+            font-weight: 700;
         }}
         
-        .label-home {{ color: #4ade80; }}
-        .label-draw {{ color: #fbbf24; }}
-        .label-away {{ color: #f87171; }}
+        .label-home {{ color: #6b6b80; }}
+        .label-draw {{ color: #8b8b9b; }}
+        .label-away {{ color: #c084fc; font-weight: 700; }}
         
         /* Stats Container */
         .stats-container {{
-            background: rgba(0,0,0,0.2);
+            background: rgba(0,0,0,0.25);
             border-radius: 10px;
-            padding: 12px;
+            padding: 14px 16px;
             margin-bottom: 12px;
         }}
         
         .stat-row {{
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
+            gap: 12px;
+            margin-bottom: 10px;
         }}
         
         .stat-row:last-child {{ margin-bottom: 0; }}
@@ -598,11 +602,11 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             flex: 1;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }}
         
         .mini-bar {{
-            flex: 1;
+            width: 80px;
             height: 8px;
             background: rgba(255,255,255,0.1);
             border-radius: 4px;
@@ -640,21 +644,30 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
         }}
         
         .fav-result {{
-            padding: 10px 12px;
-            border-radius: 8px;
-            font-size: 0.9em;
-            background: rgba(255,255,255,0.05);
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 1em;
+            background: rgba(255,255,255,0.08);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }}
         
         .fav-main {{
-            padding-left: 10px;
+            padding-left: 12px;
+            font-weight: 700;
         }}
         
-        .fav-main span {{ color: {COLORS['text_secondary']}; }}
-        .fav-main strong {{ color: {COLORS['text_primary']}; font-weight: 700; }}
+        .fav-main span {{ 
+            color: {COLORS['text_secondary']};
+            font-size: 0.95em;
+        }}
+        
+        .fav-main strong {{ 
+            color: {COLORS['text_primary']}; 
+            font-weight: 800;
+            font-size: 1.1em;
+        }}
         
         .conf-badge {{
             padding: 4px 10px;
