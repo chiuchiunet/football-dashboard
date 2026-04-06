@@ -226,7 +226,6 @@ def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: 
             <div class="comp-badge" style="background: {comp_gradient}">{comp_cn}</div>
             <div class="match-datetime">
                 <span class="date-label">{date_label} {time_str}</span>
-                <span class="date-full">{full_date} HKT</span>
             </div>
         </div>
         
@@ -561,7 +560,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
         }}
         
         .bar-away {{
-            background: linear-gradient(135deg, #a855f7 0%, #c084fc 100%);
+            background: linear-gradient(135deg, #38BDF8 0%, #7dd3fc 100%);
             border-radius: 0 16px 16px 0;
         }}
         
@@ -574,7 +573,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
         
         .label-home {{ color: #6b6b80; }}
         .label-draw {{ color: #8b8b9b; }}
-        .label-away {{ color: #c084fc; font-weight: 700; }}
+        .label-away {{ color: #7dd3fc; font-weight: 700; }}
         
         /* Stats Container */
         .stats-container {{
@@ -608,15 +607,15 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
         
         .mini-bar {{
             width: 80px;
-            height: 8px;
+            height: 6px;
             background: rgba(255,255,255,0.1);
-            border-radius: 4px;
+            border-radius: 3px;
             overflow: hidden;
         }}
         
         .mini-fill {{
             height: 100%;
-            border-radius: 4px;
+            border-radius: 3px;
         }}
         
         .mini-fill.green {{
@@ -648,10 +647,11 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             padding: 12px 14px;
             border-radius: 10px;
             font-size: 1em;
-            background: rgba(255,255,255,0.08);
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(125, 211, 252, 0.08) 100%);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border: 1px solid rgba(56, 189, 248, 0.3);
         }}
         
         .fav-main {{
@@ -665,9 +665,10 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
         }}
         
         .fav-main strong {{ 
-            color: {COLORS['text_primary']}; 
+            color: #38BDF8; 
             font-weight: 800;
-            font-size: 1.1em;
+            font-size: 1.2em;
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
         }}
         
         .conf-badge {{
