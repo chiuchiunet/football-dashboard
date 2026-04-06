@@ -23,20 +23,17 @@ COLORS = {
     "success": "#22c55e",
     "warning": "#f59e0b",
     "danger": "#ef4444",
-    "gradient_header": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    "gradient_featured": "linear-gradient(135deg, rgba(255,107,157,0.15) 0%, rgba(78,205,196,0.1) 100%)",
-    "gradient_card": "linear-gradient(180deg, #1a1a2e 0%, #151528 100%)",
 }
 
 # 中文隊名映射
 TEAM_NAMES_CN = {
     "Real Madrid CF": "皇家馬德里",
-    "FC Bayern München": "拜仁慕尼黑",
+    "FC Bayern Munchen": "拜仁慕尼黑",
     "Arsenal FC": "阿仙奴",
     "Liverpool FC": "利物浦",
     "Paris Saint-Germain FC": "巴黎聖日耳門",
     "FC Barcelona": "巴塞隆拿",
-    "Club Atlético de Madrid": "馬德里體育會",
+    "Club Atletico de Madrid": "馬德里體育會",
     "Sporting Clube de Portugal": "士砵亭",
     "Manchester City": "曼城",
     "Manchester United": "曼聯",
@@ -50,33 +47,12 @@ TEAM_NAMES_CN = {
     "Bayern Munich": "拜仁慕尼黑",
     "Sporting CP": "士砵亭",
     "PSG": "巴黎聖日耳門",
-    "Barça": "巴塞隆拿",
+    "Barca": "巴塞隆拿",
     "Atleti": "馬德里體育會",
     "Leverkusen": "利華古遜",
     "Newcastle United": "紐卡素",
     "Atalanta": "阿特蘭大",
     "Benfica": "賓菲加",
-    "Celtic": "些路迪",
-    "Feyenoord": "飛燕諾",
-    "West Ham United FC": "韋斯咸",
-    "Aston Villa": "阿士東維拉",
-    "Brighton Hove Albion FC": "白禮頓",
-    "Wolverhampton Wanderers FC": "狼隊",
-    "Crystal Palace": "水晶宮",
-    "Fulham FC": "富咸",
-    "Brentford FC": "賓福特",
-    "AFC Bournemouth": "般尼茅夫",
-    "Everton FC": "愛華頓",
-    "Nottingham Forest": "諾定咸森林",
-    "Burnley FC": "般尼",
-    "Sunderland AFC": "新特蘭",
-    "Tottenham Hotspur": "熱刺",
-    "Brighton & Hove Albion FC": "白禮頓",
-    "Wolverhampton Wanderers": "狼隊",
-    "Manchester City FC": "曼城",
-    "Liverpool FC": "利物浦",
-    "West Ham United": "韋斯咸",
-    "Brighton": "白禮頓",
 }
 
 # 聯賽中文名
@@ -139,7 +115,7 @@ def get_predictions(days_ahead: int = 7) -> list:
                p.expected_home_goals, p.expected_away_goals,
                p.recommended_bets
         FROM matches m
-        LEFT JOIN predictions p ON p.match_id = m.match_id
+        JOIN predictions p ON p.match_id = m.match_id
         WHERE m.status IN ('SCHEDULED', 'TIMED')
           AND datetime(m.utc_date) <= datetime('now', ?)
         ORDER BY m.competition_code, datetime(m.utc_date) ASC
@@ -167,48 +143,55 @@ def format_match_time(utc_date: str) -> tuple:
         else:
             label = hkt.strftime("%m/%d")
         
-        return time_str, label, hkt.strftime("%Y-%m-%d %H:%M")
+        # Full date in HK timezone
+        full_date = hkt.strftime("%Y/%m/%d %H:%M")
+        return time_str, label, full_date
     except:
         return utc_date[:16] if utc_date else "TBD", "", utc_date[:16] if utc_date else "TBD"
 
 
 def prediction_card(row) -> str:
+    # Handle both dict and tuple
     if isinstance(row, dict):
-        (match_id, utc_date, comp, home, away, home_id, away_id,
-         hwp, dp, awp, ov, un, bts_yes, bts_no,
-         ehg, eag, bets) = (
-            row.get('match_id'), row.get('utc_date'), row.get('competition_code'),
-            row.get('home_team_name'), row.get('away_team_name'),
-            row.get('home_team_id'), row.get('away_team_id'),
-            row.get('home_win_prob'), row.get('draw_prob'), row.get('away_win_prob'),
-            row.get('over_2_5_prob'), row.get('under_2_5_prob'),
-            row.get('btts_yes_prob'), row.get('btts_no_prob'),
-            row.get('expected_home_goals'), row.get('expected_away_goals'),
-            row.get('recommended_bets')
-        )
-    elif isinstance(row, (tuple, list)):
+        match_id = row.get('match_id')
+        utc_date = row.get('utc_date')
+        comp = row.get('competition_code')
+        home = row.get('home_team_name')
+        away = row.get('away_team_name')
+        home_id = row.get('home_team_id')
+        away_id = row.get('away_team_id')
+        hwp = row.get('home_win_prob') or 0
+        dp = row.get('draw_prob') or 0
+        awp = row.get('away_win_prob') or 0
+        ov = row.get('over_2_5_prob') or 0
+        un = row.get('under_2_5_prob') or 0
+        bts_yes = row.get('btts_yes_prob') or 0
+        bts_no = row.get('btts_no_prob') or 0
+        ehg = row.get('expected_home_goals') or 0
+        eag = row.get('expected_away_goals') or 0
+        bets = row.get('recommended_bets') or ""
+    else:
         (match_id, utc_date, comp, home, away, home_id, away_id,
          hwp, dp, awp, ov, un, bts_yes, bts_no,
          ehg, eag, bets) = row
-    
-    hwp = hwp or 0
-    dp = dp or 0
-    awp = awp or 0
-    ov = ov or 0
-    un = un or 0
-    bts_yes = bts_yes or 0
-    bts_no = bts_no or 0
-    ehg = ehg or 0
-    eag = eag or 0
+        hwp = hwp or 0
+        dp = dp or 0
+        awp = awp or 0
+        ov = ov or 0
+        un = un or 0
+        bts_yes = bts_yes or 0
+        bts_no = bts_no or 0
+        ehg = ehg or 0
+        eag = eag or 0
+        bets = bets or ""
     
     home_cn = get_team_name_cn(home)
     away_cn = get_team_name_cn(away)
     comp_cn = get_comp_cn(comp)
     comp_gradient = get_comp_gradient(comp)
     
-    time_str, date_label, full_time = format_match_time(utc_date)
+    time_str, date_label, full_date = format_match_time(utc_date)
     
-    # 預測總入球 (scale down for display since model produces high values)
     total_goals = min((ehg or 0) + (eag or 0), 6.0)
     total_goals_str = f"{total_goals:.1f}"
     
@@ -219,22 +202,18 @@ def prediction_card(row) -> str:
     
     likely_score = f"{int(ehg+0.5)}-{int(eag+0.5)}"
     
-    # Show confidence level instead of value bets (since no odds data)
-    conf_level = "高信心" if fav_prob > 0.55 else "中信心" if fav_prob > 0.45 else "一般"
-    
-    # Show confidence badge
-    conf_color = "#4ade80" if fav_prob > 0.55 else "#fbbf24" if fav_prob > 0.45 else "#6b6b80"
-    conf_badge = f'<span class="conf-badge" style="background:{conf_color}20; color:{conf_color}">{conf_level}</span>'
-    
-    has_value = bool(bets and bets.strip())
+    max_prob = max(hwp, dp, awp)
+    is_confident = max_prob > 0.50
+    conf_level = "高信心" if max_prob > 0.55 else "中信心" if max_prob > 0.45 else "一般"
+    conf_color = "#22c55e" if max_prob > 0.55 else "#f59e0b" if max_prob > 0.45 else "#6b6b80"
     
     return f"""
-    <div class="match-card {'has-value' if has_value else ''}">
+    <div class="match-card">
         <div class="match-header">
             <div class="comp-badge" style="background: {comp_gradient}">{comp_cn}</div>
             <div class="match-datetime">
-                <span class="date-label">{date_label}</span>
-                <span class="time">{time_str}</span>
+                <span class="date-label">{date_label} {time_str}</span>
+                <span class="date-full">{full_date} HKT</span>
             </div>
         </div>
         
@@ -288,7 +267,7 @@ def prediction_card(row) -> str:
             </div>
         </div>
         
-        {'<div class="value-bets">⭐ 模型高信心揀選</div>' if max(hwp, dp, awp) > 0.50 else ''}
+        {'<div class="value-bets">⭐ 模型高信心揀選</div>' if is_confident else ''}
         
         <div class="fav-result" style="border-left: 3px solid {fav_color}">
             <span>最可能：<strong>{fav}</strong> {fav_prob*100:.0f}%</span>
@@ -302,10 +281,8 @@ def group_by_competition(rows) -> dict:
     for row in rows:
         if isinstance(row, dict):
             comp = row.get('competition_code', 'OTHER')
-        elif isinstance(row, (tuple, list)) and len(row) > 2:
-            comp = row[2]
         else:
-            comp = 'OTHER'
+            comp = row[2] if len(row) > 2 else 'OTHER'
         if comp not in groups:
             groups[comp] = []
         groups[comp].append(row)
@@ -313,15 +290,11 @@ def group_by_competition(rows) -> dict:
 
 
 def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
+    # Handle both DataFrame and list of tuples
     if hasattr(predictions, 'to_dict'):
         rows = predictions.to_dict(orient='records')
-    elif predictions and isinstance(predictions[0], dict):
-        rows = predictions
-    elif predictions and isinstance(predictions[0], (tuple, list)):
-        rows = predictions
     else:
-        rows = list(predictions) if predictions else []
-    
+        rows = predictions
     groups = group_by_competition(rows)
     
     comp_sections = []
@@ -341,9 +314,13 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
     
     comp_html = "\n".join(comp_sections)
     
-    # Featured - model confidence based picks (no bookmaker odds needed)
-    # Show matches where model probability > 50% (high confidence predictions)
-    featured_rows = [r for r in rows if isinstance(r, (tuple, list)) and len(r) > 8 and max(r[7] or 0, r[8] or 0, r[9] or 0) > 0.50]
+    # Featured - model confidence based picks (>50% probability)
+    def get_max_prob(r):
+        if isinstance(r, dict):
+            return max(r.get('home_win_prob') or 0, r.get('draw_prob') or 0, r.get('away_win_prob') or 0)
+        return max(r[7] or 0, r[8] or 0, r[9] or 0)
+    
+    featured_rows = [r for r in rows if get_max_prob(r) > 0.50]
     featured_html = ""
     if featured_rows:
         featured_cards = "\n".join(prediction_card(row) for row in featured_rows)
@@ -380,7 +357,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             text-align: center;
             padding: 40px 20px;
             margin-bottom: 40px;
-            background: {COLORS['gradient_header']};
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
         }}
@@ -397,7 +374,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
         }}
         
         .featured-section {{
-            background: {COLORS['gradient_featured']};
+            background: linear-gradient(135deg, rgba(255,107,157,0.15) 0%, rgba(78,205,196,0.1) 100%);
             border-radius: 16px;
             padding: 20px;
             margin-bottom: 30px;
@@ -452,11 +429,6 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             background: {COLORS['bg_card_hover']};
         }}
         
-        .match-card.has-value {{
-            border-color: rgba(255, 230, 109, 0.4);
-            background: linear-gradient(135deg, rgba(255,230,109,0.08) 0%, rgba(255,107,157,0.05) 100%);
-        }}
-        
         .match-header {{
             display: flex;
             justify-content: space-between;
@@ -474,20 +446,23 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
         
         .match-datetime {{
             display: flex;
-            gap: 8px;
-            align-items: center;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
         }}
         
         .date-label {{
             background: rgba(255,255,255,0.15);
             padding: 4px 10px;
             border-radius: 6px;
-            font-size: 0.8em;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: white;
         }}
         
-        .time {{
+        .date-full {{
+            font-size: 0.75em;
             color: {COLORS['text_secondary']};
-            font-size: 0.9em;
         }}
         
         .teams-section {{
@@ -538,8 +513,6 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             gap: 10px;
             margin-bottom: 12px;
         }}
-        
-        .prob-item {{}}
         
         .prob-header {{
             display: flex;
@@ -610,6 +583,9 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             border-radius: 6px;
             font-size: 0.85em;
             background: rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }}
         
         .footer {{
