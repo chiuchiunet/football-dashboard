@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 import sqlite3
+import math
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 
@@ -288,7 +289,23 @@ def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: 
     
     time_str, date_label, full_date = format_match_time(utc_date)
     
-    total_goals = min((ehg or 0) + (eag or 0), 6.0)
+    # Poisson mode for most likely exact score
+    def poisson_prob(g, a):
+        if a <= 0: return 1.0 if g == 0 else 0.0
+        return (a ** g * math.exp(-a)) / math.factorial(g)
+    
+    best_score = (0, 0)
+    best_prob = 0
+    for hg in range(8):
+        for ag in range(8):
+            prob = poisson_prob(hg, ehg) * poisson_prob(ag, eag)
+            if prob > best_prob:
+                best_prob = prob
+                best_score = (hg, ag)
+    
+    predicted_home, predicted_away = best_score
+    
+    total_goals = ehg + eag
     total_goals_str = f"{total_goals:.1f}"
     
     probs = {"主勝": hwp, "和": dp, "客勝": awp}
@@ -341,7 +358,7 @@ def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: 
                 <div class="team-en">{home}</div>
             </div>
             <div class="score-center">
-                <div class="predicted-score">{int(ehg+0.5)}-{int(eag+0.5)}</div>
+                <div class="predicted-score">{predicted_home}-{predicted_away}</div>
                 <div class="total-goals">預測 {total_goals_str} 球</div>
             </div>
             <div class="team away">
