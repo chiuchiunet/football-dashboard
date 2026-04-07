@@ -161,6 +161,65 @@ def _get_h2h_record(home_id: int, away_id: int) -> dict:
     return _H2H_CACHE.get((home_id, away_id), None)
 
 
+def get_recent_form_html(conn, team_id: int, is_home: bool) -> str:
+    """Build recent 5-match form badges for a team from SQL."""
+    if not team_id:
+        return ""
+
+    side_label = "主場" if is_home else "作客"
+    badges = conn.execute("""
+        WITH recent_matches AS (
+            SELECT
+                match_id,
+                utc_date,
+                CASE WHEN home_team_id = ? THEN home_score ELSE away_score END AS goals_for,
+                CASE WHEN home_team_id = ? THEN away_score ELSE home_score END AS goals_against
+            FROM matches
+            WHERE (home_team_id = ? OR away_team_id = ?)
+              AND home_score IS NOT NULL
+              AND away_score IS NOT NULL
+              AND status = 'FINISHED'
+              AND datetime(utc_date) < datetime('now')
+            ORDER BY datetime(utc_date) DESC, match_id DESC
+            LIMIT 5
+        ),
+        badge_html AS (
+            SELECT
+                utc_date,
+                match_id,
+                '<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid ' ||
+                CASE
+                    WHEN goals_for > goals_against THEN 'rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d'
+                    WHEN goals_for = goals_against THEN 'rgba(245,158,11,0.35);background:rgba(245,158,11,0.14);color:#b45309'
+                    ELSE 'rgba(239,68,68,0.35);background:rgba(239,68,68,0.12);color:#dc2626'
+                END ||
+                '"><strong>' ||
+                CASE
+                    WHEN goals_for > goals_against THEN 'W'
+                    WHEN goals_for = goals_against THEN 'D'
+                    ELSE 'L'
+                END ||
+                '</strong><span>' || goals_for || '-' || goals_against || '</span></span>' AS html
+            FROM recent_matches
+        )
+        SELECT GROUP_CONCAT(html, '')
+        FROM (
+            SELECT html
+            FROM badge_html
+            ORDER BY datetime(utc_date) DESC, match_id DESC
+        )
+    """, (team_id, team_id, team_id, team_id)).fetchone()[0]
+
+    if not badges:
+        badges = '<span style="font-size:0.8em;color:#64748b;">暫無賽果</span>'
+
+    return f"""
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.18);border-radius:8px;padding:8px 10px;">
+            <span style="color:#166534;font-size:0.84em;font-weight:700;">{side_label} - 近5場:</span>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">{badges}</div>
+        </div>"""
+
+
 def get_comp_cn(code: str) -> str:
     return COMP_NAMES_CN.get(code, f"⚽ {code}")
 
@@ -246,8 +305,14 @@ def prediction_card_from_dict(row: dict) -> str:
     ehg2 = row.get('expected_home_half_goals') or 0
     ea2 = row.get('expected_away_half_goals') or 0
     bets = row.get('recommended_bets') or ""
+    home_recent_html = ""
+    away_recent_html = ""
+    if home_id or away_id:
+        with sqlite3.connect(DB_PATH) as conn:
+            home_recent_html = get_recent_form_html(conn, home_id, True)
+            away_recent_html = get_recent_form_html(conn, away_id, False)
     
-    return _build_card(utc_date, comp, home, away, hwp, dp, awp, ov, un, bts_yes, bts_no, ehg, eag, hhp, dhp, ahp, ehg2, ea2, bets)
+    return _build_card(utc_date, comp, home, away, hwp, dp, awp, ov, un, bts_yes, bts_no, ehg, eag, hhp, dhp, ahp, ehg2, ea2, bets, home_id, away_id, home_recent_html, away_recent_html)
 
 
 def prediction_card_from_tuple(row: tuple) -> str:
@@ -273,14 +338,21 @@ def prediction_card_from_tuple(row: tuple) -> str:
     bets = bets or ""
     home_id = home_id or 0
     away_id = away_id or 0
+    home_recent_html = ""
+    away_recent_html = ""
+    if home_id or away_id:
+        with sqlite3.connect(DB_PATH) as conn:
+            home_recent_html = get_recent_form_html(conn, home_id, True)
+            away_recent_html = get_recent_form_html(conn, away_id, False)
     
-    return _build_card(utc_date, comp, home, away, hwp, dp, awp, ov, un, bts_yes, bts_no, ehg, eag, hhp, dhp, ahp, ehg2, ea2, bets, home_id, away_id)
+    return _build_card(utc_date, comp, home, away, hwp, dp, awp, ov, un, bts_yes, bts_no, ehg, eag, hhp, dhp, ahp, ehg2, ea2, bets, home_id, away_id, home_recent_html, away_recent_html)
 
 
 def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: float, awp: float, 
                  ov: float, un: float, bts_yes: float, bts_no: float, ehg: float, eag: float,
                  hhp: float, dhp: float, ahp: float, ehg2: float, ea2: float, bets: str,
-                 home_id: int = 0, away_id: int = 0) -> str:
+                 home_id: int = 0, away_id: int = 0, home_recent_html: str = "",
+                 away_recent_html: str = "") -> str:
     """Common card building logic."""
     home_cn = get_team_name_cn(home)
     away_cn = get_team_name_cn(away)
@@ -367,6 +439,11 @@ def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: 
             </div>
         </div>
         
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
+            {home_recent_html}
+            {away_recent_html}
+        </div>
+
         <!-- Stacked Bar for Win/Draw/Win probabilities -->
         <div class="stacked-bar-section">
             <div class="stacked-bar">
