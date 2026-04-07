@@ -121,22 +121,39 @@ _H2H_CACHE = None
 
 
 def _get_h2h_record(home_id: int, away_id: int) -> dict:
-    """Get H2H record between two teams."""
+    """由 Football-Data.co.uk historical 賽果計指定主客對賽記錄。"""
     global _H2H_CACHE
     if _H2H_CACHE is None:
         _H2H_CACHE = {}
         try:
             conn = sqlite3.connect(DB_PATH)
             rows = conn.execute('''
-                SELECT team_id, opponent_team_id, matches_played, wins, draws, losses, goals_for, goals_against
-                FROM h2h_stats
+                SELECT home_team_id, away_team_id, home_goals, away_goals
+                FROM h2h_historical
+                WHERE home_team_id IS NOT NULL
+                  AND away_team_id IS NOT NULL
+                  AND home_goals IS NOT NULL
+                  AND away_goals IS NOT NULL
             ''').fetchall()
-            for row in rows:
-                t1, t2 = row[0], row[1]
-                _H2H_CACHE[(t1, t2)] = {
-                    'played': row[2], 'wins': row[3], 'draws': row[4], 
-                    'losses': row[5], 'gf': row[6], 'ga': row[7]
-                }
+            for home_team_id, away_team_id, home_goals, away_goals in rows:
+                # UI 要用當前主隊視角，所以同一場賽果要寫入兩個方向。
+                for team_id, opponent_id, goals_for, goals_against in (
+                    (home_team_id, away_team_id, home_goals, away_goals),
+                    (away_team_id, home_team_id, away_goals, home_goals),
+                ):
+                    record = _H2H_CACHE.setdefault(
+                        (team_id, opponent_id),
+                        {'played': 0, 'wins': 0, 'draws': 0, 'losses': 0, 'gf': 0, 'ga': 0},
+                    )
+                    record['played'] += 1
+                    record['gf'] += goals_for
+                    record['ga'] += goals_against
+                    if goals_for > goals_against:
+                        record['wins'] += 1
+                    elif goals_for == goals_against:
+                        record['draws'] += 1
+                    else:
+                        record['losses'] += 1
             conn.close()
         except:
             pass

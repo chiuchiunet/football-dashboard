@@ -96,6 +96,34 @@ SCHEMA_STATEMENTS = [
     )
     """,
     """
+    CREATE TABLE IF NOT EXISTS team_name_mapping (
+        source TEXT NOT NULL,
+        source_name TEXT NOT NULL,
+        canonical_name TEXT NOT NULL,
+        team_id INTEGER,
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (source, source_name)
+    )
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS h2h_historical (
+        source TEXT NOT NULL,
+        division TEXT NOT NULL,
+        season TEXT NOT NULL,
+        match_date TEXT NOT NULL,
+        home_team_name TEXT NOT NULL,
+        away_team_name TEXT NOT NULL,
+        home_team_id INTEGER,
+        away_team_id INTEGER,
+        home_goals INTEGER,
+        away_goals INTEGER,
+        result TEXT,
+        source_url TEXT NOT NULL,
+        imported_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (source, division, season, match_date, home_team_name, away_team_name)
+    )
+    """,
+    """
     CREATE TABLE IF NOT EXISTS bookmaker_odds (
         match_id INTEGER PRIMARY KEY,
         bookmaker TEXT NOT NULL,
@@ -181,4 +209,3 @@ class Database:
     def read_sql(self, query: str, params: Sequence | None = None) -> pd.DataFrame:
         with self.connect() as conn:
             return pd.read_sql_query(query, conn, params=params)
-
