@@ -218,6 +218,58 @@
         .label-home { color: #6b6b80; }
         .label-draw { color: #8b8b9b; }
         .label-away { color: #7dd3fc; font-weight: 700; }
+
+        /* Half-time Prediction */
+        .half-time-section {
+            background: rgba(34,197,94,0.08);
+            border: 1px solid rgba(34,197,94,0.22);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+        }
+
+        .half-time-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #4ade80;
+            font-size: 0.85em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .half-time-score {
+            color: #ffffff;
+            background: rgba(255,255,255,0.1);
+            border-radius: 6px;
+            padding: 3px 8px;
+        }
+
+        .half-time-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .half-time-pill {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            padding: 8px 10px;
+            color: #ffffff;
+        }
+
+        .half-time-label {
+            color: #a0a0b0;
+            font-size: 0.82em;
+        }
+
+        .half-time-pill strong {
+            color: #ffffff;
+            font-size: 0.95em;
+        }
         
         /* Stats Container */
         .stats-container {
@@ -382,6 +434,7 @@
             .team-en { display: none; }
             .stacked-bar-labels { flex-wrap: wrap; gap: 5px; }
             .stacked-bar-labels span { font-size: 0.8em; }
+            .half-time-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -433,6 +486,28 @@
                 <span class="label-home">主勝 3%</span>
                 <span class="label-draw">和 4%</span>
                 <span class="label-away">客勝 63%</span>
+            </div>
+        </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">0.8-0.8</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>31%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>37%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>31%</strong>
+                </div>
             </div>
         </div>
         
@@ -502,6 +577,28 @@
                 <span class="label-away">客勝 27%</span>
             </div>
         </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">1.0-0.2</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>55%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>37%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>6%</strong>
+                </div>
+            </div>
+        </div>
         
         <!-- Stats container -->
         <div class="stats-container">
@@ -567,6 +664,28 @@
                 <span class="label-home">主勝 61%</span>
                 <span class="label-draw">和 4%</span>
                 <span class="label-away">客勝 3%</span>
+            </div>
+        </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">0.9-0.8</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>33%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>34%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>31%</strong>
+                </div>
             </div>
         </div>
         
@@ -636,6 +755,28 @@
                 <span class="label-away">客勝 70%</span>
             </div>
         </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">0.5-0.5</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>27%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>48%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>24%</strong>
+                </div>
+            </div>
+        </div>
         
         <!-- Stats container -->
         <div class="stats-container">
@@ -701,6 +842,28 @@
                 <span class="label-home">主勝 63%</span>
                 <span class="label-draw">和 15%</span>
                 <span class="label-away">客勝 20%</span>
+            </div>
+        </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">0.6-0.5</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>31%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>45%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>23%</strong>
+                </div>
             </div>
         </div>
         
@@ -770,6 +933,28 @@
                 <span class="label-away">客勝 54%</span>
             </div>
         </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">0.2-0.5</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>14%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>53%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>32%</strong>
+                </div>
+            </div>
+        </div>
         
         <!-- Stats container -->
         <div class="stats-container">
@@ -837,6 +1022,28 @@
                 <span class="label-away">客勝 59%</span>
             </div>
         </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">0.9-0.8</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>35%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>34%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>29%</strong>
+                </div>
+            </div>
+        </div>
         
         <!-- Stats container -->
         <div class="stats-container">
@@ -902,6 +1109,28 @@
                 <span class="label-home">主勝 59%</span>
                 <span class="label-draw">和 7%</span>
                 <span class="label-away">客勝 8%</span>
+            </div>
+        </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">0.7-0.4</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>38%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>42%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>19%</strong>
+                </div>
             </div>
         </div>
         
@@ -981,6 +1210,28 @@
                 <span class="label-away">客勝 36%</span>
             </div>
         </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">1.4-1.5</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>30%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>25%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>34%</strong>
+                </div>
+            </div>
+        </div>
         
         <!-- Stats container -->
         <div class="stats-container">
@@ -1046,6 +1297,28 @@
                 <span class="label-home">主勝 3%</span>
                 <span class="label-draw">和 4%</span>
                 <span class="label-away">客勝 63%</span>
+            </div>
+        </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">0.8-0.8</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>31%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>37%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>31%</strong>
+                </div>
             </div>
         </div>
         
@@ -1115,6 +1388,28 @@
                 <span class="label-away">客勝 38%</span>
             </div>
         </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">0.8-0.4</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>40%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>40%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>19%</strong>
+                </div>
+            </div>
+        </div>
         
         <!-- Stats container -->
         <div class="stats-container">
@@ -1180,6 +1475,28 @@
                 <span class="label-home">主勝 15%</span>
                 <span class="label-draw">和 5%</span>
                 <span class="label-away">客勝 6%</span>
+            </div>
+        </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">1.2-0.8</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>43%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>29%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>23%</strong>
+                </div>
             </div>
         </div>
         
@@ -1257,6 +1574,28 @@
                 <span class="label-away">客勝 27%</span>
             </div>
         </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">1.0-0.2</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>55%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>37%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>6%</strong>
+                </div>
+            </div>
+        </div>
         
         <!-- Stats container -->
         <div class="stats-container">
@@ -1322,6 +1661,28 @@
                 <span class="label-home">主勝 61%</span>
                 <span class="label-draw">和 4%</span>
                 <span class="label-away">客勝 3%</span>
+            </div>
+        </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">0.9-0.8</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>33%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>34%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>31%</strong>
+                </div>
             </div>
         </div>
         
@@ -1391,6 +1752,28 @@
                 <span class="label-away">客勝 39%</span>
             </div>
         </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">0.6-0.4</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>34%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>45%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>20%</strong>
+                </div>
+            </div>
+        </div>
         
         <!-- Stats container -->
         <div class="stats-container">
@@ -1456,6 +1839,28 @@
                 <span class="label-home">主勝 8%</span>
                 <span class="label-draw">和 8%</span>
                 <span class="label-away">客勝 70%</span>
+            </div>
+        </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">0.5-0.5</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>27%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>48%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>24%</strong>
+                </div>
             </div>
         </div>
         
@@ -1525,6 +1930,28 @@
                 <span class="label-away">客勝 26%</span>
             </div>
         </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">0.9-0.4</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>47%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>37%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>14%</strong>
+                </div>
+            </div>
+        </div>
         
         <!-- Stats container -->
         <div class="stats-container">
@@ -1590,6 +2017,28 @@
                 <span class="label-home">主勝 63%</span>
                 <span class="label-draw">和 15%</span>
                 <span class="label-away">客勝 20%</span>
+            </div>
+        </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">0.6-0.5</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>31%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>45%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>23%</strong>
+                </div>
             </div>
         </div>
         
@@ -1659,6 +2108,28 @@
                 <span class="label-away">客勝 36%</span>
             </div>
         </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">0.4-1.2</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>13%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>32%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>52%</strong>
+                </div>
+            </div>
+        </div>
         
         <!-- Stats container -->
         <div class="stats-container">
@@ -1724,6 +2195,28 @@
                 <span class="label-home">主勝 27%</span>
                 <span class="label-draw">和 17%</span>
                 <span class="label-away">客勝 54%</span>
+            </div>
+        </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">0.2-0.5</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>14%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>53%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>32%</strong>
+                </div>
             </div>
         </div>
         
@@ -1793,6 +2286,28 @@
                 <span class="label-away">客勝 59%</span>
             </div>
         </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">0.9-0.8</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>35%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>34%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>29%</strong>
+                </div>
+            </div>
+        </div>
         
         <!-- Stats container -->
         <div class="stats-container">
@@ -1858,6 +2373,28 @@
                 <span class="label-home">主勝 59%</span>
                 <span class="label-draw">和 7%</span>
                 <span class="label-away">客勝 8%</span>
+            </div>
+        </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">0.7-0.4</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>38%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>42%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>19%</strong>
+                </div>
             </div>
         </div>
         

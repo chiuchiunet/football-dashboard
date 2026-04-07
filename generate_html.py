@@ -178,6 +178,8 @@ def get_predictions(days_ahead: int = 7) -> list:
                p.over_2_5_prob, p.under_2_5_prob,
                p.btts_yes_prob, p.btts_no_prob,
                p.expected_home_goals, p.expected_away_goals,
+               p.home_half_prob, p.draw_half_prob, p.away_half_prob,
+               p.expected_home_half_goals, p.expected_away_half_goals,
                p.recommended_bets
         FROM matches m
         JOIN predictions p ON p.match_id = m.match_id
@@ -237,16 +239,21 @@ def prediction_card_from_dict(row: dict) -> str:
     bts_no = row.get('btts_no_prob') or 0
     ehg = row.get('expected_home_goals') or 0
     eag = row.get('expected_away_goals') or 0
+    hhp = row.get('home_half_prob') or 0
+    dhp = row.get('draw_half_prob') or 0
+    ahp = row.get('away_half_prob') or 0
+    ehg2 = row.get('expected_home_half_goals') or 0
+    ea2 = row.get('expected_away_half_goals') or 0
     bets = row.get('recommended_bets') or ""
     
-    return _build_card(utc_date, comp, home, away, hwp, dp, awp, ov, un, bts_yes, bts_no, ehg, eag, bets)
+    return _build_card(utc_date, comp, home, away, hwp, dp, awp, ov, un, bts_yes, bts_no, ehg, eag, hhp, dhp, ahp, ehg2, ea2, bets)
 
 
 def prediction_card_from_tuple(row: tuple) -> str:
     """Build card from tuple (DB row)."""
     (match_id, utc_date, comp, home, away, home_id, away_id,
      hwp, dp, awp, ov, un, bts_yes, bts_no,
-     ehg, eag, bets) = row
+     ehg, eag, hhp, dhp, ahp, ehg2, ea2, bets) = row
     
     hwp = hwp or 0
     dp = dp or 0
@@ -257,15 +264,21 @@ def prediction_card_from_tuple(row: tuple) -> str:
     bts_no = bts_no or 0
     ehg = ehg or 0
     eag = eag or 0
+    hhp = hhp or 0
+    dhp = dhp or 0
+    ahp = ahp or 0
+    ehg2 = ehg2 or 0
+    ea2 = ea2 or 0
     bets = bets or ""
     home_id = home_id or 0
     away_id = away_id or 0
     
-    return _build_card(utc_date, comp, home, away, hwp, dp, awp, ov, un, bts_yes, bts_no, ehg, eag, bets, home_id, away_id)
+    return _build_card(utc_date, comp, home, away, hwp, dp, awp, ov, un, bts_yes, bts_no, ehg, eag, hhp, dhp, ahp, ehg2, ea2, bets, home_id, away_id)
 
 
 def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: float, awp: float, 
-                 ov: float, un: float, bts_yes: float, bts_no: float, ehg: float, eag: float, bets: str,
+                 ov: float, un: float, bts_yes: float, bts_no: float, ehg: float, eag: float,
+                 hhp: float, dhp: float, ahp: float, ehg2: float, ea2: float, bets: str,
                  home_id: int = 0, away_id: int = 0) -> str:
     """Common card building logic."""
     home_cn = get_team_name_cn(home)
@@ -348,6 +361,28 @@ def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: 
                 <span class="label-home">主勝 {hwp*100:.0f}%</span>
                 <span class="label-draw">和 {dp*100:.0f}%</span>
                 <span class="label-away">客勝 {awp*100:.0f}%</span>
+            </div>
+        </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">{ehg2:.1f}-{ea2:.1f}</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>{hhp*100:.0f}%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>{dhp*100:.0f}%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>{ahp*100:.0f}%</strong>
+                </div>
             </div>
         </div>
         
@@ -669,6 +704,58 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
         .label-home {{ color: #6b6b80; }}
         .label-draw {{ color: #8b8b9b; }}
         .label-away {{ color: #7dd3fc; font-weight: 700; }}
+
+        /* Half-time Prediction */
+        .half-time-section {{
+            background: rgba(34,197,94,0.08);
+            border: 1px solid rgba(34,197,94,0.22);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+        }}
+
+        .half-time-header {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #4ade80;
+            font-size: 0.85em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }}
+
+        .half-time-score {{
+            color: {COLORS['text_primary']};
+            background: rgba(255,255,255,0.1);
+            border-radius: 6px;
+            padding: 3px 8px;
+        }}
+
+        .half-time-grid {{
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }}
+
+        .half-time-pill {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            padding: 8px 10px;
+            color: {COLORS['text_primary']};
+        }}
+
+        .half-time-label {{
+            color: {COLORS['text_secondary']};
+            font-size: 0.82em;
+        }}
+
+        .half-time-pill strong {{
+            color: #ffffff;
+            font-size: 0.95em;
+        }}
         
         /* Stats Container */
         .stats-container {{
@@ -833,6 +920,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             .team-en {{ display: none; }}
             .stacked-bar-labels {{ flex-wrap: wrap; gap: 5px; }}
             .stacked-bar-labels span {{ font-size: 0.8em; }}
+            .half-time-grid {{ grid-template-columns: 1fr; }}
         }}
     </style>
 </head>
