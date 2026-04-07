@@ -651,7 +651,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             padding: 14px 18px;
             border-radius: 12px;
             margin-bottom: 15px;
-            color: white;
+            color: #166534;
             font-weight: 600;
         }}
         
@@ -685,7 +685,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             border-radius: 20px;
             font-weight: 600;
             font-size: 0.85em;
-            color: white;
+            color: #166534;
         }}
         
         .match-datetime {{
@@ -701,7 +701,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             border-radius: 6px;
             font-size: 0.85em;
             font-weight: 600;
-            color: white;
+            color: #166534;
         }}
         
         .date-full {{
