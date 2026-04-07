@@ -368,7 +368,7 @@ def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: 
         <div class="half-time-section">
             <div class="half-time-header">
                 <span>半場預測</span>
-                <span class="half-time-score">{ehg2:.1f}-{ea2:.1f}</span>
+                <span class="half-time-score">{int(ehg2+0.5)}-{int(ea2+0.5)}</span>
             </div>
             <div class="half-time-grid">
                 <div class="half-time-pill">
@@ -701,8 +701,8 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             font-weight: 700;
         }}
         
-        .label-home {{ color: #6b6b80; }}
-        .label-draw {{ color: #8b8b9b; }}
+        .label-home {{ color: #166534; }}
+        .label-draw {{ color: #166534; }}
         .label-away {{ color: #7dd3fc; font-weight: 700; }}
 
         /* Half-time Prediction */
