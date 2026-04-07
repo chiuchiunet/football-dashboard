@@ -117,6 +117,32 @@ def get_team_name_cn(name: str) -> str:
     return TEAM_NAMES_CN.get(name, name)
 
 
+_H2H_CACHE = None
+
+
+def _get_h2h_record(home_id: int, away_id: int) -> dict:
+    """Get H2H record between two teams."""
+    global _H2H_CACHE
+    if _H2H_CACHE is None:
+        _H2H_CACHE = {}
+        try:
+            conn = sqlite3.connect(DB_PATH)
+            rows = conn.execute('''
+                SELECT team_id, opponent_team_id, matches_played, wins, draws, losses, goals_for, goals_against
+                FROM h2h_stats
+            ''').fetchall()
+            for row in rows:
+                t1, t2 = row[0], row[1]
+                _H2H_CACHE[(t1, t2)] = {
+                    'played': row[2], 'wins': row[3], 'draws': row[4], 
+                    'losses': row[5], 'gf': row[6], 'ga': row[7]
+                }
+            conn.close()
+        except:
+            pass
+    return _H2H_CACHE.get((home_id, away_id), None)
+
+
 def get_comp_cn(code: str) -> str:
     return COMP_NAMES_CN.get(code, f"⚽ {code}")
 
@@ -210,12 +236,15 @@ def prediction_card_from_tuple(row: tuple) -> str:
     ehg = ehg or 0
     eag = eag or 0
     bets = bets or ""
+    home_id = home_id or 0
+    away_id = away_id or 0
     
-    return _build_card(utc_date, comp, home, away, hwp, dp, awp, ov, un, bts_yes, bts_no, ehg, eag, bets)
+    return _build_card(utc_date, comp, home, away, hwp, dp, awp, ov, un, bts_yes, bts_no, ehg, eag, bets, home_id, away_id)
 
 
 def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: float, awp: float, 
-                 ov: float, un: float, bts_yes: float, bts_no: float, ehg: float, eag: float, bets: str) -> str:
+                 ov: float, un: float, bts_yes: float, bts_no: float, ehg: float, eag: float, bets: str,
+                 home_id: int = 0, away_id: int = 0) -> str:
     """Common card building logic."""
     home_cn = get_team_name_cn(home)
     away_cn = get_team_name_cn(away)
@@ -242,6 +271,25 @@ def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: 
         primary_color = COLORS["away_color"]
     else:
         primary_color = COLORS["draw_color"]
+    
+    # H2H section
+    h2h_section = ""
+    if home_id and away_id:
+        h2h = _get_h2h_record(home_id, away_id)
+        if h2h and h2h.get('played', 0) > 0:
+            w, d, l = h2h['wins'], h2h['draws'], h2h['losses']
+            gf, ga = h2h['gf'], h2h['ga']
+            h2h_section = f"""
+        <div class="h2h-container">
+            <div class="h2h-header">📊 對賽記錄</div>
+            <div class="h2h-stats">
+                <span class="h2h-wins">勝 {w}</span>
+                <span class="h2h-draws">和 {d}</span>
+                <span class="h2h-losses">負 {l}</span>
+                <span class="h2h-goals">{gf}-{ga}</span>
+            </div>
+            <div class="h2h-matches">{h2h['played']} 場</div>
+        </div>"""
     
     return f"""
     <div class="match-card">
@@ -298,6 +346,8 @@ def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: 
                 </div>
             </div>
         </div>
+        
+        {h2h_section}
         
         {'<div class="value-bets">⭐ 模型高信心揀選</div>' if is_confident else ''}
         
@@ -604,6 +654,43 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             border-radius: 10px;
             padding: 14px 16px;
             margin-bottom: 12px;
+        }}
+        
+        /* H2H Container */
+        .h2h-container {{
+            background: rgba(56,189,248,0.08);
+            border: 1px solid rgba(56,189,248,0.2);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+        }}
+        
+        .h2h-header {{
+            font-size: 0.8em;
+            color: #7dd3fc;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }}
+        
+        .h2h-stats {{
+            display: flex;
+            gap: 12px;
+            margin-bottom: 4px;
+        }}
+        
+        .h2h-stats span {{
+            font-size: 0.9em;
+            font-weight: 600;
+        }}
+        
+        .h2h-wins {{ color: #22c55e; }}
+        .h2h-draws {{ color: #f59e0b; }}
+        .h2h-losses {{ color: #ef4444; }}
+        .h2h-goals {{ color: #7dd3fc; }}
+        
+        .h2h-matches {{
+            font-size: 0.75em;
+            color: #6b6b80;
         }}
         
         .stat-row {{

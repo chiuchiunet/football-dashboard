@@ -227,6 +227,43 @@
             margin-bottom: 12px;
         }
         
+        /* H2H Container */
+        .h2h-container {
+            background: rgba(56,189,248,0.08);
+            border: 1px solid rgba(56,189,248,0.2);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+        }
+        
+        .h2h-header {
+            font-size: 0.8em;
+            color: #7dd3fc;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .h2h-stats {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 4px;
+        }
+        
+        .h2h-stats span {
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
+        .h2h-wins { color: #22c55e; }
+        .h2h-draws { color: #f59e0b; }
+        .h2h-losses { color: #ef4444; }
+        .h2h-goals { color: #7dd3fc; }
+        
+        .h2h-matches {
+            font-size: 0.75em;
+            color: #6b6b80;
+        }
+        
         .stat-row {
             display: flex;
             align-items: center;
@@ -359,14 +396,14 @@
         <div class="featured-section">
             <div class="featured-header">
                 <span>⭐ 精選信心場次</span>
-                <span class="count">7 場</span>
+                <span class="count">8 場</span>
             </div>
             <div class="featured-grid">
     <div class="match-card">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">🏆 歐聯</div>
             <div class="match-datetime">
-                <span class="date-label">04/08 11:00</span>
+                <span class="date-label">明日 11:00</span>
             </div>
         </div>
         
@@ -416,6 +453,8 @@
                 </div>
             </div>
         </div>
+        
+        
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
@@ -482,6 +521,8 @@
             </div>
         </div>
         
+        
+        
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
         <div class="fav-result">
@@ -546,6 +587,8 @@
                 </div>
             </div>
         </div>
+        
+        
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
@@ -612,6 +655,8 @@
             </div>
         </div>
         
+        
+        
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
         <div class="fav-result">
@@ -676,6 +721,8 @@
                 </div>
             </div>
         </div>
+        
+        
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
@@ -742,6 +789,8 @@
             </div>
         </div>
         
+        
+        
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
         <div class="fav-result">
@@ -807,11 +856,80 @@
             </div>
         </div>
         
+        
+        
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #ef4444">
                 <span>最可能：<strong>客勝</strong> 59%</span>
+            </div>
+            <span class="conf-badge" style="background:#22c55e20; color:#22c55e">高信心</span>
+        </div>
+    </div>
+
+    <div class="match-card">
+        <div class="match-header">
+            <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
+            <div class="match-datetime">
+                <span class="date-label">04/14 11:00</span>
+            </div>
+        </div>
+        
+        <div class="teams-section">
+            <div class="team home">
+                <div class="team-name">曼聯</div>
+                <div class="team-en">Manchester United FC</div>
+            </div>
+            <div class="score-center">
+                <div class="predicted-score">6-3</div>
+                <div class="total-goals">預測 6.0 球</div>
+            </div>
+            <div class="team away">
+                <div class="team-name">列斯聯</div>
+                <div class="team-en">Leeds United FC</div>
+            </div>
+        </div>
+        
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:80%"></div>
+                <div class="bar-segment bar-draw" style="width:9%"></div>
+                <div class="bar-segment bar-away" style="width:11%"></div>
+            </div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 59%</span>
+                <span class="label-draw">和 7%</span>
+                <span class="label-away">客勝 8%</span>
+            </div>
+        </div>
+        
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
+                <span class="stat-label">大細 2.5</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:74%"></div></div>
+                    <span class="stat-val">大 74%</span>
+                </div>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">BTTS</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:68%"></div></div>
+                    <span class="stat-val">Yes 68%</span>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        <div class="value-bets">⭐ 模型高信心揀選</div>
+        
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #22c55e">
+                <span>最可能：<strong>主勝</strong> 59%</span>
             </div>
             <span class="conf-badge" style="background:#22c55e20; color:#22c55e">高信心</span>
         </div>
@@ -831,7 +949,7 @@
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">🏆 歐聯</div>
             <div class="match-datetime">
-                <span class="date-label">04/08 11:00</span>
+                <span class="date-label">明日 11:00</span>
             </div>
         </div>
         
@@ -884,6 +1002,8 @@
         
         
         
+        
+        
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #ef4444">
                 <span>最可能：<strong>客勝</strong> 36%</span>
@@ -896,7 +1016,7 @@
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">🏆 歐聯</div>
             <div class="match-datetime">
-                <span class="date-label">04/08 11:00</span>
+                <span class="date-label">明日 11:00</span>
             </div>
         </div>
         
@@ -946,6 +1066,8 @@
                 </div>
             </div>
         </div>
+        
+        
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
@@ -1014,6 +1136,8 @@
         
         
         
+        
+        
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #ef4444">
                 <span>最可能：<strong>客勝</strong> 38%</span>
@@ -1079,6 +1203,8 @@
         
         
         
+        
+        
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 15%</span>
@@ -1092,7 +1218,7 @@
         <div class="comp-group">
             <div class="comp-header" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">
                 <span class="comp-name">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</span>
-                <span class="comp-count">9 場</span>
+                <span class="comp-count">10 場</span>
             </div>
             <div class="comp-matches">
     <div class="match-card">
@@ -1149,6 +1275,8 @@
                 </div>
             </div>
         </div>
+        
+        
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
@@ -1214,6 +1342,8 @@
                 </div>
             </div>
         </div>
+        
+        
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
@@ -1282,6 +1412,8 @@
         
         
         
+        
+        
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 42%</span>
@@ -1344,6 +1476,8 @@
                 </div>
             </div>
         </div>
+        
+        
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
@@ -1412,6 +1546,8 @@
         
         
         
+        
+        
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 47%</span>
@@ -1474,6 +1610,8 @@
                 </div>
             </div>
         </div>
+        
+        
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
@@ -1542,6 +1680,8 @@
         
         
         
+        
+        
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 44%</span>
@@ -1604,6 +1744,8 @@
                 </div>
             </div>
         </div>
+        
+        
         
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
@@ -1670,11 +1812,80 @@
             </div>
         </div>
         
+        
+        
         <div class="value-bets">⭐ 模型高信心揀選</div>
         
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #ef4444">
                 <span>最可能：<strong>客勝</strong> 59%</span>
+            </div>
+            <span class="conf-badge" style="background:#22c55e20; color:#22c55e">高信心</span>
+        </div>
+    </div>
+
+    <div class="match-card">
+        <div class="match-header">
+            <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
+            <div class="match-datetime">
+                <span class="date-label">04/14 11:00</span>
+            </div>
+        </div>
+        
+        <div class="teams-section">
+            <div class="team home">
+                <div class="team-name">曼聯</div>
+                <div class="team-en">Manchester United FC</div>
+            </div>
+            <div class="score-center">
+                <div class="predicted-score">6-3</div>
+                <div class="total-goals">預測 6.0 球</div>
+            </div>
+            <div class="team away">
+                <div class="team-name">列斯聯</div>
+                <div class="team-en">Leeds United FC</div>
+            </div>
+        </div>
+        
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:80%"></div>
+                <div class="bar-segment bar-draw" style="width:9%"></div>
+                <div class="bar-segment bar-away" style="width:11%"></div>
+            </div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 59%</span>
+                <span class="label-draw">和 7%</span>
+                <span class="label-away">客勝 8%</span>
+            </div>
+        </div>
+        
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
+                <span class="stat-label">大細 2.5</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:74%"></div></div>
+                    <span class="stat-val">大 74%</span>
+                </div>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">BTTS</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:68%"></div></div>
+                    <span class="stat-val">Yes 68%</span>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        <div class="value-bets">⭐ 模型高信心揀選</div>
+        
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #22c55e">
+                <span>最可能：<strong>主勝</strong> 59%</span>
             </div>
             <span class="conf-badge" style="background:#22c55e20; color:#22c55e">高信心</span>
         </div>
