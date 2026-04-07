@@ -164,6 +164,11 @@ def get_predictions(days_ahead: int = 7) -> list:
                p.recommended_bets
         FROM matches m
         JOIN predictions p ON p.match_id = m.match_id
+        AND p.prediction_id = (
+            SELECT MAX(p2.prediction_id) 
+            FROM predictions p2 
+            WHERE p2.match_id = m.match_id
+        )
         WHERE m.status IN ('SCHEDULED', 'TIMED')
           AND datetime(m.utc_date) <= datetime('now', ?)
         ORDER BY m.competition_code, datetime(m.utc_date) ASC
