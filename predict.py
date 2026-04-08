@@ -75,6 +75,8 @@ def build_predictions(days_ahead: int = 7) -> pd.DataFrame:
             competition_standings,
             competition_form,
             h2h_stats,
+            home_team_name=str(match["home_team_name"]),
+            away_team_name=str(match["away_team_name"]),
         )
         prediction_dict = prediction.__dict__.copy()
         value_bets = find_value_bets(prediction_dict, match)
