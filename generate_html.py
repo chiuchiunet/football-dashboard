@@ -30,6 +30,46 @@ COLORS = {
 }
 
 # 中文隊名映射
+def get_accuracy_stats() -> dict:
+    """Query overall and per-competition prediction accuracy from DB."""
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        
+        # Overall accuracy
+        overall = cur.execute("""
+            SELECT COUNT(*) as total,
+                   SUM(prediction_correct_outcome) as correct
+            FROM match_results
+        """).fetchone()
+        
+        # Per-competition accuracy
+        comp_stats = cur.execute("""
+            SELECT m.competition_code,
+                   COUNT(*) as total,
+                   SUM(mr.prediction_correct_outcome) as correct
+            FROM match_results mr
+            JOIN matches m ON mr.match_id = m.match_id
+            GROUP BY m.competition_code
+        """).fetchall()
+        
+        conn.close()
+        
+        overall_acc = round(100 * overall['correct'] / overall['total'], 1) if overall['total'] > 0 else 0
+        overall_total = overall['total']
+        overall_correct = overall['correct']
+        
+        comp_dict = {}
+        for row in comp_stats:
+            acc = round(100 * row['correct'] / row['total'], 1) if row['total'] > 0 else 0
+            comp_dict[row['competition_code']] = {'total': row['total'], 'correct': row['correct'], 'accuracy': acc}
+        
+        return {'overall': {'total': overall_total, 'correct': overall_correct, 'accuracy': overall_acc}, 'by_comp': comp_dict}
+    except Exception as e:
+        return {'overall': {'total': 0, 'correct': 0, 'accuracy': 0}, 'by_comp': {}}
+
+
 TEAM_NAMES_CN = {
     "Real Madrid CF": "皇家馬德里",
     "FC Bayern Munchen": "拜仁慕尼黑",
@@ -633,6 +673,28 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
         </div>
         <div class="filter-empty" id="filter-empty" hidden>⚠️ 呢個分類暫時冇賽事</div>
     """
+
+    # Build accuracy stats HTML
+    stats = get_accuracy_stats()
+    ov = stats['overall']
+    acc_cards = []
+    # Overall
+    acc_cards.append(f"""
+        <div class="accuracy-card highlight">
+            <div class="acc-label">總準確度</div>
+            <div class="acc-value">{ov['accuracy']}%</div>
+            <div class="acc-detail">{ov['correct']}/{ov['total']} 場</div>
+        </div>""")
+    # Per-comp
+    for code, s in stats['by_comp'].items():
+        comp_cn = get_comp_cn(code).replace("🏆 ","").replace("🌍 ","")
+        acc_cards.append(f"""
+        <div class="accuracy-card">
+            <div class="acc-label">{comp_cn}</div>
+            <div class="acc-value">{s['accuracy']}%</div>
+            <div class="acc-detail">{s['correct']}/{s['total']}</div>
+        </div>""")
+    accuracy_html = f"<div class='accuracy-bar'>{''.join(acc_cards)}</div>"
     
     return f"""<!DOCTYPE html>
 <html lang="zh-Hant">
@@ -671,6 +733,52 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
         .header p {{
             color: rgba(255,255,255,0.85);
             font-size: 1em;
+        }}
+
+        .accuracy-bar {{
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin: -20px 0 30px;
+        }}
+        .accuracy-card {{
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 14px 20px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(21,128,61,0.12);
+            border: 1px solid rgba(21,128,61,0.15);
+            min-width: 110px;
+        }}
+        .accuracy-card .acc-label {{
+            font-size: 0.78em;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }}
+        .accuracy-card .acc-value {{
+            font-size: 1.5em;
+            font-weight: 800;
+            color: #166534;
+        }}
+        .accuracy-card .acc-detail {{
+            font-size: 0.72em;
+            color: #94a3b8;
+            margin-top: 2px;
+        }}
+        .accuracy-card.highlight {{
+            background: linear-gradient(135deg, #166534, #15803d);
+            border-color: #16a34a;
+        }}
+        .accuracy-card.highlight .acc-label,
+        .accuracy-card.highlight .acc-detail {{
+            color: rgba(255,255,255,0.75);
+        }}
+        .accuracy-card.highlight .acc-value {{
+            color: #ffffff;
         }}
 
         .filter-controls {{
@@ -1185,6 +1293,8 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             <h1>⚽ 足球預測報告</h1>
             <p>Football Predictions | Powered by Hanni 🐰</p>
         </div>
+
+        {accuracy_html}
 
         {filter_html}
         
