@@ -240,7 +240,11 @@ def get_predictions(days_ahead: int = 7) -> list:
                p.expected_home_goals, p.expected_away_goals,
                p.home_half_prob, p.draw_half_prob, p.away_half_prob,
                p.expected_home_half_goals, p.expected_away_half_goals,
-               p.recommended_bets
+               p.recommended_bets,
+               m.status,
+               COALESCE(mr.actual_home_score, m.home_score) AS actual_home_score,
+               COALESCE(mr.actual_away_score, m.away_score) AS actual_away_score,
+               mr.prediction_correct_outcome
         FROM matches m
         JOIN predictions p ON p.match_id = m.match_id
         AND p.prediction_id = (
@@ -248,10 +252,17 @@ def get_predictions(days_ahead: int = 7) -> list:
             FROM predictions p2 
             WHERE p2.match_id = m.match_id
         )
-        WHERE m.status IN ('SCHEDULED', 'TIMED')
-          AND datetime(m.utc_date) <= datetime('now', ?)
+        LEFT JOIN match_results mr ON mr.match_id = m.match_id
+        WHERE (
+            m.status IN ('SCHEDULED', 'TIMED')
+            AND datetime(m.utc_date) <= datetime('now', ?)
+        ) OR (
+            m.status = 'FINISHED'
+            AND datetime(m.utc_date) >= datetime('now', ?)
+            AND datetime(m.utc_date) <= datetime('now')
+        )
         ORDER BY m.competition_code, datetime(m.utc_date) ASC
-    """, [f"+{days_ahead} days"])
+    """, [f"+{days_ahead} days", f"-{days_ahead} days"])
     rows = cursor.fetchall()
     conn.close()
     return rows
@@ -305,6 +316,10 @@ def prediction_card_from_dict(row: dict) -> str:
     ehg2 = row.get('expected_home_half_goals') or 0
     ea2 = row.get('expected_away_half_goals') or 0
     bets = row.get('recommended_bets') or ""
+    status = row.get('status') or ""
+    actual_home_score = row.get('actual_home_score')
+    actual_away_score = row.get('actual_away_score')
+    prediction_correct = row.get('prediction_correct_outcome')
     home_recent_html = ""
     away_recent_html = ""
     if home_id or away_id:
@@ -312,14 +327,18 @@ def prediction_card_from_dict(row: dict) -> str:
             home_recent_html = get_recent_form_html(conn, home_id, True)
             away_recent_html = get_recent_form_html(conn, away_id, False)
     
-    return _build_card(utc_date, comp, home, away, hwp, dp, awp, ov, un, bts_yes, bts_no, ehg, eag, hhp, dhp, ahp, ehg2, ea2, bets, home_id, away_id, home_recent_html, away_recent_html)
+    return _build_card(utc_date, comp, home, away, hwp, dp, awp, ov, un, bts_yes, bts_no, ehg, eag, hhp, dhp, ahp, ehg2, ea2, bets, home_id, away_id, home_recent_html, away_recent_html, status, actual_home_score, actual_away_score, prediction_correct)
 
 
 def prediction_card_from_tuple(row: tuple) -> str:
     """Build card from tuple (DB row)."""
     (match_id, utc_date, comp, home, away, home_id, away_id,
      hwp, dp, awp, ov, un, bts_yes, bts_no,
-     ehg, eag, hhp, dhp, ahp, ehg2, ea2, bets) = row
+     ehg, eag, hhp, dhp, ahp, ehg2, ea2, bets) = row[:22]
+    if len(row) > 22:
+        status, actual_home_score, actual_away_score, prediction_correct = row[22:26]
+    else:
+        status, actual_home_score, actual_away_score, prediction_correct = "", None, None, None
     
     hwp = hwp or 0
     dp = dp or 0
@@ -338,6 +357,7 @@ def prediction_card_from_tuple(row: tuple) -> str:
     bets = bets or ""
     home_id = home_id or 0
     away_id = away_id or 0
+    status = status or ""
     home_recent_html = ""
     away_recent_html = ""
     if home_id or away_id:
@@ -345,14 +365,15 @@ def prediction_card_from_tuple(row: tuple) -> str:
             home_recent_html = get_recent_form_html(conn, home_id, True)
             away_recent_html = get_recent_form_html(conn, away_id, False)
     
-    return _build_card(utc_date, comp, home, away, hwp, dp, awp, ov, un, bts_yes, bts_no, ehg, eag, hhp, dhp, ahp, ehg2, ea2, bets, home_id, away_id, home_recent_html, away_recent_html)
+    return _build_card(utc_date, comp, home, away, hwp, dp, awp, ov, un, bts_yes, bts_no, ehg, eag, hhp, dhp, ahp, ehg2, ea2, bets, home_id, away_id, home_recent_html, away_recent_html, status, actual_home_score, actual_away_score, prediction_correct)
 
 
 def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: float, awp: float, 
                  ov: float, un: float, bts_yes: float, bts_no: float, ehg: float, eag: float,
                  hhp: float, dhp: float, ahp: float, ehg2: float, ea2: float, bets: str,
                  home_id: int = 0, away_id: int = 0, home_recent_html: str = "",
-                 away_recent_html: str = "") -> str:
+                 away_recent_html: str = "", status: str = "", actual_home_score=None,
+                 actual_away_score=None, prediction_correct=None) -> str:
     """Common card building logic."""
     home_cn = get_team_name_cn(home)
     away_cn = get_team_name_cn(away)
@@ -376,10 +397,29 @@ def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: 
                 best_score = (hg, ag)
     
     predicted_home, predicted_away = best_score
-    
     total_goals = ehg + eag
     total_goals_str = f"{total_goals:.1f}"
-    
+    is_finished = status == "FINISHED"
+    filter_status = "finished" if is_finished else "predicting"
+    if is_finished and actual_home_score is not None and actual_away_score is not None:
+        correct_icon = ""
+        result_badge = ""
+        if prediction_correct is not None:
+            is_correct = bool(prediction_correct)
+            correct_icon = " ✅" if is_correct else " ❌"
+            result_badge = f"""<span class="prediction-result {'win' if is_correct else 'lose'}">{'WIN' if is_correct else 'LOSE'}</span>"""
+        score_html = f"""
+                <div class="predicted-score actual-score">{actual_home_score}-{actual_away_score}</div>
+                <div class="score-meta">
+                    <span class="finished-badge">已完成</span>
+                    {result_badge}
+                </div>
+                <div class="total-goals">{actual_home_score}-{actual_away_score} 完成{correct_icon}</div>"""
+    else:
+        score_html = f"""
+                <div class="predicted-score">{predicted_home}-{predicted_away}</div>
+                <div class="total-goals">預測 {total_goals_str} 球</div>"""
+
     probs = {"主勝": hwp, "和": dp, "客勝": awp}
     fav = max(probs, key=probs.get)
     fav_prob = probs[fav]
@@ -416,7 +456,7 @@ def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: 
         </div>"""
     
     return f"""
-    <div class="match-card">
+    <div class="match-card" data-match-status="{filter_status}">
         <div class="match-header">
             <div class="comp-badge" style="background: {comp_gradient}">{comp_cn}</div>
             <div class="match-datetime">
@@ -430,8 +470,7 @@ def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: 
                 <div class="team-en">{home}</div>
             </div>
             <div class="score-center">
-                <div class="predicted-score">{predicted_home}-{predicted_away}</div>
-                <div class="total-goals">預測 {total_goals_str} 球</div>
+                {score_html}
             </div>
             <div class="team away">
                 <div class="team-name">{away_cn}</div>
@@ -524,6 +563,12 @@ def group_by_competition(rows) -> dict:
     return groups
 
 
+def get_filter_status(row) -> str:
+    if isinstance(row, dict):
+        return "finished" if row.get('status') == "FINISHED" else "predicting"
+    return "finished" if len(row) > 22 and row[22] == "FINISHED" else "predicting"
+
+
 def prediction_card(row) -> str:
     """Generic prediction card builder."""
     if isinstance(row, dict):
@@ -540,6 +585,8 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
         rows = predictions
     
     groups = group_by_competition(rows)
+    finished_count = sum(1 for row in rows if get_filter_status(row) == "finished")
+    predicting_count = len(rows) - finished_count
     
     comp_sections = []
     for comp_code, comp_rows in sorted(groups.items(), key=lambda x: x[0]):
@@ -577,6 +624,15 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             <div class="featured-grid">{featured_cards}</div>
         </div>
         """
+
+    filter_html = f"""
+        <div class="filter-controls" aria-label="賽事篩選">
+            <button class="filter-btn active" type="button" data-filter="all">全部 <span>{len(rows)}</span></button>
+            <button class="filter-btn" type="button" data-filter="finished">已完賽 <span>{finished_count}</span></button>
+            <button class="filter-btn" type="button" data-filter="predicting">預測中 <span>{predicting_count}</span></button>
+        </div>
+        <div class="filter-empty" id="filter-empty" hidden>⚠️ 呢個分類暫時冇賽事</div>
+    """
     
     return f"""<!DOCTYPE html>
 <html lang="zh-Hant">
@@ -615,6 +671,67 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
         .header p {{
             color: rgba(255,255,255,0.85);
             font-size: 1em;
+        }}
+
+        .filter-controls {{
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: -20px 0 30px;
+        }}
+
+        .filter-btn {{
+            border: 1px solid rgba(34,197,94,0.28);
+            background: #ffffff;
+            color: #166534;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 0.95em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 6px 18px rgba(21,128,61,0.08);
+        }}
+
+        .filter-btn:hover,
+        .filter-btn.active {{
+            background: #16a34a;
+            border-color: #16a34a;
+            color: #ffffff;
+            box-shadow: 0 8px 24px rgba(22,163,74,0.22);
+        }}
+
+        .filter-btn span {{
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 22px;
+            margin-left: 6px;
+            padding: 2px 6px;
+            border-radius: 999px;
+            background: rgba(22,101,52,0.1);
+            font-size: 0.82em;
+        }}
+
+        .filter-btn.active span,
+        .filter-btn:hover span {{
+            background: rgba(255,255,255,0.22);
+        }}
+
+        .filter-empty {{
+            text-align: center;
+            margin: 0 0 25px;
+            padding: 20px;
+            border: 1px solid rgba(34,197,94,0.22);
+            border-radius: 8px;
+            background: rgba(34,197,94,0.08);
+            color: #166534;
+            font-weight: 700;
+        }}
+
+        .is-hidden {{
+            display: none !important;
         }}
         
         .featured-section {{
@@ -749,6 +866,50 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             font-size: 0.8em;
             color: {COLORS['accent_yellow']};
             margin-top: 2px;
+        }}
+
+        .actual-score {{
+            background: linear-gradient(135deg, #15803d, #22c55e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }}
+
+        .score-meta {{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }}
+
+        .finished-badge,
+        .prediction-result {{
+            display: inline-flex;
+            align-items: center;
+            border-radius: 8px;
+            padding: 4px 8px;
+            font-size: 0.72em;
+            font-weight: 800;
+            line-height: 1;
+        }}
+
+        .finished-badge {{
+            background: rgba(22,101,52,0.12);
+            border: 1px solid rgba(22,101,52,0.22);
+            color: #166534;
+        }}
+
+        .prediction-result.win {{
+            background: rgba(34,197,94,0.16);
+            border: 1px solid rgba(34,197,94,0.32);
+            color: #15803d;
+        }}
+
+        .prediction-result.lose {{
+            background: rgba(239,68,68,0.14);
+            border: 1px solid rgba(239,68,68,0.32);
+            color: #dc2626;
         }}
         
         /* Stacked Bar Section */
@@ -1024,6 +1185,8 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             <h1>⚽ 足球預測報告</h1>
             <p>Football Predictions | Powered by Hanni 🐰</p>
         </div>
+
+        {filter_html}
         
         {featured_html}
         
@@ -1036,6 +1199,39 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             <p>⚠️ 僅供參考，不構成投注建議</p>
         </div>
     </div>
+    <script>
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const matchCards = document.querySelectorAll('.match-card');
+        const sections = document.querySelectorAll('.featured-section, .comp-group');
+        const filterEmpty = document.getElementById('filter-empty');
+
+        function applyFilter(filter) {{
+            let visibleCards = 0;
+
+            filterButtons.forEach((button) => {{
+                button.classList.toggle('active', button.dataset.filter === filter);
+            }});
+
+            matchCards.forEach((card) => {{
+                const isVisible = filter === 'all' || card.dataset.matchStatus === filter;
+                card.classList.toggle('is-hidden', !isVisible);
+                if (isVisible) visibleCards += 1;
+            }});
+
+            sections.forEach((section) => {{
+                const hasVisibleCard = section.querySelector('.match-card:not(.is-hidden)');
+                section.classList.toggle('is-hidden', !hasVisibleCard);
+            }});
+
+            if (filterEmpty) {{
+                filterEmpty.hidden = visibleCards > 0;
+            }}
+        }}
+
+        filterButtons.forEach((button) => {{
+            button.addEventListener('click', () => applyFilter(button.dataset.filter));
+        }});
+    </script>
 </body>
 </html>"""
 
@@ -1043,6 +1239,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
 def main():
     predictions = get_predictions(days_ahead=7)
     html = generate_html(predictions)
+    html = "\n".join(line.rstrip() for line in html.splitlines()) + "\n"
     output = Path(__file__).resolve().parent / "web" / "index.html"
     output.write_text(html, encoding="utf-8")
     print(f"✅ Dashboard written to: {output}")
