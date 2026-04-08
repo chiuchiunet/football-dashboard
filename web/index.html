@@ -553,8 +553,8 @@
 
         <div class="filter-controls" aria-label="賽事篩選">
             <button class="filter-btn active" type="button" data-filter="all">全部 <span>14</span></button>
-            <button class="filter-btn" type="button" data-filter="finished">已完賽 <span>0</span></button>
-            <button class="filter-btn" type="button" data-filter="predicting">預測中 <span>14</span></button>
+            <button class="filter-btn" type="button" data-filter="finished">已完賽 <span>2</span></button>
+            <button class="filter-btn" type="button" data-filter="predicting">預測中 <span>12</span></button>
         </div>
         <div class="filter-empty" id="filter-empty" hidden>⚠️ 呢個分類暫時冇賽事</div>
 
@@ -566,7 +566,7 @@
                 <span class="count">5 場</span>
             </div>
             <div class="featured-grid">
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="finished">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">🏆 歐聯</div>
             <div class="match-datetime">
@@ -581,8 +581,12 @@
             </div>
             <div class="score-center">
 
-                <div class="predicted-score">1-1</div>
-                <div class="total-goals">預測 3.2 球</div>
+                <div class="predicted-score actual-score">0-1</div>
+                <div class="score-meta">
+                    <span class="finished-badge">已完成</span>
+
+                </div>
+                <div class="total-goals">0-1 完成</div>
             </div>
             <div class="team away">
                 <div class="team-name">阿仙奴</div>
@@ -594,12 +598,12 @@
 
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.18);border-radius:8px;padding:8px 10px;">
             <span style="color:#166534;font-size:0.84em;font-weight:700;">主場 - 近5場:</span>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;"><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>5-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(239,68,68,0.35);background:rgba(239,68,68,0.12);color:#dc2626"><strong>L</strong><span>0-3</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>3-2</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(239,68,68,0.35);background:rgba(239,68,68,0.12);color:#dc2626"><strong>L</strong><span>1-3</span></span></div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;"><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(239,68,68,0.35);background:rgba(239,68,68,0.12);color:#dc2626"><strong>L</strong><span>0-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>5-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(239,68,68,0.35);background:rgba(239,68,68,0.12);color:#dc2626"><strong>L</strong><span>0-3</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>3-2</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-1</span></span></div>
         </div>
 
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.18);border-radius:8px;padding:8px 10px;">
             <span style="color:#166534;font-size:0.84em;font-weight:700;">作客 - 近5場:</span>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;"><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(245,158,11,0.35);background:rgba(245,158,11,0.14);color:#b45309"><strong>D</strong><span>1-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>1-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-1</span></span></div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;"><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>1-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(245,158,11,0.35);background:rgba(245,158,11,0.14);color:#b45309"><strong>D</strong><span>1-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>1-0</span></span></div>
         </div>
         </div>
 
@@ -800,7 +804,7 @@
 
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.18);border-radius:8px;padding:8px 10px;">
             <span style="color:#166534;font-size:0.84em;font-weight:700;">主場 - 近5場:</span>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;"><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(245,158,11,0.35);background:rgba(245,158,11,0.14);color:#b45309"><strong>D</strong><span>1-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>1-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-1</span></span></div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;"><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>1-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(245,158,11,0.35);background:rgba(245,158,11,0.14);color:#b45309"><strong>D</strong><span>1-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>1-0</span></span></div>
         </div>
 
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.18);border-radius:8px;padding:8px 10px;">
@@ -1091,7 +1095,7 @@
                 <span class="comp-count">4 場</span>
             </div>
             <div class="comp-matches">
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="finished">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">🏆 歐聯</div>
             <div class="match-datetime">
@@ -1106,8 +1110,12 @@
             </div>
             <div class="score-center">
 
-                <div class="predicted-score">2-1</div>
-                <div class="total-goals">預測 3.8 球</div>
+                <div class="predicted-score actual-score">1-2</div>
+                <div class="score-meta">
+                    <span class="finished-badge">已完成</span>
+
+                </div>
+                <div class="total-goals">1-2 完成</div>
             </div>
             <div class="team away">
                 <div class="team-name">拜仁慕尼黑</div>
@@ -1119,12 +1127,12 @@
 
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.18);border-radius:8px;padding:8px 10px;">
             <span style="color:#166534;font-size:0.84em;font-weight:700;">主場 - 近5場:</span>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;"><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>3-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>1-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(239,68,68,0.35);background:rgba(239,68,68,0.12);color:#dc2626"><strong>L</strong><span>2-4</span></span></div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;"><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(239,68,68,0.35);background:rgba(239,68,68,0.12);color:#dc2626"><strong>L</strong><span>1-2</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>3-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>1-0</span></span></div>
         </div>
 
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.18);border-radius:8px;padding:8px 10px;">
             <span style="color:#166534;font-size:0.84em;font-weight:700;">作客 - 近5場:</span>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;"><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>4-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>6-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>3-1</span></span></div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;"><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>4-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>6-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-0</span></span></div>
         </div>
         </div>
 
@@ -1194,7 +1202,7 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="finished">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">🏆 歐聯</div>
             <div class="match-datetime">
@@ -1209,8 +1217,12 @@
             </div>
             <div class="score-center">
 
-                <div class="predicted-score">1-1</div>
-                <div class="total-goals">預測 3.2 球</div>
+                <div class="predicted-score actual-score">0-1</div>
+                <div class="score-meta">
+                    <span class="finished-badge">已完成</span>
+
+                </div>
+                <div class="total-goals">0-1 完成</div>
             </div>
             <div class="team away">
                 <div class="team-name">阿仙奴</div>
@@ -1222,12 +1234,12 @@
 
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.18);border-radius:8px;padding:8px 10px;">
             <span style="color:#166534;font-size:0.84em;font-weight:700;">主場 - 近5場:</span>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;"><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>5-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(239,68,68,0.35);background:rgba(239,68,68,0.12);color:#dc2626"><strong>L</strong><span>0-3</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>3-2</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(239,68,68,0.35);background:rgba(239,68,68,0.12);color:#dc2626"><strong>L</strong><span>1-3</span></span></div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;"><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(239,68,68,0.35);background:rgba(239,68,68,0.12);color:#dc2626"><strong>L</strong><span>0-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>5-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(239,68,68,0.35);background:rgba(239,68,68,0.12);color:#dc2626"><strong>L</strong><span>0-3</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>3-2</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-1</span></span></div>
         </div>
 
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.18);border-radius:8px;padding:8px 10px;">
             <span style="color:#166534;font-size:0.84em;font-weight:700;">作客 - 近5場:</span>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;"><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(245,158,11,0.35);background:rgba(245,158,11,0.14);color:#b45309"><strong>D</strong><span>1-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>1-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-1</span></span></div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;"><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>1-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(245,158,11,0.35);background:rgba(245,158,11,0.14);color:#b45309"><strong>D</strong><span>1-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>1-0</span></span></div>
         </div>
         </div>
 
@@ -1642,7 +1654,7 @@
 
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.18);border-radius:8px;padding:8px 10px;">
             <span style="color:#166534;font-size:0.84em;font-weight:700;">主場 - 近5場:</span>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;"><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(245,158,11,0.35);background:rgba(245,158,11,0.14);color:#b45309"><strong>D</strong><span>1-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>1-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-1</span></span></div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;"><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>1-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(245,158,11,0.35);background:rgba(245,158,11,0.14);color:#b45309"><strong>D</strong><span>1-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>1-0</span></span></div>
         </div>
 
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.18);border-radius:8px;padding:8px 10px;">

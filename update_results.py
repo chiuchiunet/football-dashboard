@@ -9,19 +9,10 @@ import json
 from datetime import datetime, timedelta
 
 DB_PATH = '/home/ubuntu/.openclaw/workspace-football/football.db'
-API_KEY = '40da067a02msh8a2e6e63f76p10d4ejsn17f40b6bef41'  # Need to get from DB
-
-def get_api_key():
-    import sqlite3
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
-    cur.execute("SELECT api_key FROM api_keys WHERE source = 'football-data.org' LIMIT 1")
-    result = cur.fetchone()
-    conn.close()
-    return result[0] if result else None
+API_KEY = '40da06df85674c78897c6bfec8333c0e'
 
 def update_finished_matches():
-    api_key = get_api_key()
+    api_key = API_KEY
     if not api_key:
         print("No API key found")
         return 0
