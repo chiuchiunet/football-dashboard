@@ -39,23 +39,49 @@ def build_score_matrix(home_xg: float, away_xg: float, max_goals: int = MAX_GOAL
 
 
 def _load_xg_cache():
-    """Load Understat xG data from DB into a dict keyed by team name."""
+    """Load Understat xG data + recent xpts history from DB, keyed by team name."""
     try:
         import sqlite3
         from pathlib import Path
         db_path = Path(__file__).resolve().parent.parent / "football.db"
         conn = sqlite3.connect(db_path)
+
+        # Team-level xG stats
         rows = conn.execute("""
-            SELECT team_name, xg, xga, home_xg, away_xg, played
+            SELECT team_name, xg, xga, home_xg, away_xg, played, xpts, pts
             FROM understat_xg WHERE league_code='PL'
         """).fetchall()
+
+        # Recent xpts per match (last 10 matches per team)
+        history_rows = conn.execute("""
+            SELECT ug.team_name, h.xpts, h.pts, h.date, h.h_a
+            FROM understat_xg ug
+            JOIN understat_history h ON h.team_name = ug.team_name AND h.league = ug.league_code
+            ORDER BY ug.team_name, h.date DESC
+        """).fetchall()
         conn.close()
-        return {r[0]: {"xg": r[1], "xga": r[2], "home_xg": r[3], "away_xg": r[4], "played": r[5]} for r in rows}
+
+        # Build xpts history dict
+        xpts_history = {}
+        for team, xpts, pts, date, h_a in history_rows:
+            if team not in xpts_history:
+                xpts_history[team] = []
+            xpts_history[team].append({"xpts": xpts, "pts": pts, "date": date, "h_a": h_a})
+
+        result = {}
+        for r in rows:
+            result[r[0]] = {
+                "xg": r[1], "xga": r[2], "home_xg": r[3], "away_xg": r[4],
+                "played": r[5], "xpts_total": r[6], "pts_total": r[7],
+                "recent": xpts_history.get(r[0], [])
+            }
+        return result
     except Exception:
         return {}
 
 
 _XG_CACHE = None
+
 
 def _get_xg(team_name: str) -> dict | None:
     """Get xG stats for a team, using cached data."""
@@ -63,6 +89,37 @@ def _get_xg(team_name: str) -> dict | None:
     if _XG_CACHE is None:
         _XG_CACHE = _load_xg_cache()
     return _XG_CACHE.get(team_name)
+
+
+def _weighted_form_score(recent: list, decay: float = 0.85) -> float:
+    """
+    Calculate time-weighted form score from recent match history.
+    Uses xpts (expected points) instead of raw pts to reduce luck factor.
+    Recent matches have higher weight via exponential decay.
+
+    Args:
+        recent: list of dicts with 'xpts' (and optionally 'pts')
+        decay: weight multiplier per older match (0.85 = each older match is worth 85% of the previous)
+
+    Returns:
+        Weighted average xpts per game (0 to 3)
+    """
+    if not recent:
+        return 1.0  # neutral
+
+    total_weight = 0.0
+    weighted_xpts = 0.0
+    weight = 1.0
+
+    for i, m in enumerate(recent[:10]):  # cap at 10 matches
+        xpts = float(m.get("xpts", m.get("pts", 1.0)))
+        weighted_xpts += xpts * weight
+        total_weight += weight
+        weight *= decay
+
+    if total_weight <= 0:
+        return 1.0
+    return weighted_xpts / total_weight
 
 
 def expected_goals(
@@ -106,13 +163,14 @@ def expected_goals(
         home_xg = base_home * home_attack * away_defense
         away_xg = base_away * away_attack * home_defense
 
-        # Form boost (still use recent form)
-        home_form_boost = 1.0
-        away_form_boost = 1.0
-        if not home_form.empty:
-            home_form_boost = 0.9 + min(home_form.iloc[0]["points_per_match"] / 3, 0.45)
-        if not away_form.empty:
-            away_form_boost = 0.9 + min(away_form.iloc[0]["points_per_match"] / 3, 0.45)
+        # Form boost using time-weighted xpts (decay=0.85 per older match)
+        home_recent = home_xg_data.get("recent", [])
+        away_recent = away_xg_data.get("recent", [])
+        home_wxpts = _weighted_form_score(home_recent, decay=0.85)
+        away_wxpts = _weighted_form_score(away_recent, decay=0.85)
+
+        home_form_boost = 0.9 + min(home_wxpts / 3, 0.45)
+        away_form_boost = 0.9 + min(away_wxpts / 3, 0.45)
 
         home_xg *= home_form_boost * HOME_ADVANTAGE_MULTIPLIER
         away_xg *= away_form_boost

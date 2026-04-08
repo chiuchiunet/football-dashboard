@@ -84,11 +84,59 @@ def fetch_understat_xg(league_code: str = "EPL", season: str = "2025") -> dict:
             "away_xg": round(away_xg / len(away_matches), 3) if away_matches else 0,
             "home_xga": round(home_xga / len(home_matches), 3) if home_matches else 0,
             "away_xga": round(away_xga / len(away_matches), 3) if away_matches else 0,
+            "history": history,  # Keep per-match history for time-decay
         }
     return result
 
 
 def create_xg_table():
+    """Create understat_xg and understat_history tables."""
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS understat_xg (
+            team_name TEXT PRIMARY KEY,
+            understat_id TEXT,
+            played INTEGER,
+            xg REAL,
+            xga REAL,
+            npxg REAL,
+            npxga REAL,
+            scored INTEGER,
+            missed INTEGER,
+            xpts REAL,
+            pts INTEGER,
+            home_xg REAL,
+            away_xg REAL,
+            home_xga REAL,
+            away_xga REAL,
+            league_code TEXT,
+            season TEXT,
+            updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS understat_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            team_name TEXT,
+            league TEXT,
+            date TEXT,
+            h_a TEXT,
+            xG REAL,
+            xGA REAL,
+            npxG REAL,
+            npxGA REAL,
+            scored INTEGER,
+            missed INTEGER,
+            xpts REAL,
+            pts INTEGER,
+            result TEXT,
+            updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(team_name, league, date)
+        )
+    """)
+    conn.commit()
+    conn.close()
     """Create understat_xg table if not exists."""
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
@@ -119,7 +167,7 @@ def create_xg_table():
 
 
 def upsert_xg_data(xg_data: dict, league_code: str, season: str = "2025"):
-    """Insert or replace xG data into DB."""
+    """Insert or replace xG data + per-match history into DB."""
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     for understat_name, stats in xg_data.items():
@@ -136,6 +184,22 @@ def upsert_xg_data(xg_data: dict, league_code: str, season: str = "2025"):
             stats["home_xg"], stats["away_xg"], stats["home_xga"], stats["away_xga"],
             league_code, season
         ))
+
+        # Insert per-match history
+        for m in stats.get("history", []):
+            cur.execute("""
+                INSERT OR REPLACE INTO understat_history
+                (team_name, league, date, h_a, xG, xGA, npxG, npxGA, scored, missed, xpts, pts, result, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+            """, (
+                fd_name, league_code,
+                m.get("date", ""), m.get("h_a", ""),
+                m.get("xG"), m.get("xGA"),
+                m.get("npxG"), m.get("npxGA"),
+                m.get("scored"), m.get("missed"),
+                m.get("xpts"), m.get("pts"),
+                m.get("result", "")
+            ))
     conn.commit()
     conn.close()
 
