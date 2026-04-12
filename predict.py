@@ -100,7 +100,9 @@ def build_predictions(days_ahead: int = 7) -> pd.DataFrame:
     insert_frame = insert_frame[[
         "match_id", "model", "home_win_prob", "draw_prob", "away_win_prob", "over_2_5_prob",
         "under_2_5_prob", "btts_yes_prob", "btts_no_prob", "expected_home_goals",
-        "expected_away_goals", "recommended_bets", "output_text"
+        "expected_away_goals", "recommended_bets", "output_text",
+        "home_half_prob", "draw_half_prob", "away_half_prob",
+        "expected_home_half_goals", "expected_away_half_goals",
     ]]
     db.insert_many("predictions", insert_frame.to_dict(orient="records"))
 

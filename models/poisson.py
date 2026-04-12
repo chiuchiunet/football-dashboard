@@ -20,6 +20,12 @@ class MatchPrediction:
     btts_no_prob: float
     expected_home_goals: float
     expected_away_goals: float
+    # Half-time
+    home_half_prob: float = 0.0
+    draw_half_prob: float = 0.0
+    away_half_prob: float = 0.0
+    expected_home_half_goals: float = 0.0
+    expected_away_half_goals: float = 0.0
 
 
 def poisson_pmf(k: int, lam: float) -> float:
@@ -243,6 +249,28 @@ def predict_match(
     under_2_5_prob = max(0.0, 1 - over_2_5_prob)
     btts_no_prob = max(0.0, 1 - btts_yes_prob)
 
+    # Half-time prediction using scaled xG (~45% of full-match for first half)
+    half_scaling = 0.45
+    home_half_xg = home_xg * half_scaling
+    away_half_xg = away_xg * half_scaling
+
+    # Build half-time score matrix
+    half_matrix = build_score_matrix(home_half_xg, away_half_xg)
+
+    home_half_prob = 0.0
+    draw_half_prob = 0.0
+    away_half_prob = 0.0
+
+    for home_goals in half_matrix.index:
+        for away_goals in half_matrix.columns:
+            prob = half_matrix.iloc[home_goals, away_goals]
+            if home_goals > away_goals:
+                home_half_prob += prob
+            elif home_goals == away_goals:
+                draw_half_prob += prob
+            else:
+                away_half_prob += prob
+
     return MatchPrediction(
         home_win_prob=home_win_prob,
         draw_prob=draw_prob,
@@ -253,5 +281,10 @@ def predict_match(
         btts_no_prob=btts_no_prob,
         expected_home_goals=home_xg,
         expected_away_goals=away_xg,
+        home_half_prob=home_half_prob,
+        draw_half_prob=draw_half_prob,
+        away_half_prob=away_half_prob,
+        expected_home_half_goals=home_half_xg,
+        expected_away_half_goals=away_half_xg,
     )
 
