@@ -6,7 +6,7 @@
     <title>⚽ 足球預測報告</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: #ffffff;
@@ -14,9 +14,9 @@
             min-height: 100vh;
             padding: 20px;
         }
-        
+
         .container { max-width: 1000px; margin: 0 auto; }
-        
+
         .header {
             text-align: center;
             padding: 40px 20px;
@@ -25,13 +25,13 @@
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
         }
-        
+
         .header h1 {
             font-size: 2.2em;
             font-weight: 700;
             margin-bottom: 8px;
         }
-        
+
         .header p {
             color: rgba(255,255,255,0.85);
             font-size: 1em;
@@ -86,11 +86,34 @@
         .filter-controls {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            align-items: center;
+            gap: 12px;
             flex-wrap: wrap;
             margin: -20px 0 30px;
         }
-
+        
+        .comp-select {
+            padding: 10px 14px;
+            border: 1px solid rgba(34,197,94,0.28);
+            border-radius: 8px;
+            background: #ffffff;
+            color: #166534;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            min-width: 160px;
+            box-shadow: 0 4px 12px rgba(21,128,61,0.08);
+        }
+        
+        .comp-select:hover {
+            border-color: #16a34a;
+        }
+        
+        .status-filters {
+            display: flex;
+            gap: 8px;
+        }
+        
         .filter-btn {
             border: 1px solid rgba(34,197,94,0.28);
             background: #ffffff;
@@ -143,7 +166,7 @@
         .is-hidden {
             display: none !important;
         }
-        
+
         .featured-section {
             background: linear-gradient(135deg, rgba(255,107,157,0.15) 0%, rgba(78,205,196,0.1) 100%);
             border-radius: 16px;
@@ -151,7 +174,7 @@
             margin-bottom: 30px;
             border: 1px solid rgba(255,107,157,0.3);
         }
-        
+
         .featured-header {
             display: flex;
             justify-content: space-between;
@@ -163,14 +186,14 @@
             font-weight: 600;
             font-size: 1.1em;
         }
-        
+
         .featured-header .count {
             font-size: 0.85em;
             color: #166534;
         }
-        
+
         .comp-group { margin-bottom: 30px; }
-        
+
         .comp-header {
             display: flex;
             justify-content: space-between;
@@ -181,10 +204,10 @@
             color: #166534;
             font-weight: 600;
         }
-        
+
         .comp-name { font-size: 1.1em; }
         .comp-count { font-size: 0.85em; opacity: 0.9; }
-        
+
         .match-card {
             background: #f8fafc;
             border-radius: 16px;
@@ -193,20 +216,20 @@
             border: 1px solid rgba(255,255,255,0.08);
             transition: all 0.25s ease;
         }
-        
+
         .match-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 12px 40px rgba(102, 126, 234, 0.25);
             background: #f0fdf4;
         }
-        
+
         .match-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
         }
-        
+
         .comp-badge {
             padding: 6px 14px;
             border-radius: 20px;
@@ -214,14 +237,14 @@
             font-size: 0.85em;
             color: #166534;
         }
-        
+
         .match-datetime {
             display: flex;
             flex-direction: column;
             align-items: flex-end;
             gap: 2px;
         }
-        
+
         .date-label {
             background: rgba(255,255,255,0.15);
             padding: 4px 10px;
@@ -230,12 +253,12 @@
             font-weight: 600;
             color: #166534;
         }
-        
+
         .date-full {
             font-size: 0.75em;
             color: #166534;
         }
-        
+
         .teams-section {
             display: flex;
             align-items: center;
@@ -245,25 +268,25 @@
             border-radius: 12px;
             margin-bottom: 15px;
         }
-        
+
         .team { flex: 1; text-align: center; }
-        
+
         .team-name {
             font-size: 1.1em;
             font-weight: 600;
             margin-bottom: 3px;
         }
-        
+
         .team-en {
             font-size: 0.75em;
             color: #64748b;
         }
-        
+
         .score-center {
             text-align: center;
             padding: 0 20px;
         }
-        
+
         .predicted-score {
             font-size: 2em;
             font-weight: 700;
@@ -271,7 +294,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        
+
         .total-goals {
             font-size: 0.8em;
             color: #166534;
@@ -321,12 +344,12 @@
             border: 1px solid rgba(239,68,68,0.32);
             color: #dc2626;
         }
-        
+
         /* Stacked Bar Section */
         .stacked-bar-section {
             margin-bottom: 15px;
         }
-        
+
         .stacked-bar {
             display: flex;
             height: 32px;
@@ -335,7 +358,7 @@
             margin-bottom: 8px;
             background: rgba(255,255,255,0.06);
         }
-        
+
         .bar-segment {
             height: 100%;
             transition: width 0.6s ease;
@@ -344,28 +367,28 @@
             justify-content: center;
             min-width: 0;
         }
-        
+
         .bar-home {
             background: #3a3a4a;
             border-radius: 16px 0 0 16px;
         }
-        
+
         .bar-draw {
             background: #4a4a5a;
         }
-        
+
         .bar-away {
             background: linear-gradient(135deg, #38BDF8 0%, #7dd3fc 100%);
             border-radius: 0 16px 16px 0;
         }
-        
+
         .stacked-bar-labels {
             display: flex;
             justify-content: space-between;
             font-size: 0.9em;
             font-weight: 700;
         }
-        
+
         .label-home { color: #166534; }
         .label-draw { color: #166534; }
         .label-away { color: #7dd3fc; font-weight: 700; }
@@ -421,7 +444,7 @@
             color: #ffffff;
             font-size: 0.95em;
         }
-        
+
         /* Stats Container */
         .stats-container {
             background: rgba(0,0,0,0.25);
@@ -429,7 +452,7 @@
             padding: 14px 16px;
             margin-bottom: 12px;
         }
-        
+
         /* H2H Container */
         .h2h-container {
             background: rgba(56,189,248,0.08);
@@ -438,57 +461,57 @@
             padding: 12px 14px;
             margin-bottom: 12px;
         }
-        
+
         .h2h-header {
             font-size: 0.8em;
             color: #7dd3fc;
             margin-bottom: 8px;
             font-weight: 600;
         }
-        
+
         .h2h-stats {
             display: flex;
             gap: 12px;
             margin-bottom: 4px;
         }
-        
+
         .h2h-stats span {
             font-size: 0.9em;
             font-weight: 600;
         }
-        
+
         .h2h-wins { color: #22c55e; }
         .h2h-draws { color: #f59e0b; }
         .h2h-losses { color: #ef4444; }
         .h2h-goals { color: #7dd3fc; }
-        
+
         .h2h-matches {
             font-size: 0.75em;
             color: #6b6b80;
         }
-        
+
         .stat-row {
             display: flex;
             align-items: center;
             gap: 12px;
             margin-bottom: 10px;
         }
-        
+
         .stat-row:last-child { margin-bottom: 0; }
-        
+
         .stat-label {
             width: 60px;
             font-size: 0.85em;
             color: #166534;
         }
-        
+
         .stat-bars {
             flex: 1;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .mini-bar {
             width: 80px;
             height: 6px;
@@ -496,27 +519,27 @@
             border-radius: 3px;
             overflow: hidden;
         }
-        
+
         .mini-fill {
             height: 100%;
             border-radius: 3px;
         }
-        
+
         .mini-fill.green {
             background: linear-gradient(90deg, #22c55e, #4ade80);
         }
-        
+
         .mini-fill.pink {
             background: linear-gradient(90deg, #ff6b9d, #ff8fab);
         }
-        
+
         .stat-val {
             font-size: 0.85em;
             font-weight: 600;
             color: #1e293b;
             min-width: 70px;
         }
-        
+
         .value-bets {
             font-size: 0.9em;
             color: #166534;
@@ -526,7 +549,7 @@
             margin-bottom: 10px;
             font-weight: 500;
         }
-        
+
         .fav-result {
             padding: 12px 14px;
             border-radius: 10px;
@@ -537,31 +560,31 @@
             align-items: center;
             border: 1px solid rgba(56, 189, 248, 0.3);
         }
-        
+
         .fav-main {
             padding-left: 12px;
             font-weight: 700;
         }
-        
-        .fav-main span { 
+
+        .fav-main span {
             color: #166534;
             font-size: 0.95em;
         }
-        
-        .fav-main strong { 
-            color: #38BDF8; 
+
+        .fav-main strong {
+            color: #38BDF8;
             font-weight: 800;
             font-size: 1.2em;
             text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
         }
-        
+
         .conf-badge {
             padding: 4px 10px;
             border-radius: 12px;
             font-size: 0.8em;
             font-weight: 600;
         }
-        
+
         .footer {
             text-align: center;
             margin-top: 50px;
@@ -569,15 +592,15 @@
             color: #64748b;
             font-size: 0.8em;
         }
-        
+
         .footer a { color: #166534; text-decoration: none; }
-        
+
         .no-data {
             text-align: center;
             padding: 60px;
             color: #166534;
         }
-        
+
         @media (max-width: 600px) {
             .teams-section { flex-direction: column; gap: 10px; }
             .score-center { order: -1; }
@@ -615,13 +638,19 @@
 
         
         <div class="filter-controls" aria-label="賽事篩選">
-            <button class="filter-btn active" type="button" data-filter="all">全部 <span>65</span></button>
-            <button class="filter-btn" type="button" data-filter="finished">已完賽 <span>0</span></button>
-            <button class="filter-btn" type="button" data-filter="predicting">預測中 <span>65</span></button>
+            <select id="comp-filter" class="comp-select" aria-label="選擇聯賽">
+                <option value="all">🏆 全部聯賽 (65)</option>
+                <option value="BL1">🇩🇪 德甲</option><option value="FL1">🇫🇷 法甲</option><option value="PD">🇪🇸 西甲</option><option value="PL">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</option><option value="SA">🇮🇹 意甲</option>
+            </select>
+            <div class="status-filters">
+                <button class="filter-btn active" type="button" data-filter="all">全部 <span>65</span></button>
+                <button class="filter-btn" type="button" data-filter="finished">已完賽 <span>0</span></button>
+                <button class="filter-btn" type="button" data-filter="predicting">預測中 <span>65</span></button>
+            </div>
         </div>
         <div class="filter-empty" id="filter-empty" hidden>⚠️ 呢個分類暫時冇賽事</div>
     
-        
+
         
         <div class="featured-section">
             <div class="featured-header">
@@ -629,14 +658,14 @@
                 <span class="count">8 場</span>
             </div>
             <div class="featured-grid">
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 06:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">列斯聯</div>
@@ -652,7 +681,7 @@
                 <div class="team-en">Wolverhampton Wanderers FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -693,7 +722,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -711,11 +740,11 @@
                 </div>
             </div>
         </div>
+
         
-        
-        
+
         <div class="value-bets">⭐ 模型高信心揀選</div>
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 57%</span>
@@ -724,14 +753,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 06:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">列斯聯</div>
@@ -747,7 +776,7 @@
                 <div class="team-en">Wolverhampton Wanderers FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -788,7 +817,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -806,11 +835,11 @@
                 </div>
             </div>
         </div>
+
         
-        
-        
+
         <div class="value-bets">⭐ 模型高信心揀選</div>
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 57%</span>
@@ -819,14 +848,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/20 05:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">諾定咸森林</div>
@@ -842,7 +871,7 @@
                 <div class="team-en">Burnley FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -883,7 +912,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -901,11 +930,11 @@
                 </div>
             </div>
         </div>
+
         
-        
-        
+
         <div class="value-bets">⭐ 模型高信心揀選</div>
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 52%</span>
@@ -914,14 +943,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/20 05:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">諾定咸森林</div>
@@ -937,7 +966,7 @@
                 <div class="team-en">Burnley FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -978,7 +1007,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -996,11 +1025,11 @@
                 </div>
             </div>
         </div>
+
         
-        
-        
+
         <div class="value-bets">⭐ 模型高信心揀選</div>
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 52%</span>
@@ -1009,14 +1038,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/21 11:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">水晶宮</div>
@@ -1032,7 +1061,7 @@
                 <div class="team-en">West Ham United FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -1073,7 +1102,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -1091,11 +1120,11 @@
                 </div>
             </div>
         </div>
+
         
-        
-        
+
         <div class="value-bets">⭐ 模型高信心揀選</div>
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 54%</span>
@@ -1104,14 +1133,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/21 11:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">水晶宮</div>
@@ -1127,7 +1156,7 @@
                 <div class="team-en">West Ham United FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -1168,7 +1197,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -1186,11 +1215,11 @@
                 </div>
             </div>
         </div>
+
         
-        
-        
+
         <div class="value-bets">⭐ 模型高信心揀選</div>
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 54%</span>
@@ -1199,14 +1228,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/23 11:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">般尼</div>
@@ -1222,7 +1251,7 @@
                 <div class="team-en">Manchester City FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -1263,7 +1292,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -1281,11 +1310,11 @@
                 </div>
             </div>
         </div>
+
         
-        
-        
+
         <div class="value-bets">⭐ 模型高信心揀選</div>
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #ef4444">
                 <span>最可能：<strong>客勝</strong> 77%</span>
@@ -1294,14 +1323,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/23 11:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">般尼</div>
@@ -1317,7 +1346,7 @@
                 <div class="team-en">Manchester City FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -1358,7 +1387,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -1376,11 +1405,11 @@
                 </div>
             </div>
         </div>
+
         
-        
-        
+
         <div class="value-bets">⭐ 模型高信心揀選</div>
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #ef4444">
                 <span>最可能：<strong>客勝</strong> 77%</span>
@@ -1390,7 +1419,7 @@
     </div></div>
         </div>
         
-        
+
         <div class="all-matches">
             
         <div class="comp-group">
@@ -1399,14 +1428,14 @@
                 <span class="comp-count">9 場</span>
             </div>
             <div class="comp-matches">
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="BL1">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #f59e0b 0%, #ca8a04 100%)">🇩🇪 德甲</div>
             <div class="match-datetime">
                 <span class="date-label">明日 10:30</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">FC St. Pauli 1910</div>
@@ -1422,7 +1451,7 @@
                 <div class="team-en">1. FC Köln</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -1463,7 +1492,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -1481,11 +1510,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -1494,14 +1523,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="BL1">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #f59e0b 0%, #ca8a04 100%)">🇩🇪 德甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 05:30</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">SV Werder Bremen</div>
@@ -1517,7 +1546,7 @@
                 <div class="team-en">Hamburger SV</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -1558,7 +1587,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -1576,11 +1605,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -1589,14 +1618,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="BL1">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #f59e0b 0%, #ca8a04 100%)">🇩🇪 德甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 05:30</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">利華古遜</div>
@@ -1612,7 +1641,7 @@
                 <div class="team-en">FC Augsburg</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -1653,7 +1682,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -1671,11 +1700,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -1684,14 +1713,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="BL1">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #f59e0b 0%, #ca8a04 100%)">🇩🇪 德甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 05:30</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">TSG 1899 Hoffenheim</div>
@@ -1707,7 +1736,7 @@
                 <div class="team-en">Borussia Dortmund</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -1748,7 +1777,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -1766,11 +1795,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -1779,14 +1808,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="BL1">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #f59e0b 0%, #ca8a04 100%)">🇩🇪 德甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 05:30</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">1. FC Union Berlin</div>
@@ -1802,7 +1831,7 @@
                 <div class="team-en">VfL Wolfsburg</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -1843,7 +1872,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -1861,11 +1890,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -1874,14 +1903,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="BL1">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #f59e0b 0%, #ca8a04 100%)">🇩🇪 德甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 08:30</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">法蘭克福</div>
@@ -1897,7 +1926,7 @@
                 <div class="team-en">RB Leipzig</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -1938,7 +1967,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -1956,11 +1985,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -1969,14 +1998,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="BL1">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #f59e0b 0%, #ca8a04 100%)">🇩🇪 德甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/20 05:30</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">SC Freiburg</div>
@@ -1992,7 +2021,7 @@
                 <div class="team-en">1. FC Heidenheim 1846</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -2033,7 +2062,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -2051,11 +2080,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -2064,14 +2093,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="BL1">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #f59e0b 0%, #ca8a04 100%)">🇩🇪 德甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/20 07:30</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">拜仁慕尼黑</div>
@@ -2087,7 +2116,7 @@
                 <div class="team-en">VfB Stuttgart</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -2128,7 +2157,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -2146,11 +2175,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -2159,14 +2188,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="BL1">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #f59e0b 0%, #ca8a04 100%)">🇩🇪 德甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/20 09:30</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">Borussia Mönchengladbach</div>
@@ -2182,7 +2211,7 @@
                 <div class="team-en">1. FSV Mainz 05</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -2223,7 +2252,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -2241,11 +2270,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -2262,14 +2291,14 @@
                 <span class="comp-count">10 場</span>
             </div>
             <div class="comp-matches">
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="FL1">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)">🇫🇷 法甲</div>
             <div class="match-datetime">
                 <span class="date-label">明日 10:45</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">Racing Club de Lens</div>
@@ -2285,7 +2314,7 @@
                 <div class="team-en">Toulouse FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -2326,7 +2355,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -2344,11 +2373,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -2357,14 +2386,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="FL1">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)">🇫🇷 法甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 07:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">FC Lorient</div>
@@ -2380,7 +2409,7 @@
                 <div class="team-en">Olympique de Marseille</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -2421,7 +2450,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -2439,11 +2468,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -2452,14 +2481,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="FL1">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)">🇫🇷 法甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 09:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">Angers SCO</div>
@@ -2475,7 +2504,7 @@
                 <div class="team-en">Le Havre AC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -2516,7 +2545,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -2534,11 +2563,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -2547,14 +2576,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="FL1">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)">🇫🇷 法甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 11:05</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">Lille OSC</div>
@@ -2570,7 +2599,7 @@
                 <div class="team-en">OGC Nice</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -2611,7 +2640,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -2629,11 +2658,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -2642,14 +2671,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="FL1">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)">🇫🇷 法甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/20 05:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">摩納哥</div>
@@ -2665,7 +2694,7 @@
                 <div class="team-en">AJ Auxerre</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -2706,7 +2735,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -2724,11 +2753,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -2737,14 +2766,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="FL1">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)">🇫🇷 法甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/20 07:15</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">FC Metz</div>
@@ -2760,7 +2789,7 @@
                 <div class="team-en">Paris FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -2801,7 +2830,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -2819,11 +2848,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -2832,14 +2861,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="FL1">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)">🇫🇷 法甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/20 07:15</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">FC Nantes</div>
@@ -2855,7 +2884,7 @@
                 <div class="team-en">Stade Brestois 29</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -2896,7 +2925,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -2914,11 +2943,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -2927,14 +2956,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="FL1">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)">🇫🇷 法甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/20 07:15</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">RC Strasbourg Alsace</div>
@@ -2950,7 +2979,7 @@
                 <div class="team-en">Stade Rennais FC 1901</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -2991,7 +3020,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -3009,11 +3038,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -3022,14 +3051,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="FL1">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)">🇫🇷 法甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/20 10:45</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">巴黎聖日耳門</div>
@@ -3045,7 +3074,7 @@
                 <div class="team-en">Olympique Lyonnais</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -3086,7 +3115,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -3104,11 +3133,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -3117,14 +3146,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="FL1">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)">🇫🇷 法甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/23 09:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">巴黎聖日耳門</div>
@@ -3140,7 +3169,7 @@
                 <div class="team-en">FC Nantes</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -3181,7 +3210,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -3199,11 +3228,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -3220,14 +3249,14 @@
                 <span class="comp-count">10 場</span>
             </div>
             <div class="comp-matches">
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PD">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%)">🇪🇸 西甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/22 09:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">畢爾包</div>
@@ -3243,7 +3272,7 @@
                 <div class="team-en">CA Osasuna</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -3284,7 +3313,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -3302,11 +3331,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -3315,14 +3344,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PD">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%)">🇪🇸 西甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/22 09:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">RCD Mallorca</div>
@@ -3338,7 +3367,7 @@
                 <div class="team-en">Valencia CF</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -3379,7 +3408,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -3397,11 +3426,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -3410,14 +3439,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PD">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%)">🇪🇸 西甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/22 11:30</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">皇家馬德里</div>
@@ -3433,7 +3462,7 @@
                 <div class="team-en">Deportivo Alavés</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -3474,7 +3503,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -3492,11 +3521,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -3505,14 +3534,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PD">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%)">🇪🇸 西甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/22 11:30</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">Girona FC</div>
@@ -3528,7 +3557,7 @@
                 <div class="team-en">Real Betis Balompié</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -3569,7 +3598,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -3587,11 +3616,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -3600,14 +3629,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PD">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%)">🇪🇸 西甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/23 09:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">Elche CF</div>
@@ -3623,7 +3652,7 @@
                 <div class="team-en">Club Atlético de Madrid</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -3664,7 +3693,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -3682,11 +3711,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -3695,14 +3724,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PD">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%)">🇪🇸 西甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/23 10:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">Real Sociedad de Fútbol</div>
@@ -3718,7 +3747,7 @@
                 <div class="team-en">Getafe CF</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -3759,7 +3788,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -3777,11 +3806,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -3790,14 +3819,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PD">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%)">🇪🇸 西甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/23 11:30</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">巴塞隆拿</div>
@@ -3813,7 +3842,7 @@
                 <div class="team-en">RC Celta de Vigo</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -3854,7 +3883,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -3872,11 +3901,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -3885,14 +3914,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PD">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%)">🇪🇸 西甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/24 09:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">Levante UD</div>
@@ -3908,7 +3937,7 @@
                 <div class="team-en">Sevilla FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -3949,7 +3978,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -3967,11 +3996,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -3980,14 +4009,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PD">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%)">🇪🇸 西甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/24 10:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">Rayo Vallecano de Madrid</div>
@@ -4003,7 +4032,7 @@
                 <div class="team-en">RCD Espanyol de Barcelona</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -4044,7 +4073,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -4062,11 +4091,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -4075,14 +4104,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PD">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%)">🇪🇸 西甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/24 11:30</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">Real Oviedo</div>
@@ -4098,7 +4127,7 @@
                 <div class="team-en">Villarreal CF</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -4139,7 +4168,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -4157,11 +4186,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -4178,14 +4207,14 @@
                 <span class="comp-count">26 場</span>
             </div>
             <div class="comp-matches">
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 03:30</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">賓福特</div>
@@ -4201,7 +4230,7 @@
                 <div class="team-en">Fulham FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -4242,7 +4271,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -4260,11 +4289,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 50%</span>
@@ -4273,14 +4302,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 03:30</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">賓福特</div>
@@ -4296,7 +4325,7 @@
                 <div class="team-en">Fulham FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -4337,7 +4366,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -4355,11 +4384,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 50%</span>
@@ -4368,14 +4397,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 06:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">列斯聯</div>
@@ -4391,7 +4420,7 @@
                 <div class="team-en">Wolverhampton Wanderers FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -4432,7 +4461,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -4450,11 +4479,11 @@
                 </div>
             </div>
         </div>
+
         
-        
-        
+
         <div class="value-bets">⭐ 模型高信心揀選</div>
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 57%</span>
@@ -4463,14 +4492,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 06:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">紐卡素</div>
@@ -4486,7 +4515,7 @@
                 <div class="team-en">AFC Bournemouth</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -4527,7 +4556,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -4545,11 +4574,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #ef4444">
                 <span>最可能：<strong>客勝</strong> 38%</span>
@@ -4558,14 +4587,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 06:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">紐卡素</div>
@@ -4581,7 +4610,7 @@
                 <div class="team-en">AFC Bournemouth</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -4622,7 +4651,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -4640,11 +4669,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #ef4444">
                 <span>最可能：<strong>客勝</strong> 38%</span>
@@ -4653,14 +4682,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 06:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">列斯聯</div>
@@ -4676,7 +4705,7 @@
                 <div class="team-en">Wolverhampton Wanderers FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -4717,7 +4746,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -4735,11 +4764,11 @@
                 </div>
             </div>
         </div>
+
         
-        
-        
+
         <div class="value-bets">⭐ 模型高信心揀選</div>
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 57%</span>
@@ -4748,14 +4777,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 08:30</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">熱刺</div>
@@ -4771,7 +4800,7 @@
                 <div class="team-en">Brighton & Hove Albion FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -4812,7 +4841,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -4830,11 +4859,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #ef4444">
                 <span>最可能：<strong>客勝</strong> 44%</span>
@@ -4843,14 +4872,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 08:30</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">熱刺</div>
@@ -4866,7 +4895,7 @@
                 <div class="team-en">Brighton & Hove Albion FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -4907,7 +4936,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -4925,11 +4954,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #ef4444">
                 <span>最可能：<strong>客勝</strong> 44%</span>
@@ -4938,14 +4967,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 11:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">車路士</div>
@@ -4961,7 +4990,7 @@
                 <div class="team-en">Manchester United FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -5002,7 +5031,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -5020,11 +5049,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 39%</span>
@@ -5033,14 +5062,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 11:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">車路士</div>
@@ -5056,7 +5085,7 @@
                 <div class="team-en">Manchester United FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -5097,7 +5126,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -5115,11 +5144,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 39%</span>
@@ -5128,14 +5157,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/20 05:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">阿士東維拉</div>
@@ -5151,7 +5180,7 @@
                 <div class="team-en">Sunderland AFC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -5192,7 +5221,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -5210,11 +5239,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 45%</span>
@@ -5223,14 +5252,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/20 05:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">愛華頓</div>
@@ -5246,7 +5275,7 @@
                 <div class="team-en">Liverpool FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -5287,7 +5316,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -5305,11 +5334,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #ef4444">
                 <span>最可能：<strong>客勝</strong> 47%</span>
@@ -5318,14 +5347,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/20 05:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">諾定咸森林</div>
@@ -5341,7 +5370,7 @@
                 <div class="team-en">Burnley FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -5382,7 +5411,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -5400,11 +5429,11 @@
                 </div>
             </div>
         </div>
+
         
-        
-        
+
         <div class="value-bets">⭐ 模型高信心揀選</div>
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 52%</span>
@@ -5413,14 +5442,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/20 05:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">諾定咸森林</div>
@@ -5436,7 +5465,7 @@
                 <div class="team-en">Burnley FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -5477,7 +5506,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -5495,11 +5524,11 @@
                 </div>
             </div>
         </div>
+
         
-        
-        
+
         <div class="value-bets">⭐ 模型高信心揀選</div>
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 52%</span>
@@ -5508,14 +5537,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/20 05:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">阿士東維拉</div>
@@ -5531,7 +5560,7 @@
                 <div class="team-en">Sunderland AFC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -5572,7 +5601,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -5590,11 +5619,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 45%</span>
@@ -5603,14 +5632,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/20 05:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">愛華頓</div>
@@ -5626,7 +5655,7 @@
                 <div class="team-en">Liverpool FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -5667,7 +5696,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -5685,11 +5714,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #ef4444">
                 <span>最可能：<strong>客勝</strong> 47%</span>
@@ -5698,14 +5727,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/20 07:30</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">曼城</div>
@@ -5721,7 +5750,7 @@
                 <div class="team-en">Arsenal FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -5762,7 +5791,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -5780,11 +5809,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #ef4444">
                 <span>最可能：<strong>客勝</strong> 42%</span>
@@ -5793,14 +5822,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/20 07:30</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">曼城</div>
@@ -5816,7 +5845,7 @@
                 <div class="team-en">Arsenal FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -5857,7 +5886,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -5875,11 +5904,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #ef4444">
                 <span>最可能：<strong>客勝</strong> 42%</span>
@@ -5888,14 +5917,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/21 11:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">水晶宮</div>
@@ -5911,7 +5940,7 @@
                 <div class="team-en">West Ham United FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -5952,7 +5981,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -5970,11 +5999,11 @@
                 </div>
             </div>
         </div>
+
         
-        
-        
+
         <div class="value-bets">⭐ 模型高信心揀選</div>
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 54%</span>
@@ -5983,14 +6012,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/21 11:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">水晶宮</div>
@@ -6006,7 +6035,7 @@
                 <div class="team-en">West Ham United FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -6047,7 +6076,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -6065,11 +6094,11 @@
                 </div>
             </div>
         </div>
+
         
-        
-        
+
         <div class="value-bets">⭐ 模型高信心揀選</div>
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 54%</span>
@@ -6078,14 +6107,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/22 11:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">白禮頓</div>
@@ -6101,7 +6130,7 @@
                 <div class="team-en">Chelsea FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -6142,7 +6171,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -6160,11 +6189,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #ef4444">
                 <span>最可能：<strong>客勝</strong> 44%</span>
@@ -6173,14 +6202,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/22 11:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">白禮頓</div>
@@ -6196,7 +6225,7 @@
                 <div class="team-en">Chelsea FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -6237,7 +6266,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -6255,11 +6284,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #ef4444">
                 <span>最可能：<strong>客勝</strong> 44%</span>
@@ -6268,14 +6297,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/23 11:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">般尼茅夫</div>
@@ -6291,7 +6320,7 @@
                 <div class="team-en">Leeds United FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -6332,7 +6361,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -6350,11 +6379,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 44%</span>
@@ -6363,14 +6392,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/23 11:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">般尼</div>
@@ -6386,7 +6415,7 @@
                 <div class="team-en">Manchester City FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -6427,7 +6456,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -6445,11 +6474,11 @@
                 </div>
             </div>
         </div>
+
         
-        
-        
+
         <div class="value-bets">⭐ 模型高信心揀選</div>
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #ef4444">
                 <span>最可能：<strong>客勝</strong> 77%</span>
@@ -6458,14 +6487,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/23 11:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">般尼茅夫</div>
@@ -6481,7 +6510,7 @@
                 <div class="team-en">Leeds United FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -6522,7 +6551,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -6540,11 +6569,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 44%</span>
@@ -6553,14 +6582,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
             <div class="match-datetime">
                 <span class="date-label">04/23 11:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">般尼</div>
@@ -6576,7 +6605,7 @@
                 <div class="team-en">Manchester City FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -6617,7 +6646,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -6635,11 +6664,11 @@
                 </div>
             </div>
         </div>
+
         
-        
-        
+
         <div class="value-bets">⭐ 模型高信心揀選</div>
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #ef4444">
                 <span>最可能：<strong>客勝</strong> 77%</span>
@@ -6656,14 +6685,14 @@
                 <span class="comp-count">10 場</span>
             </div>
             <div class="comp-matches">
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="SA">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #22c55e 0%, #15803d 100%)">🇮🇹 意甲</div>
             <div class="match-datetime">
                 <span class="date-label">明日 08:30</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">US Sassuolo Calcio</div>
@@ -6679,7 +6708,7 @@
                 <div class="team-en">Como 1907</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -6720,7 +6749,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -6738,11 +6767,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -6751,14 +6780,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="SA">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #22c55e 0%, #15803d 100%)">🇮🇹 意甲</div>
             <div class="match-datetime">
                 <span class="date-label">明日 10:45</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">國際米蘭</div>
@@ -6774,7 +6803,7 @@
                 <div class="team-en">Cagliari Calcio</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -6815,7 +6844,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -6833,11 +6862,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -6846,14 +6875,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="SA">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #22c55e 0%, #15803d 100%)">🇮🇹 意甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 05:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">Udinese Calcio</div>
@@ -6869,7 +6898,7 @@
                 <div class="team-en">Parma Calcio 1913</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -6910,7 +6939,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -6928,11 +6957,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -6941,14 +6970,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="SA">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #22c55e 0%, #15803d 100%)">🇮🇹 意甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 08:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">拿玻里</div>
@@ -6964,7 +6993,7 @@
                 <div class="team-en">SS Lazio</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -7005,7 +7034,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -7023,11 +7052,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -7036,14 +7065,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="SA">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #22c55e 0%, #15803d 100%)">🇮🇹 意甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/19 10:45</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">AS Roma</div>
@@ -7059,7 +7088,7 @@
                 <div class="team-en">Atalanta BC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -7100,7 +7129,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -7118,11 +7147,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -7131,14 +7160,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="SA">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #22c55e 0%, #15803d 100%)">🇮🇹 意甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/20 02:30</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">US Cremonese</div>
@@ -7154,7 +7183,7 @@
                 <div class="team-en">Torino FC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -7195,7 +7224,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -7213,11 +7242,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -7226,14 +7255,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="SA">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #22c55e 0%, #15803d 100%)">🇮🇹 意甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/20 05:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">Hellas Verona FC</div>
@@ -7249,7 +7278,7 @@
                 <div class="team-en">AC Milan</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -7290,7 +7319,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -7308,11 +7337,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -7321,14 +7350,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="SA">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #22c55e 0%, #15803d 100%)">🇮🇹 意甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/20 08:00</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">AC Pisa 1909</div>
@@ -7344,7 +7373,7 @@
                 <div class="team-en">Genoa CFC</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -7385,7 +7414,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -7403,11 +7432,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -7416,14 +7445,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="SA">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #22c55e 0%, #15803d 100%)">🇮🇹 意甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/20 10:45</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">祖雲達斯</div>
@@ -7439,7 +7468,7 @@
                 <div class="team-en">Bologna FC 1909</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -7480,7 +7509,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -7498,11 +7527,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -7511,14 +7540,14 @@
         </div>
     </div>
 
-    <div class="match-card" data-match-status="predicting">
+    <div class="match-card" data-match-status="predicting" data-comp="SA">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #22c55e 0%, #15803d 100%)">🇮🇹 意甲</div>
             <div class="match-datetime">
                 <span class="date-label">04/21 10:45</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">US Lecce</div>
@@ -7534,7 +7563,7 @@
                 <div class="team-en">ACF Fiorentina</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             
             
@@ -7575,7 +7604,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -7593,11 +7622,11 @@
                 </div>
             </div>
         </div>
+
         
+
         
-        
-        
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid #22c55e">
                 <span>最可能：<strong>主勝</strong> 40%</span>
@@ -7608,7 +7637,7 @@
         </div>
         
         </div>
-        
+
         <div class="footer">
             <p>Generated by Hanni 🐰 | Data: football-data.org</p>
             <p>⚠️ 僅供參考，不構成投注建議</p>
@@ -7616,19 +7645,26 @@
     </div>
     <script>
         const filterButtons = document.querySelectorAll('.filter-btn');
+        const compSelect = document.getElementById('comp-filter');
         const matchCards = document.querySelectorAll('.match-card');
         const sections = document.querySelectorAll('.featured-section, .comp-group');
         const filterEmpty = document.getElementById('filter-empty');
+        
+        let currentComp = 'all';
+        let currentStatus = 'all';
 
-        function applyFilter(filter) {
+        function applyFilters() {
             let visibleCards = 0;
 
+            // Update status button active states
             filterButtons.forEach((button) => {
-                button.classList.toggle('active', button.dataset.filter === filter);
+                button.classList.toggle('active', button.dataset.filter === currentStatus);
             });
 
             matchCards.forEach((card) => {
-                const isVisible = filter === 'all' || card.dataset.matchStatus === filter;
+                const compMatch = currentComp === 'all' || card.dataset.comp === currentComp;
+                const statusMatch = currentStatus === 'all' || card.dataset.matchStatus === currentStatus;
+                const isVisible = compMatch && statusMatch;
                 card.classList.toggle('is-hidden', !isVisible);
                 if (isVisible) visibleCards += 1;
             });
@@ -7644,8 +7680,18 @@
         }
 
         filterButtons.forEach((button) => {
-            button.addEventListener('click', () => applyFilter(button.dataset.filter));
+            button.addEventListener('click', () => {
+                currentStatus = button.dataset.filter;
+                applyFilters();
+            });
         });
+
+        if (compSelect) {
+            compSelect.addEventListener('change', (e) => {
+                currentComp = e.target.value;
+                applyFilters();
+            });
+        }
     </script>
 </body>
 </html>

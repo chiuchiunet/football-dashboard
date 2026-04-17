@@ -25,7 +25,7 @@ COLORS = {
     "warning": "#f59e0b",
     "danger": "#ef4444",
     "home_color": "#22c55e",
-    "draw_color": "#f59e0b", 
+    "draw_color": "#f59e0b",
     "away_color": "#ef4444",
 }
 
@@ -36,14 +36,14 @@ def get_accuracy_stats() -> dict:
         conn = sqlite3.connect(DB_PATH)
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
-        
+
         # Overall accuracy
         overall = cur.execute("""
             SELECT COUNT(*) as total,
                    SUM(prediction_correct_outcome) as correct
             FROM match_results
         """).fetchone()
-        
+
         # Per-competition accuracy
         comp_stats = cur.execute("""
             SELECT m.competition_code,
@@ -53,18 +53,18 @@ def get_accuracy_stats() -> dict:
             JOIN matches m ON mr.match_id = m.match_id
             GROUP BY m.competition_code
         """).fetchall()
-        
+
         conn.close()
-        
+
         overall_acc = round(100 * overall['correct'] / overall['total'], 1) if overall['total'] > 0 else 0
         overall_total = overall['total']
         overall_correct = overall['correct']
-        
+
         comp_dict = {}
         for row in comp_stats:
             acc = round(100 * row['correct'] / row['total'], 1) if row['total'] > 0 else 0
             comp_dict[row['competition_code']] = {'total': row['total'], 'correct': row['correct'], 'accuracy': acc}
-        
+
         return {'overall': {'total': overall_total, 'correct': overall_correct, 'accuracy': overall_acc}, 'by_comp': comp_dict}
     except Exception as e:
         return {'overall': {'total': 0, 'correct': 0, 'accuracy': 0}, 'by_comp': {}}
@@ -288,8 +288,8 @@ def get_predictions(days_ahead: int = 7) -> list:
         FROM matches m
         JOIN predictions p ON p.match_id = m.match_id
         AND p.prediction_id = (
-            SELECT MAX(p2.prediction_id) 
-            FROM predictions p2 
+            SELECT MAX(p2.prediction_id)
+            FROM predictions p2
             WHERE p2.match_id = m.match_id
         )
         LEFT JOIN match_results mr ON mr.match_id = m.match_id
@@ -317,7 +317,7 @@ def format_match_time(utc_date: str) -> tuple:
         now_utc = datetime.now(timezone.utc)
         today_hkt = now_utc.astimezone(timezone(timedelta(hours=8))).date()
         match_date = hkt.date()
-        
+
         time_str = hkt.strftime("%H:%M")
         if match_date == today_hkt:
             label = "今日"
@@ -325,7 +325,7 @@ def format_match_time(utc_date: str) -> tuple:
             label = "明日"
         else:
             label = hkt.strftime("%m/%d")
-        
+
         full_date = hkt.strftime("%Y/%m/%d %H:%M")
         return time_str, label, full_date
     except:
@@ -366,7 +366,7 @@ def prediction_card_from_dict(row: dict) -> str:
         with sqlite3.connect(DB_PATH) as conn:
             home_recent_html = get_recent_form_html(conn, home_id, True)
             away_recent_html = get_recent_form_html(conn, away_id, False)
-    
+
     return _build_card(utc_date, comp, home, away, hwp, dp, awp, ov, un, bts_yes, bts_no, ehg, eag, hhp, dhp, ahp, ehg2, ea2, bets, home_id, away_id, home_recent_html, away_recent_html, status, actual_home_score, actual_away_score, prediction_correct)
 
 
@@ -379,7 +379,7 @@ def prediction_card_from_tuple(row: tuple) -> str:
         status, actual_home_score, actual_away_score, prediction_correct = row[22:26]
     else:
         status, actual_home_score, actual_away_score, prediction_correct = "", None, None, None
-    
+
     hwp = hwp or 0
     dp = dp or 0
     awp = awp or 0
@@ -404,11 +404,11 @@ def prediction_card_from_tuple(row: tuple) -> str:
         with sqlite3.connect(DB_PATH) as conn:
             home_recent_html = get_recent_form_html(conn, home_id, True)
             away_recent_html = get_recent_form_html(conn, away_id, False)
-    
+
     return _build_card(utc_date, comp, home, away, hwp, dp, awp, ov, un, bts_yes, bts_no, ehg, eag, hhp, dhp, ahp, ehg2, ea2, bets, home_id, away_id, home_recent_html, away_recent_html, status, actual_home_score, actual_away_score, prediction_correct)
 
 
-def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: float, awp: float, 
+def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: float, awp: float,
                  ov: float, un: float, bts_yes: float, bts_no: float, ehg: float, eag: float,
                  hhp: float, dhp: float, ahp: float, ehg2: float, ea2: float, bets: str,
                  home_id: int = 0, away_id: int = 0, home_recent_html: str = "",
@@ -419,14 +419,14 @@ def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: 
     away_cn = get_team_name_cn(away)
     comp_cn = get_comp_cn(comp)
     comp_gradient = get_comp_gradient(comp)
-    
+
     time_str, date_label, full_date = format_match_time(utc_date)
-    
+
     # Poisson mode for most likely exact score
     def poisson_prob(g, a):
         if a <= 0: return 1.0 if g == 0 else 0.0
         return (a ** g * math.exp(-a)) / math.factorial(g)
-    
+
     best_score = (0, 0)
     best_prob = 0
     for hg in range(8):
@@ -435,7 +435,7 @@ def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: 
             if prob > best_prob:
                 best_prob = prob
                 best_score = (hg, ag)
-    
+
     predicted_home, predicted_away = best_score
     total_goals = ehg + eag
     total_goals_str = f"{total_goals:.1f}"
@@ -463,19 +463,19 @@ def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: 
     probs = {"主勝": hwp, "和": dp, "客勝": awp}
     fav = max(probs, key=probs.get)
     fav_prob = probs[fav]
-    
+
     max_prob = max(hwp, dp, awp)
     is_confident = max_prob > 0.50
     conf_level = "高信心" if max_prob > 0.55 else "中信心" if max_prob > 0.45 else "一般"
     conf_color = "#22c55e" if max_prob > 0.55 else "#f59e0b" if max_prob > 0.45 else "#6b6b80"
-    
+
     if hwp >= dp and hwp >= awp:
         primary_color = COLORS["home_color"]
     elif awp >= dp:
         primary_color = COLORS["away_color"]
     else:
         primary_color = COLORS["draw_color"]
-    
+
     # H2H section
     h2h_section = ""
     if home_id and away_id:
@@ -494,16 +494,16 @@ def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: 
             </div>
             <div class="h2h-matches">{h2h['played']} 場</div>
         </div>"""
-    
+
     return f"""
-    <div class="match-card" data-match-status="{filter_status}">
+    <div class="match-card" data-match-status="{filter_status}" data-comp="{comp}">
         <div class="match-header">
             <div class="comp-badge" style="background: {comp_gradient}">{comp_cn}</div>
             <div class="match-datetime">
                 <span class="date-label">{date_label} {time_str}</span>
             </div>
         </div>
-        
+
         <div class="teams-section">
             <div class="team home">
                 <div class="team-name">{home_cn}</div>
@@ -517,7 +517,7 @@ def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: 
                 <div class="team-en">{away}</div>
             </div>
         </div>
-        
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
             {home_recent_html}
             {away_recent_html}
@@ -558,7 +558,7 @@ def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: 
                 </div>
             </div>
         </div>
-        
+
         <!-- Stats container -->
         <div class="stats-container">
             <div class="stat-row">
@@ -576,11 +576,11 @@ def _build_card(utc_date: str, comp: str, home: str, away: str, hwp: float, dp: 
                 </div>
             </div>
         </div>
-        
+
         {h2h_section}
-        
+
         {'<div class="value-bets">⭐ 模型高信心揀選</div>' if is_confident else ''}
-        
+
         <div class="fav-result">
             <div class="fav-main" style="border-left: 4px solid {primary_color}">
                 <span>最可能：<strong>{fav}</strong> {fav_prob*100:.0f}%</span>
@@ -623,11 +623,17 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
         rows = predictions.to_dict(orient='records')
     else:
         rows = predictions
-    
+
     groups = group_by_competition(rows)
     finished_count = sum(1 for row in rows if get_filter_status(row) == "finished")
     predicting_count = len(rows) - finished_count
-    
+
+    # Build competition dropdown options
+    comp_options = "".join(
+        f'<option value="{code}">{get_comp_cn(code)}</option>'
+        for code in sorted(groups.keys())
+    )
+
     comp_sections = []
     for comp_code, comp_rows in sorted(groups.items(), key=lambda x: x[0]):
         comp_cn = get_comp_cn(comp_code)
@@ -642,15 +648,15 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             <div class="comp-matches">{cards}</div>
         </div>
         """)
-    
+
     comp_html = "\n".join(comp_sections)
-    
+
     # Featured - model confidence based picks (>50% probability)
     def get_max_prob(r):
         if isinstance(r, dict):
             return max(r.get('home_win_prob') or 0, r.get('draw_prob') or 0, r.get('away_win_prob') or 0)
         return max(r[7] or 0, r[8] or 0, r[9] or 0)
-    
+
     featured_rows = [r for r in rows if get_max_prob(r) > 0.50]
     featured_html = ""
     if featured_rows:
@@ -667,9 +673,15 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
 
     filter_html = f"""
         <div class="filter-controls" aria-label="賽事篩選">
-            <button class="filter-btn active" type="button" data-filter="all">全部 <span>{len(rows)}</span></button>
-            <button class="filter-btn" type="button" data-filter="finished">已完賽 <span>{finished_count}</span></button>
-            <button class="filter-btn" type="button" data-filter="predicting">預測中 <span>{predicting_count}</span></button>
+            <select id="comp-filter" class="comp-select" aria-label="選擇聯賽">
+                <option value="all">🏆 全部聯賽 ({len(rows)})</option>
+                {comp_options}
+            </select>
+            <div class="status-filters">
+                <button class="filter-btn active" type="button" data-filter="all">全部 <span>{len(rows)}</span></button>
+                <button class="filter-btn" type="button" data-filter="finished">已完賽 <span>{finished_count}</span></button>
+                <button class="filter-btn" type="button" data-filter="predicting">預測中 <span>{predicting_count}</span></button>
+            </div>
         </div>
         <div class="filter-empty" id="filter-empty" hidden>⚠️ 呢個分類暫時冇賽事</div>
     """
@@ -695,7 +707,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             <div class="acc-detail">{s['correct']}/{s['total']}</div>
         </div>""")
     accuracy_html = f"<div class='accuracy-bar'>{''.join(acc_cards)}</div>"
-    
+
     return f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -704,7 +716,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
     <title>{title}</title>
     <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-        
+
         body {{
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: {COLORS['bg_primary']};
@@ -712,9 +724,9 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             min-height: 100vh;
             padding: 20px;
         }}
-        
+
         .container {{ max-width: 1000px; margin: 0 auto; }}
-        
+
         .header {{
             text-align: center;
             padding: 40px 20px;
@@ -723,13 +735,13 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
         }}
-        
+
         .header h1 {{
             font-size: 2.2em;
             font-weight: 700;
             margin-bottom: 8px;
         }}
-        
+
         .header p {{
             color: rgba(255,255,255,0.85);
             font-size: 1em;
@@ -784,11 +796,34 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
         .filter-controls {{
             display: flex;
             justify-content: center;
-            gap: 10px;
+            align-items: center;
+            gap: 12px;
             flex-wrap: wrap;
             margin: -20px 0 30px;
         }}
-
+        
+        .comp-select {{
+            padding: 10px 14px;
+            border: 1px solid rgba(34,197,94,0.28);
+            border-radius: 8px;
+            background: #ffffff;
+            color: #166534;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            min-width: 160px;
+            box-shadow: 0 4px 12px rgba(21,128,61,0.08);
+        }}
+        
+        .comp-select:hover {{
+            border-color: #16a34a;
+        }}
+        
+        .status-filters {{
+            display: flex;
+            gap: 8px;
+        }}
+        
         .filter-btn {{
             border: 1px solid rgba(34,197,94,0.28);
             background: #ffffff;
@@ -841,7 +876,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
         .is-hidden {{
             display: none !important;
         }}
-        
+
         .featured-section {{
             background: linear-gradient(135deg, rgba(255,107,157,0.15) 0%, rgba(78,205,196,0.1) 100%);
             border-radius: 16px;
@@ -849,7 +884,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             margin-bottom: 30px;
             border: 1px solid rgba(255,107,157,0.3);
         }}
-        
+
         .featured-header {{
             display: flex;
             justify-content: space-between;
@@ -861,14 +896,14 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             font-weight: 600;
             font-size: 1.1em;
         }}
-        
+
         .featured-header .count {{
             font-size: 0.85em;
             color: {COLORS['text_secondary']};
         }}
-        
+
         .comp-group {{ margin-bottom: 30px; }}
-        
+
         .comp-header {{
             display: flex;
             justify-content: space-between;
@@ -879,10 +914,10 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             color: #166534;
             font-weight: 600;
         }}
-        
+
         .comp-name {{ font-size: 1.1em; }}
         .comp-count {{ font-size: 0.85em; opacity: 0.9; }}
-        
+
         .match-card {{
             background: {COLORS['bg_card']};
             border-radius: 16px;
@@ -891,20 +926,20 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             border: 1px solid rgba(255,255,255,0.08);
             transition: all 0.25s ease;
         }}
-        
+
         .match-card:hover {{
             transform: translateY(-3px);
             box-shadow: 0 12px 40px rgba(102, 126, 234, 0.25);
             background: {COLORS['bg_card_hover']};
         }}
-        
+
         .match-header {{
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
         }}
-        
+
         .comp-badge {{
             padding: 6px 14px;
             border-radius: 20px;
@@ -912,14 +947,14 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             font-size: 0.85em;
             color: #166534;
         }}
-        
+
         .match-datetime {{
             display: flex;
             flex-direction: column;
             align-items: flex-end;
             gap: 2px;
         }}
-        
+
         .date-label {{
             background: rgba(255,255,255,0.15);
             padding: 4px 10px;
@@ -928,12 +963,12 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             font-weight: 600;
             color: #166534;
         }}
-        
+
         .date-full {{
             font-size: 0.75em;
             color: {COLORS['text_secondary']};
         }}
-        
+
         .teams-section {{
             display: flex;
             align-items: center;
@@ -943,25 +978,25 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             border-radius: 12px;
             margin-bottom: 15px;
         }}
-        
+
         .team {{ flex: 1; text-align: center; }}
-        
+
         .team-name {{
             font-size: 1.1em;
             font-weight: 600;
             margin-bottom: 3px;
         }}
-        
+
         .team-en {{
             font-size: 0.75em;
             color: {COLORS['text_muted']};
         }}
-        
+
         .score-center {{
             text-align: center;
             padding: 0 20px;
         }}
-        
+
         .predicted-score {{
             font-size: 2em;
             font-weight: 700;
@@ -969,7 +1004,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }}
-        
+
         .total-goals {{
             font-size: 0.8em;
             color: {COLORS['accent_yellow']};
@@ -1019,12 +1054,12 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             border: 1px solid rgba(239,68,68,0.32);
             color: #dc2626;
         }}
-        
+
         /* Stacked Bar Section */
         .stacked-bar-section {{
             margin-bottom: 15px;
         }}
-        
+
         .stacked-bar {{
             display: flex;
             height: 32px;
@@ -1033,7 +1068,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             margin-bottom: 8px;
             background: rgba(255,255,255,0.06);
         }}
-        
+
         .bar-segment {{
             height: 100%;
             transition: width 0.6s ease;
@@ -1042,28 +1077,28 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             justify-content: center;
             min-width: 0;
         }}
-        
+
         .bar-home {{
             background: #3a3a4a;
             border-radius: 16px 0 0 16px;
         }}
-        
+
         .bar-draw {{
             background: #4a4a5a;
         }}
-        
+
         .bar-away {{
             background: linear-gradient(135deg, #38BDF8 0%, #7dd3fc 100%);
             border-radius: 0 16px 16px 0;
         }}
-        
+
         .stacked-bar-labels {{
             display: flex;
             justify-content: space-between;
             font-size: 0.9em;
             font-weight: 700;
         }}
-        
+
         .label-home {{ color: #166534; }}
         .label-draw {{ color: #166534; }}
         .label-away {{ color: #7dd3fc; font-weight: 700; }}
@@ -1119,7 +1154,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             color: #ffffff;
             font-size: 0.95em;
         }}
-        
+
         /* Stats Container */
         .stats-container {{
             background: rgba(0,0,0,0.25);
@@ -1127,7 +1162,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             padding: 14px 16px;
             margin-bottom: 12px;
         }}
-        
+
         /* H2H Container */
         .h2h-container {{
             background: rgba(56,189,248,0.08);
@@ -1136,57 +1171,57 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             padding: 12px 14px;
             margin-bottom: 12px;
         }}
-        
+
         .h2h-header {{
             font-size: 0.8em;
             color: #7dd3fc;
             margin-bottom: 8px;
             font-weight: 600;
         }}
-        
+
         .h2h-stats {{
             display: flex;
             gap: 12px;
             margin-bottom: 4px;
         }}
-        
+
         .h2h-stats span {{
             font-size: 0.9em;
             font-weight: 600;
         }}
-        
+
         .h2h-wins {{ color: #22c55e; }}
         .h2h-draws {{ color: #f59e0b; }}
         .h2h-losses {{ color: #ef4444; }}
         .h2h-goals {{ color: #7dd3fc; }}
-        
+
         .h2h-matches {{
             font-size: 0.75em;
             color: #6b6b80;
         }}
-        
+
         .stat-row {{
             display: flex;
             align-items: center;
             gap: 12px;
             margin-bottom: 10px;
         }}
-        
+
         .stat-row:last-child {{ margin-bottom: 0; }}
-        
+
         .stat-label {{
             width: 60px;
             font-size: 0.85em;
             color: {COLORS['text_secondary']};
         }}
-        
+
         .stat-bars {{
             flex: 1;
             display: flex;
             align-items: center;
             gap: 10px;
         }}
-        
+
         .mini-bar {{
             width: 80px;
             height: 6px;
@@ -1194,27 +1229,27 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             border-radius: 3px;
             overflow: hidden;
         }}
-        
+
         .mini-fill {{
             height: 100%;
             border-radius: 3px;
         }}
-        
+
         .mini-fill.green {{
             background: linear-gradient(90deg, #22c55e, #4ade80);
         }}
-        
+
         .mini-fill.pink {{
             background: linear-gradient(90deg, #ff6b9d, #ff8fab);
         }}
-        
+
         .stat-val {{
             font-size: 0.85em;
             font-weight: 600;
             color: {COLORS['text_primary']};
             min-width: 70px;
         }}
-        
+
         .value-bets {{
             font-size: 0.9em;
             color: {COLORS['accent_yellow']};
@@ -1224,7 +1259,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             margin-bottom: 10px;
             font-weight: 500;
         }}
-        
+
         .fav-result {{
             padding: 12px 14px;
             border-radius: 10px;
@@ -1235,31 +1270,31 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             align-items: center;
             border: 1px solid rgba(56, 189, 248, 0.3);
         }}
-        
+
         .fav-main {{
             padding-left: 12px;
             font-weight: 700;
         }}
-        
-        .fav-main span {{ 
+
+        .fav-main span {{
             color: {COLORS['text_secondary']};
             font-size: 0.95em;
         }}
-        
-        .fav-main strong {{ 
-            color: #38BDF8; 
+
+        .fav-main strong {{
+            color: #38BDF8;
             font-weight: 800;
             font-size: 1.2em;
             text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
         }}
-        
+
         .conf-badge {{
             padding: 4px 10px;
             border-radius: 12px;
             font-size: 0.8em;
             font-weight: 600;
         }}
-        
+
         .footer {{
             text-align: center;
             margin-top: 50px;
@@ -1267,15 +1302,15 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             color: {COLORS['text_muted']};
             font-size: 0.8em;
         }}
-        
+
         .footer a {{ color: {COLORS['accent_blue']}; text-decoration: none; }}
-        
+
         .no-data {{
             text-align: center;
             padding: 60px;
             color: {COLORS['text_secondary']};
         }}
-        
+
         @media (max-width: 600px) {{
             .teams-section {{ flex-direction: column; gap: 10px; }}
             .score-center {{ order: -1; }}
@@ -1297,13 +1332,13 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
         {accuracy_html}
 
         {filter_html}
-        
+
         {featured_html}
-        
+
         <div class="all-matches">
             {comp_html if comp_html else '<div class="no-data">⚠️ 暫時冇可用預測數據</div>'}
         </div>
-        
+
         <div class="footer">
             <p>Generated by Hanni 🐰 | Data: football-data.org</p>
             <p>⚠️ 僅供參考，不構成投注建議</p>
@@ -1311,19 +1346,26 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
     </div>
     <script>
         const filterButtons = document.querySelectorAll('.filter-btn');
+        const compSelect = document.getElementById('comp-filter');
         const matchCards = document.querySelectorAll('.match-card');
         const sections = document.querySelectorAll('.featured-section, .comp-group');
         const filterEmpty = document.getElementById('filter-empty');
+        
+        let currentComp = 'all';
+        let currentStatus = 'all';
 
-        function applyFilter(filter) {{
+        function applyFilters() {{
             let visibleCards = 0;
 
+            // Update status button active states
             filterButtons.forEach((button) => {{
-                button.classList.toggle('active', button.dataset.filter === filter);
+                button.classList.toggle('active', button.dataset.filter === currentStatus);
             }});
 
             matchCards.forEach((card) => {{
-                const isVisible = filter === 'all' || card.dataset.matchStatus === filter;
+                const compMatch = currentComp === 'all' || card.dataset.comp === currentComp;
+                const statusMatch = currentStatus === 'all' || card.dataset.matchStatus === currentStatus;
+                const isVisible = compMatch && statusMatch;
                 card.classList.toggle('is-hidden', !isVisible);
                 if (isVisible) visibleCards += 1;
             }});
@@ -1339,8 +1381,18 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
         }}
 
         filterButtons.forEach((button) => {{
-            button.addEventListener('click', () => applyFilter(button.dataset.filter));
+            button.addEventListener('click', () => {{
+                currentStatus = button.dataset.filter;
+                applyFilters();
+            }});
         }});
+
+        if (compSelect) {{
+            compSelect.addEventListener('change', (e) => {{
+                currentComp = e.target.value;
+                applyFilters();
+            }});
+        }}
     </script>
 </body>
 </html>"""
