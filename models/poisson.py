@@ -45,44 +45,115 @@ def build_score_matrix(home_xg: float, away_xg: float, max_goals: int = MAX_GOAL
 
 
 def _load_xg_cache():
-    """Load Understat xG data + recent xpts history from DB, keyed by team name."""
+    """
+    Load Understat xG data keyed by team name.
+    
+    For PL teams: uses RECENT per-match xG from understat_history (last 5 home/away games)
+    instead of season-total averages — captures current form better.
+    
+    Falls back to season-total from understat_xg if recent data insufficient.
+    """
     try:
         import sqlite3
         from pathlib import Path
         db_path = Path(__file__).resolve().parent.parent / "football.db"
         conn = sqlite3.connect(db_path)
 
-        # Team-level xG stats
-        rows = conn.execute("""
+        # For each PL team: recent home xG, recent away xG, recent xGA (last 5 games each)
+        recent_rows = conn.execute("""
+            WITH recent AS (
+                SELECT 
+                    team_name,
+                    h_a,
+                    xG,
+                    xGA,
+                    ROW_NUMBER() OVER (PARTITION BY team_name, h_a ORDER BY date DESC) as rn
+                FROM understat_history
+                WHERE league = 'PL'
+            )
+            SELECT 
+                team_name,
+                h_a,
+                AVG(xG) as avg_xg,
+                AVG(xGA) as avg_xga
+            FROM recent
+            WHERE rn <= 5
+            GROUP BY team_name, h_a
+        """).fetchall()
+
+        # Season-total xG for fallback / defense strength
+        season_rows = conn.execute("""
             SELECT team_name, xg, xga, home_xg, away_xg, played, xpts, pts
             FROM understat_xg WHERE league_code='PL'
         """).fetchall()
-
-        # Recent xpts per match (last 10 matches per team)
-        history_rows = conn.execute("""
-            SELECT ug.team_name, h.xpts, h.pts, h.date, h.h_a
-            FROM understat_xg ug
-            JOIN understat_history h ON h.team_name = ug.team_name AND h.league = ug.league_code
-            ORDER BY ug.team_name, h.date DESC
-        """).fetchall()
         conn.close()
 
-        # Build xpts history dict
-        xpts_history = {}
-        for team, xpts, pts, date, h_a in history_rows:
-            if team not in xpts_history:
-                xpts_history[team] = []
-            xpts_history[team].append({"xpts": xpts, "pts": pts, "date": date, "h_a": h_a})
+        # Build recent xG dict: {team_name: {"home_xg": float, "away_xg": float, "xga": float, "played": int, "recent_games": int}}
+        recent_xg = {}
+        for team, h_a, avg_xg, avg_xga in recent_rows:
+            if team not in recent_xg:
+                recent_xg[team] = {"home_xg": [], "away_xg": [], "xga": [], "recent_games": 0}
+            if h_a == "h":
+                recent_xg[team]["home_xg"].append(avg_xg)
+            else:
+                recent_xg[team]["away_xg"].append(avg_xga)  # away team xGA = our xG
+            recent_xg[team]["xga"].append(avg_xga)
+            recent_xg[team]["recent_games"] += 1
 
-        result = {}
-        for r in rows:
-            result[r[0]] = {
+        # Build season-total dict
+        season_xg = {}
+        for r in season_rows:
+            season_xg[r[0]] = {
                 "xg": r[1], "xga": r[2], "home_xg": r[3], "away_xg": r[4],
-                "played": r[5], "xpts_total": r[6], "pts_total": r[7],
-                "recent": xpts_history.get(r[0], [])
+                "played": r[5], "xpts_total": r[6], "pts_total": r[7]
+            }
+
+        # Merge: use recent when available (>=3 games), else season-total
+        result = {}
+        all_teams = set(list(recent_xg.keys()) + list(season_xg.keys()))
+        for team in all_teams:
+            recent = recent_xg.get(team, {})
+            season = season_xg.get(team, {})
+
+            # Recent home xG: need at least 2 home games
+            if len(recent.get("home_xg", [])) >= 2:
+                rh_xg = sum(recent["home_xg"]) / len(recent["home_xg"])
+            else:
+                rh_xg = season.get("home_xg", 1.35)
+
+            # Recent away xG: need at least 2 away games
+            if len(recent.get("away_xg", [])) >= 2:
+                ra_xg = sum(recent["away_xg"]) / len(recent["away_xg"])
+            else:
+                ra_xg = season.get("away_xg", 1.15)
+
+            # Recent overall xGA
+            if len(recent.get("xga", [])) >= 3:
+                r_xga = sum(recent["xga"]) / len(recent["xga"])
+            else:
+                r_xga = season.get("xga", 1.35)
+
+            # Recent games count (home + away)
+            recent_count = recent.get("recent_games", 0)
+
+            result[team] = {
+                # Per-match xG from RECENT games (primary)
+                "recent_home_xg": rh_xg,
+                "recent_away_xg": ra_xg,
+                "recent_xga": r_xga,
+                "recent_games": recent_count,
+                # Season-total (fallback / for xpts)
+                "xg": season.get("xg", 1.35),
+                "xga": season.get("xga", 1.35),
+                "home_xg": season.get("home_xg", 1.35),
+                "away_xg": season.get("away_xg", 1.15),
+                "played": season.get("played", 0),
+                "xpts_total": season.get("xpts_total", 0),
+                "pts_total": season.get("pts_total", 0),
             }
         return result
-    except Exception:
+    except Exception as e:
+        print(f"Warning: _load_xg_cache failed: {e}")
         return {}
 
 
@@ -157,26 +228,40 @@ def expected_goals(
     away_xg_data = _get_xg(away_team_name) if away_team_name else None
 
     if home_xg_data and away_xg_data and home_xg_data["played"] and away_xg_data["played"]:
-        # Use Understat xG as primary signal
-        # xG per game relative to league avg
+        # Use RECENT per-match xG from understat_history (last 5 games)
+        # This captures current form vs season-average
         avg_xg = 1.35  # approximate EPL avg per team per game from understat
-        home_attack = home_xg_data["xg"] / avg_xg
-        home_defense = home_xg_data["xga"] / avg_xg
-        away_attack = away_xg_data["xg"] / avg_xg
-        away_defense = away_xg_data["xga"] / avg_xg
+        
+        # Primary: use recent per-match xG (home/away split)
+        recent_home_xg = home_xg_data["recent_home_xg"]
+        recent_away_xg = away_xg_data["recent_away_xg"]
+        recent_xga_home = home_xg_data["recent_xga"]  # avg xGA when playing at home
+        recent_xga_away = away_xg_data["recent_xga"]  # avg xGA when playing away
+
+        # Attack: recent per-match xG relative to league average
+        home_attack = recent_home_xg / avg_xg
+        away_attack = recent_away_xg / avg_xg
+        
+        # Defense: recent xGA relative to league average (lower xGA = better defense)
+        home_defense = recent_xga_away / avg_xg   # how well home team restricts AWAY opponents
+        away_defense = recent_xga_home / avg_xg    # how well away team restricts HOME opponents
 
         # Scale to our base
-        home_xg = base_home * home_attack * away_defense
-        away_xg = base_away * away_attack * home_defense
+        home_xg = base_home * home_attack * home_defense
+        away_xg = base_away * away_attack * away_defense
 
-        # Form boost using time-weighted xpts (decay=0.85 per older match)
-        home_recent = home_xg_data.get("recent", [])
-        away_recent = away_xg_data.get("recent", [])
-        home_wxpts = _weighted_form_score(home_recent, decay=0.85)
-        away_wxpts = _weighted_form_score(away_recent, decay=0.85)
-
-        home_form_boost = 0.9 + min(home_wxpts / 3, 0.45)
-        away_form_boost = 0.9 + min(away_wxpts / 3, 0.45)
+        # Form boost: use recent xpts trend (decay=0.85 per older match)
+        # If team has recent games, use xpts-based form; else neutral
+        recent_games = min(home_xg_data.get("recent_games", 0), 10)
+        if recent_games >= 3:
+            # Use recent xpts from season-total as proxy for form
+            home_xpts_per_game = home_xg_data["xpts_total"] / max(home_xg_data["played"], 1)
+            away_xpts_per_game = away_xg_data["xpts_total"] / max(away_xg_data["played"], 1)
+            home_form_boost = 0.9 + min(home_xpts_per_game / 3, 0.4)
+            away_form_boost = 0.9 + min(away_xpts_per_game / 3, 0.4)
+        else:
+            home_form_boost = 1.0
+            away_form_boost = 1.0
 
         home_xg *= home_form_boost * HOME_ADVANTAGE_MULTIPLIER
         away_xg *= away_form_boost
@@ -204,8 +289,9 @@ def expected_goals(
     h2h_home_boost = 1.0
     h2h_away_boost = 1.0
     if not h2h.empty and h2h.iloc[0]["matches_played"] >= 2:
-        h2h_home_boost = 0.9 + min(h2h.iloc[0]["goals_for"] / max(h2h.iloc[0]["matches_played"], 1), 0.4)
-        h2h_away_boost = 0.9 + min(h2h.iloc[0]["goals_against"] / max(h2h.iloc[0]["matches_played"], 1), 0.4)
+        # Cap reduced from 0.4 to 0.2 — H2H shouldn't dominate predictions
+        h2h_home_boost = 0.95 + min(h2h.iloc[0]["goals_for"] / max(h2h.iloc[0]["matches_played"], 1), 0.2)
+        h2h_away_boost = 0.95 + min(h2h.iloc[0]["goals_against"] / max(h2h.iloc[0]["matches_played"], 1), 0.2)
 
     home_xg *= h2h_home_boost
     away_xg *= h2h_away_boost
