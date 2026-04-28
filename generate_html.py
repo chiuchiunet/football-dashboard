@@ -44,13 +44,14 @@ def get_accuracy_stats() -> dict:
             FROM match_results
         """).fetchone()
 
-        # Per-competition accuracy
+        # Per-competition accuracy - CL and PL only
         comp_stats = cur.execute("""
             SELECT m.competition_code,
                    COUNT(*) as total,
                    SUM(mr.prediction_correct_outcome) as correct
             FROM match_results mr
             JOIN matches m ON mr.match_id = m.match_id
+            WHERE m.competition_code IN ('CL', 'PL')
             GROUP BY m.competition_code
         """).fetchall()
 
