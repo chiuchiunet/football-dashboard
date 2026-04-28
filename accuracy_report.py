@@ -121,14 +121,17 @@ def get_accuracy_stats():
 if __name__ == "__main__":
     result = get_accuracy_stats()
     if result is None:
-        print("No data")
+        print("NO_REPLY")
     else:
         overall, leagues = result
-        print(f"Overall (last 50 PL/CL matches since Apr 2026):")
-        print(f"  Outcome: {overall['outcome_acc']:.1f}% ({overall['total']} matches)")
-        print(f"  Exact Score: {overall['score_acc']:.1f}%")
-        print(f"  Over 2.5: {overall['over_2_5_acc']:.1f}%")
-        print(f"  BTTS: {overall['btts_acc']:.1f}%")
-        print()
+        acc = overall
+        msg = f"📊 足球預測命中率報告\n━━━━━━━━━━━━\n"
+        msg += f"總場數：{acc['total']}場\n"
+        msg += f"賽果預測：{acc['outcome_acc']:.0f}%\n"
+        msg += f"比分預測：{acc['score_acc']:.0f}%\n"
+        msg += f"大細：{acc['over_2_5_acc']:.0f}%\n"
+        msg += f"BTTS：{acc['btts_acc']:.0f}%\n"
+        msg += "━━━━━━━━━━━━\n"
         for comp, stats in leagues.items():
-            print(f"  {comp}: {stats['outcome_acc']:.1f}% ({stats['total']} matches)")
+            msg += f"{comp}: {stats['outcome_acc']:.0f}% ({stats['total']}場)\n"
+        print(msg.strip())
