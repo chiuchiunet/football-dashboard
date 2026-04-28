@@ -68,12 +68,12 @@ def update_finished_matches():
                         else:
                             actual = 'A'
                         
-                        # Get prediction and calculate accuracy
+                        # Get FIRST prediction and calculate accuracy (not latest)
                         cur.execute('''
                             SELECT home_win_prob, draw_prob, away_win_prob
                             FROM predictions
                             WHERE match_id = ?
-                            ORDER BY prediction_id DESC LIMIT 1
+                            ORDER BY prediction_id ASC LIMIT 1
                         ''', (mid,))
                         pred_row = cur.fetchone()
                         

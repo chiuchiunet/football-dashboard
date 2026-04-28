@@ -265,12 +265,12 @@ def update_from_csv(conn):
             ''', (home_score, away_score, match_id))
             
             if cur.rowcount > 0:
-                # Get prediction
+                # Get FIRST prediction (not latest) to preserve original forecast
                 cur.execute('''
                     SELECT home_win_prob, draw_prob, away_win_prob
                     FROM predictions
                     WHERE match_id = ?
-                    ORDER BY prediction_id DESC LIMIT 1
+                    ORDER BY prediction_id ASC LIMIT 1
                 ''', (match_id,))
                 pred_row = cur.fetchone()
                 

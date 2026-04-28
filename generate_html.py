@@ -293,13 +293,16 @@ def get_predictions(days_ahead: int = 7) -> list:
             WHERE p2.match_id = m.match_id
         )
         LEFT JOIN match_results mr ON mr.match_id = m.match_id
-        WHERE (
-            m.status IN ('SCHEDULED', 'TIMED')
-            AND datetime(m.utc_date) <= datetime('now', ?)
-        ) OR (
-            m.status = 'FINISHED'
-            AND datetime(m.utc_date) >= datetime('now', ?)
-            AND datetime(m.utc_date) <= datetime('now')
+        WHERE m.competition_code IN ('CL', 'PL')
+        AND (
+            (
+                m.status IN ('SCHEDULED', 'TIMED')
+                AND datetime(m.utc_date) <= datetime('now', ?)
+            ) OR (
+                m.status = 'FINISHED'
+                AND datetime(m.utc_date) >= datetime('now', ?)
+                AND datetime(m.utc_date) <= datetime('now')
+            )
         )
         ORDER BY m.competition_code, datetime(m.utc_date) ASC
     """, [f"+{days_ahead} days", f"-{days_ahead} days"])
