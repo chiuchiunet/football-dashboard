@@ -639,13 +639,13 @@
 
         <div class="filter-controls" aria-label="賽事篩選">
             <select id="comp-filter" class="comp-select" aria-label="選擇聯賽">
-                <option value="all">🏆 全部聯賽 (42)</option>
+                <option value="all">🏆 全部聯賽 (43)</option>
                 <option value="CL">🏆 歐聯</option><option value="PL">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</option>
             </select>
             <div class="status-filters">
-                <button class="filter-btn active" type="button" data-filter="all">全部 <span>42</span></button>
+                <button class="filter-btn active" type="button" data-filter="all">全部 <span>43</span></button>
                 <button class="filter-btn" type="button" data-filter="finished">已完賽 <span>42</span></button>
-                <button class="filter-btn" type="button" data-filter="predicting">預測中 <span>0</span></button>
+                <button class="filter-btn" type="button" data-filter="predicting">預測中 <span>1</span></button>
             </div>
         </div>
         <div class="filter-empty" id="filter-empty" hidden>⚠️ 呢個分類暫時冇賽事</div>
@@ -655,9 +655,112 @@
         <div class="featured-section">
             <div class="featured-header">
                 <span>⭐ 精選信心場次</span>
-                <span class="count">3 場</span>
+                <span class="count">4 場</span>
             </div>
             <div class="featured-grid">
+    <div class="match-card" data-match-status="predicting" data-comp="CL">
+        <div class="match-header">
+            <div class="comp-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">🏆 歐聯</div>
+            <div class="match-datetime">
+                <span class="date-label">明日 03:00</span>
+            </div>
+        </div>
+
+        <div class="teams-section">
+            <div class="team home">
+                <div class="team-name">國際米蘭</div>
+                <div class="team-en">Inter Milan</div>
+            </div>
+            <div class="score-center">
+
+                <div class="predicted-score">3-2</div>
+                <div class="total-goals">預測 5.6 球</div>
+            </div>
+            <div class="team away">
+                <div class="team-name">巴黎聖日耳門</div>
+                <div class="team-en">Paris Saint-Germain FC</div>
+            </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
+
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.18);border-radius:8px;padding:8px 10px;">
+            <span style="color:#166534;font-size:0.84em;font-weight:700;">主場 - 近5場:</span>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;"><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(245,158,11,0.35);background:rgba(245,158,11,0.14);color:#b45309"><strong>D</strong><span>3-3</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(245,158,11,0.35);background:rgba(245,158,11,0.14);color:#b45309"><strong>D</strong><span>1-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>3-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(245,158,11,0.35);background:rgba(245,158,11,0.14);color:#b45309"><strong>D</strong><span>2-2</span></span></div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.18);border-radius:8px;padding:8px 10px;">
+            <span style="color:#166534;font-size:0.84em;font-weight:700;">作客 - 近5場:</span>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;"><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(245,158,11,0.35);background:rgba(245,158,11,0.14);color:#b45309"><strong>D</strong><span>2-2</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(239,68,68,0.35);background:rgba(239,68,68,0.12);color:#dc2626"><strong>L</strong><span>0-2</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>1-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(245,158,11,0.35);background:rgba(245,158,11,0.14);color:#b45309"><strong>D</strong><span>1-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(245,158,11,0.35);background:rgba(245,158,11,0.14);color:#b45309"><strong>D</strong><span>0-0</span></span></div>
+        </div>
+        </div>
+
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:53%"></div>
+                <div class="bar-segment bar-draw" style="width:17%"></div>
+                <div class="bar-segment bar-away" style="width:31%"></div>
+            </div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 52%</span>
+                <span class="label-draw">和 17%</span>
+                <span class="label-away">客勝 30%</span>
+            </div>
+        </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">1-1</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>44%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>27%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>29%</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
+                <span class="stat-label">大細 2.5</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:90%"></div></div>
+                    <span class="stat-val">大 90%</span>
+                </div>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">BTTS</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:86%"></div></div>
+                    <span class="stat-val">Yes 86%</span>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="value-bets">⭐ 模型高信心揀選</div>
+
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #22c55e">
+                <span>最可能：<strong>主勝</strong> 52%</span>
+            </div>
+            <span class="conf-badge" style="background:#f59e0b20; color:#f59e0b">中信心</span>
+        </div>
+    </div>
+
     <div class="match-card" data-match-status="finished" data-comp="PL">
         <div class="match-header">
             <div class="comp-badge" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英超</div>
@@ -986,7 +1089,7 @@
         <div class="comp-group">
             <div class="comp-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
                 <span class="comp-name">🏆 歐聯</span>
-                <span class="comp-count">2 場</span>
+                <span class="comp-count">3 場</span>
             </div>
             <div class="comp-matches">
     <div class="match-card" data-match-status="finished" data-comp="CL">
@@ -1200,6 +1303,109 @@
                 <span>最可能：<strong>主勝</strong> 39%</span>
             </div>
             <span class="conf-badge" style="background:#6b6b8020; color:#6b6b80">一般</span>
+        </div>
+    </div>
+
+    <div class="match-card" data-match-status="predicting" data-comp="CL">
+        <div class="match-header">
+            <div class="comp-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">🏆 歐聯</div>
+            <div class="match-datetime">
+                <span class="date-label">明日 03:00</span>
+            </div>
+        </div>
+
+        <div class="teams-section">
+            <div class="team home">
+                <div class="team-name">國際米蘭</div>
+                <div class="team-en">Inter Milan</div>
+            </div>
+            <div class="score-center">
+
+                <div class="predicted-score">3-2</div>
+                <div class="total-goals">預測 5.6 球</div>
+            </div>
+            <div class="team away">
+                <div class="team-name">巴黎聖日耳門</div>
+                <div class="team-en">Paris Saint-Germain FC</div>
+            </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:15px;">
+
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.18);border-radius:8px;padding:8px 10px;">
+            <span style="color:#166534;font-size:0.84em;font-weight:700;">主場 - 近5場:</span>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;"><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(245,158,11,0.35);background:rgba(245,158,11,0.14);color:#b45309"><strong>D</strong><span>3-3</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(245,158,11,0.35);background:rgba(245,158,11,0.14);color:#b45309"><strong>D</strong><span>1-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>3-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>2-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(245,158,11,0.35);background:rgba(245,158,11,0.14);color:#b45309"><strong>D</strong><span>2-2</span></span></div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.18);border-radius:8px;padding:8px 10px;">
+            <span style="color:#166534;font-size:0.84em;font-weight:700;">作客 - 近5場:</span>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;"><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(245,158,11,0.35);background:rgba(245,158,11,0.14);color:#b45309"><strong>D</strong><span>2-2</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(239,68,68,0.35);background:rgba(239,68,68,0.12);color:#dc2626"><strong>L</strong><span>0-2</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.12);color:#15803d"><strong>W</strong><span>1-0</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(245,158,11,0.35);background:rgba(245,158,11,0.14);color:#b45309"><strong>D</strong><span>1-1</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;font-size:0.78em;font-weight:700;border:1px solid rgba(245,158,11,0.35);background:rgba(245,158,11,0.14);color:#b45309"><strong>D</strong><span>0-0</span></span></div>
+        </div>
+        </div>
+
+        <!-- Stacked Bar for Win/Draw/Win probabilities -->
+        <div class="stacked-bar-section">
+            <div class="stacked-bar">
+                <div class="bar-segment bar-home" style="width:53%"></div>
+                <div class="bar-segment bar-draw" style="width:17%"></div>
+                <div class="bar-segment bar-away" style="width:31%"></div>
+            </div>
+            <div class="stacked-bar-labels">
+                <span class="label-home">主勝 52%</span>
+                <span class="label-draw">和 17%</span>
+                <span class="label-away">客勝 30%</span>
+            </div>
+        </div>
+
+        <!-- Half-time prediction -->
+        <div class="half-time-section">
+            <div class="half-time-header">
+                <span>半場預測</span>
+                <span class="half-time-score">1-1</span>
+            </div>
+            <div class="half-time-grid">
+                <div class="half-time-pill">
+                    <span class="half-time-label">主勝</span>
+                    <strong>44%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">和</span>
+                    <strong>27%</strong>
+                </div>
+                <div class="half-time-pill">
+                    <span class="half-time-label">客勝</span>
+                    <strong>29%</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats container -->
+        <div class="stats-container">
+            <div class="stat-row">
+                <span class="stat-label">大細 2.5</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill green" style="width:90%"></div></div>
+                    <span class="stat-val">大 90%</span>
+                </div>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">BTTS</span>
+                <div class="stat-bars">
+                    <div class="mini-bar"><div class="mini-fill pink" style="width:86%"></div></div>
+                    <span class="stat-val">Yes 86%</span>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="value-bets">⭐ 模型高信心揀選</div>
+
+        <div class="fav-result">
+            <div class="fav-main" style="border-left: 4px solid #22c55e">
+                <span>最可能：<strong>主勝</strong> 52%</span>
+            </div>
+            <span class="conf-badge" style="background:#f59e0b20; color:#f59e0b">中信心</span>
         </div>
     </div></div>
         </div>
