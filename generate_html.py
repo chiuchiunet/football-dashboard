@@ -51,7 +51,7 @@ def get_accuracy_stats() -> dict:
                    SUM(mr.prediction_correct_outcome) as correct
             FROM match_results mr
             JOIN matches m ON mr.match_id = m.match_id
-            WHERE m.competition_code IN ('CL', 'PL')
+            WHERE m.competition_code IN ('CL', 'PL') AND m.home_team_name != 'TBD'
             GROUP BY m.competition_code
         """).fetchall()
 
@@ -302,7 +302,7 @@ def get_predictions(days_ahead: int = 14) -> list:
             WHERE p2.match_id = m.match_id
         )
         LEFT JOIN match_results mr ON mr.match_id = m.match_id
-        WHERE m.competition_code IN ('CL', 'PL')
+        WHERE m.competition_code IN ('CL', 'PL') AND m.home_team_name != 'TBD'
         AND (
             (
                 m.status IN ('SCHEDULED', 'TIMED')
