@@ -269,25 +269,33 @@ def get_comp_gradient(code: str) -> str:
     return COMP_GRADIENTS.get(code, "linear-gradient(135deg, #667eea 0%, #764ba2 100%)")
 
 
-def get_predictions(days_ahead: int = 7) -> list:
+def get_predictions(days_ahead: int = 14) -> list:
     """Fetch predictions directly from database as tuples."""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.execute("""
         SELECT m.match_id, m.utc_date, m.competition_code, m.home_team_name, m.away_team_name,
                m.home_team_id, m.away_team_id,
-               p.home_win_prob, p.draw_prob, p.away_win_prob,
-               p.over_2_5_prob, p.under_2_5_prob,
-               p.btts_yes_prob, p.btts_no_prob,
-               p.expected_home_goals, p.expected_away_goals,
-               p.home_half_prob, p.draw_half_prob, p.away_half_prob,
-               p.expected_home_half_goals, p.expected_away_half_goals,
-               p.recommended_bets,
+               COALESCE(p.home_win_prob, 0.33) AS home_win_prob,
+               COALESCE(p.draw_prob, 0.33) AS draw_prob,
+               COALESCE(p.away_win_prob, 0.33) AS away_win_prob,
+               COALESCE(p.over_2_5_prob, 0.5) AS over_2_5_prob,
+               COALESCE(p.under_2_5_prob, 0.5) AS under_2_5_prob,
+               COALESCE(p.btts_yes_prob, 0.5) AS btts_yes_prob,
+               COALESCE(p.btts_no_prob, 0.5) AS btts_no_prob,
+               COALESCE(p.expected_home_goals, 1.0) AS expected_home_goals,
+               COALESCE(p.expected_away_goals, 1.0) AS expected_away_goals,
+               COALESCE(p.home_half_prob, 0.33) AS home_half_prob,
+               COALESCE(p.draw_half_prob, 0.33) AS draw_half_prob,
+               COALESCE(p.away_half_prob, 0.33) AS away_half_prob,
+               COALESCE(p.expected_home_half_goals, 0.5) AS expected_home_half_goals,
+               COALESCE(p.expected_away_half_goals, 0.5) AS expected_away_half_goals,
+               COALESCE(p.recommended_bets, '') AS recommended_bets,
                m.status,
                COALESCE(mr.actual_home_score, m.home_score) AS actual_home_score,
                COALESCE(mr.actual_away_score, m.away_score) AS actual_away_score,
                mr.prediction_correct_outcome
         FROM matches m
-        JOIN predictions p ON p.match_id = m.match_id
+        LEFT JOIN predictions p ON p.match_id = m.match_id
         AND p.prediction_id = (
             SELECT MAX(p2.prediction_id)
             FROM predictions p2
