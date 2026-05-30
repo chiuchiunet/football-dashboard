@@ -1411,7 +1411,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
 
 
 def main():
-    predictions = get_predictions(days_ahead=7)
+    predictions = get_predictions(days_ahead=14)
     html = generate_html(predictions)
     html = "\n".join(line.rstrip() for line in html.splitlines()) + "\n"
     output = Path(__file__).resolve().parent / "web" / "index.html"
