@@ -269,7 +269,7 @@ def get_comp_gradient(code: str) -> str:
     return COMP_GRADIENTS.get(code, "linear-gradient(135deg, #667eea 0%, #764ba2 100%)")
 
 
-def get_predictions(days_ahead: int = 14) -> list:
+def get_predictions(days_ahead: int = 14, finished_lookback: int = 30) -> list:
     """Fetch predictions directly from database as tuples."""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.execute("""
@@ -314,7 +314,7 @@ def get_predictions(days_ahead: int = 14) -> list:
             )
         )
         ORDER BY m.competition_code, datetime(m.utc_date) ASC
-    """, [f"+{days_ahead} days", f"-{days_ahead} days"])
+    """, [f"+{days_ahead} days", f"-{finished_lookback} days"])
     rows = cursor.fetchall()
     conn.close()
     return rows
@@ -1411,7 +1411,7 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
 
 
 def main():
-    predictions = get_predictions(days_ahead=14)
+    predictions = get_predictions(days_ahead=14, finished_lookback=30)
     html = generate_html(predictions)
     html = "\n".join(line.rstrip() for line in html.splitlines()) + "\n"
     output = Path(__file__).resolve().parent / "web" / "index.html"
