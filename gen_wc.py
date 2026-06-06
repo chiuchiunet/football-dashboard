@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""World Cup 2026 Dashboard Generator - Full 104 Matches"""
+"""World Cup 2026 Dashboard Generator - Full 104 Matches + Recent Form"""
 from datetime import date
-import random
+import random, json
 
 CN = {
     'Argentina':'阿根廷','France':'法國','Spain':'西班牙','Brazil':'巴西',
@@ -66,6 +66,57 @@ GD = {
     'K':['Portugal','DR Congo','Uzbekistan','Colombia'],
     'L':['England','Croatia','Ghana','Panama'],
 }
+
+# Load recent form data
+try:
+    with open('recent_form.json', 'r') as f:
+        RECENT_FORM = json.load(f)
+except:
+    RECENT_FORM = {}
+
+def get_recent_form_html(team):
+    """Generate recent form HTML for a team."""
+    if team not in RECENT_FORM:
+        return '<div class="rf"><span class="rfnil">無數據</span></div>'
+    matches = RECENT_FORM[team][:3]  # Last 3 matches
+    html = '<div class="rf">'
+    for m in matches:
+        date_str, home, score, away, venue, comp = m
+        is_upcoming = score == 'v'
+        if is_upcoming:
+            result_class = 'rfup'
+            result_text = 'vs'
+        else:
+            try:
+                hs, as_ = map(int, score.split('-'))
+                if home == team:
+                    if hs > as_:
+                        result_class = 'rfw'
+                        result_text = f'W {score}'
+                    elif hs < as_:
+                        result_class = 'rfl'
+                        result_text = f'L {score}'
+                    else:
+                        result_class = 'rfd'
+                        result_text = f'D {score}'
+                else:
+                    if as_ > hs:
+                        result_class = 'rfw'
+                        result_text = f'W {score}'
+                    elif as_ < hs:
+                        result_class = 'rfl'
+                        result_text = f'L {score}'
+                    else:
+                        result_class = 'rfd'
+                        result_text = f'D {score}'
+            except:
+                result_class = 'rfup'
+                result_text = score
+        opp = away if home == team else home
+        short_opp = opp[:8]
+        html += f'<span class="{result_class}">{short_opp} {result_text}</span>'
+    html += '</div>'
+    return html
 
 ALL_MATCHES = [
     ('6月11日','Mexico','South Africa','15:00','Mexico City'),
@@ -224,7 +275,8 @@ for g in 'ABCDEFGHIJKL':
     ts=GD[g]
     rows=[]
     for t in sorted(ts,key=lambda x:-rt(x)):
-        rows.append(f"<tr><td>{fl(t)} {cn(t)}</td><td style='text-align:center;font-size:0.7rem;'>{rt(t)}</td><td style='text-align:right;color:#4ade80;font-size:0.7rem;'>—</td><td style='width:100.0%;background:rgba(74,222,128,0.1);height:8px;'></td></tr>")
+        rf_html = get_recent_form_html(t)
+        rows.append(f"<tr><td>{fl(t)} {cn(t)}</td><td style='text-align:center;font-size:0.7rem;'>{rt(t)}</td><td style='text-align:right;color:#4ade80;font-size:0.7rem;'>—</td><td style='width:100.0%;background:rgba(74,222,128,0.1);height:8px;'></td></tr><tr><td colspan='4' style='padding:2px 6px;border-bottom:1px solid #1a1a2e;'>{rf_html}</td></tr>")
     gh.append(f"<div class='gc'><div class='gh'>組 {g}</div><table class='gt'><thead><tr><th>球隊</th><th style='text-align:center'>實力</th><th style='text-align:right'>出線%</th><th></th></tr></thead><tbody>{''.join(rows)}</tbody></table></div>")
 
 mm=[]
@@ -255,7 +307,7 @@ sd=''.join([f"<div class='sb'><span class='sl'>{rt(t)}</span><div class='sb2'><d
 
 gs_c=72; r32_c=16; r16_c=8; qf_c=4; sf_c=2; f_c=2
 
-CSS="""*{margin:0;padding:0;box-sizing:border-box;}body{font-family:"Noto Sans HK",sans-serif;background:#080810;color:#f0f0f5;padding:12px;}.wrap{max-width:1200px;margin:0 auto;}.hero{background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid #FFD700;border-radius:14px;padding:22px;text-align:center;margin-bottom:16px;}.hero h1{font-size:1.8rem;color:#FFD700;margin-bottom:4px;}.hero p{color:#8888a0;font-size:0.75rem;margin-top:4px;}.cd{margin-top:12px;display:flex;justify-content:center;gap:14px;flex-wrap:wrap;}.cdi{text-align:center;}.cdn{font-size:1.3rem;font-weight:700;color:#FFD700;}.cdl{font-size:0.5rem;color:#8888a0;text-transform:uppercase;}.stats{display:flex;gap:6px;margin-bottom:16px;}.sc{flex:1;background:#16161d;border:1px solid #2a2a3a;border-radius:8px;padding:8px;text-align:center;}.sc:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(255,215,0,0.15);}.scn{font-size:1rem;font-weight:700;color:#FFD700;}.scl{font-size:0.5rem;color:#8888a0;}.tab-nav{display:flex;gap:4px;margin-bottom:14px;flex-wrap:wrap;}.tab{background:#16161d;border:1px solid #2a2a3a;color:#f0f0f5;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:0.75rem;transition:all 0.2s;}.tab:hover{background:#2a2a3a;border-color:#FFD700;}.tab.active{background:#FFD700;color:#000;font-weight:700;}.content{display:none;}.content.show{display:block;}h2{font-size:0.9rem;color:#FFD700;margin:18px 0 8px;border-bottom:1px solid #2a2a3a;padding-bottom:4px;}.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-bottom:20px;}.gc{background:#16161d;border:1px solid #2a2a3a;border-radius:10px;overflow:hidden;}.gc:hover{border-color:#FFD700;transform:translateY(-2px);}.gh{background:linear-gradient(90deg,#2a2a3a,#1a1a2e);padding:6px 10px;font-weight:700;font-size:0.75rem;color:#FFD700;}.gt{width:100%;border-collapse:collapse;font-size:0.62rem;}.gt th{text-align:left;padding:4px 6px;color:#8888a0;border-bottom:1px solid #2a2a3a;}.gt td{padding:4px 6px;border-bottom:1px solid #1a1a2e;}.str{color:#888;font-size:0.7em;margin-left:3px;}.ml{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}.md{background:#FFD700;color:#000;font-size:0.7rem;font-weight:700;padding:5px 12px;border-radius:5px;margin:14px 0 6px;}.mc{background:#16161d;border:1px solid #2a2a3a;border-radius:10px;overflow:hidden;transition:all 0.2s;}.mc:hover{border-color:#FFD700;transform:translateY(-1px);}.mhd{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#1a1a2e;border-bottom:1px solid #2a2a3a;gap:6px;flex-wrap:wrap;}.mcomp{font-size:0.65rem;font-weight:700;color:#FFD700;}.mhkt{font-size:0.6rem;color:#FFD700;}.mvenue{font-size:0.6rem;color:#8888a0;}.mbody{display:flex;align-items:center;padding:12px;gap:10px;flex-wrap:wrap;}.mteam{flex:1;font-size:0.85rem;font-weight:600;min-width:80px;}.mscore{font-size:1.4rem;font-weight:700;color:#FFD700;padding:0 12px;white-space:nowrap;}.mfoot{padding:6px 10px;border-top:1px solid #2a2a3a;}.mbar{display:flex;height:20px;border-radius:4px;overflow:hidden;gap:2px;margin-bottom:4px;}.mp{background:rgba(74,222,128,0.6);display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mpd{background:rgba(148,148,160,0.6);display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mpa{background:rgba(248,113,113,0.6);display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mxg{font-size:0.58rem;color:#8888a0;}.sd{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:20px;}.sb{display:flex;align-items:center;gap:6px;}.sl{font-size:0.65rem;color:#8888a0;width:32px;text-align:right;}.sb2{flex:1;height:16px;background:#1a1a2e;border-radius:3px;overflow:hidden;}.sbf{height:100%;background:linear-gradient(90deg,#FFD700,#e94560);border-radius:3px;}.sn{font-size:0.65rem;color:#FFD700;font-weight:700;width:16px;}.ft{text-align:center;padding:16px 0;color:#8888a0;font-size:0.6rem;border-top:1px solid #2a2a3a;margin-top:20px;}@media(max-width:600px){.hero{padding:14px}.hero h1{font-size:1.4rem}.tab{padding:6px 10px;font-size:0.7rem}.mscore{font-size:1.1rem}.mteam{font-size:0.75rem}.gg{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}}"""
+CSS="""*{margin:0;padding:0;box-sizing:border-box;}body{font-family:"Noto Sans HK",sans-serif;background:#080810;color:#f0f0f5;padding:12px;}.wrap{max-width:1200px;margin:0 auto;}.hero{background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid #FFD700;border-radius:14px;padding:22px;text-align:center;margin-bottom:16px;}.hero h1{font-size:1.8rem;color:#FFD700;margin-bottom:4px;}.hero p{color:#8888a0;font-size:0.75rem;margin-top:4px;}.cd{margin-top:12px;display:flex;justify-content:center;gap:14px;flex-wrap:wrap;}.cdi{text-align:center;}.cdn{font-size:1.3rem;font-weight:700;color:#FFD700;}.cdl{font-size:0.5rem;color:#8888a0;text-transform:uppercase;}.stats{display:flex;gap:6px;margin-bottom:16px;}.sc{flex:1;background:#16161d;border:1px solid #2a2a3a;border-radius:8px;padding:8px;text-align:center;}.sc:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(255,215,0,0.15);}.scn{font-size:1rem;font-weight:700;color:#FFD700;}.scl{font-size:0.5rem;color:#8888a0;}.tab-nav{display:flex;gap:4px;margin-bottom:14px;flex-wrap:wrap;}.tab{background:#16161d;border:1px solid #2a2a3a;color:#f0f0f5;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:0.75rem;transition:all 0.2s;}.tab:hover{background:#2a2a3a;border-color:#FFD700;}.tab.active{background:#FFD700;color:#000;font-weight:700;}.content{display:none;}.content.show{display:block;}h2{font-size:0.9rem;color:#FFD700;margin:18px 0 8px;border-bottom:1px solid #2a2a3a;padding-bottom:4px;}.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-bottom:20px;}.gc{background:#16161d;border:1px solid #2a2a3a;border-radius:10px;overflow:hidden;}.gc:hover{border-color:#FFD700;transform:translateY(-2px);}.gh{background:linear-gradient(90deg,#2a2a3a,#1a1a2e);padding:6px 10px;font-weight:700;font-size:0.75rem;color:#FFD700;}.gt{width:100%;border-collapse:collapse;font-size:0.62rem;}.gt th{text-align:left;padding:4px 6px;color:#8888a0;border-bottom:1px solid #2a2a3a;}.gt td{padding:4px 6px;border-bottom:1px solid #1a1a2e;}.str{color:#888;font-size:0.7em;margin-left:3px;}.rf{display:flex;gap:3px;margin-top:3px;flex-wrap:wrap;}.rf span{font-size:0.55rem;padding:1px 4px;border-radius:3px;font-weight:600;}.rfw{background:rgba(74,222,128,0.3);color:#4ade80;}.rfl{background:rgba(248,113,113,0.3);color:#f87171;}.rfd{background:rgba(148,148,160,0.3);color:#888;}.rfup{background:rgba(255,215,0,0.2);color:#FFD700;}.rfnil{font-size:0.55rem;color:#555;}.ml{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}.md{background:#FFD700;color:#000;font-size:0.7rem;font-weight:700;padding:5px 12px;border-radius:5px;margin:14px 0 6px;}.mc{background:#16161d;border:1px solid #2a2a3a;border-radius:10px;overflow:hidden;transition:all 0.2s;}.mc:hover{border-color:#FFD700;transform:translateY(-1px);}.mhd{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#1a1a2e;border-bottom:1px solid #2a2a3a;gap:6px;flex-wrap:wrap;}.mcomp{font-size:0.65rem;font-weight:700;color:#FFD700;}.mhkt{font-size:0.6rem;color:#FFD700;}.mvenue{font-size:0.6rem;color:#8888a0;}.mbody{display:flex;align-items:center;padding:12px;gap:10px;flex-wrap:wrap;}.mteam{flex:1;font-size:0.85rem;font-weight:600;min-width:80px;}.mscore{font-size:1.4rem;font-weight:700;color:#FFD700;padding:0 12px;white-space:nowrap;}.mfoot{padding:6px 10px;border-top:1px solid #2a2a3a;}.mbar{display:flex;height:20px;border-radius:4px;overflow:hidden;gap:2px;margin-bottom:4px;}.mp{background:rgba(74,222,128,0.6);display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mpd{background:rgba(148,148,160,0.6);display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mpa{background:rgba(248,113,113,0.6);display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mxg{font-size:0.58rem;color:#8888a0;}.sd{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:20px;}.sb{display:flex;align-items:center;gap:6px;}.sl{font-size:0.65rem;color:#8888a0;width:32px;text-align:right;}.sb2{flex:1;height:16px;background:#1a1a2e;border-radius:3px;overflow:hidden;}.sbf{height:100%;background:linear-gradient(90deg,#FFD700,#e94560);border-radius:3px;}.sn{font-size:0.65rem;color:#FFD700;font-weight:700;width:16px;}.ft{text-align:center;padding:16px 0;color:#8888a0;font-size:0.6rem;border-top:1px solid #2a2a3a;margin-top:20px;}@media(max-width:600px){.hero{padding:14px}.hero h1{font-size:1.4rem}.tab{padding:6px 10px;font-size:0.7rem}.mscore{font-size:1.1rem}.mteam{font-size:0.75rem}.gg{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}}"""
 
 html=f"""<!DOCTYPE html>
 <html lang='zh-HK'>
