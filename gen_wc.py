@@ -275,9 +275,8 @@ for g in 'ABCDEFGHIJKL':
     ts=GD[g]
     rows=[]
     for t in sorted(ts,key=lambda x:-rt(x)):
-        rf_html = get_recent_form_html(t)
-        rows.append(f"<tr><td>{fl(t)} {cn(t)}</td><td style='text-align:center;font-size:0.7rem;'>{rt(t)}</td><td style='text-align:right;color:#4ade80;font-size:0.7rem;'>—</td><td style='width:100.0%;background:rgba(74,222,128,0.1);height:8px;'></td></tr><tr><td colspan='4' style='padding:2px 6px;border-bottom:1px solid #1a1a2e;'>{rf_html}</td></tr>")
-    gh.append(f"<div class='gc'><div class='gh'>組 {g}</div><table class='gt'><thead><tr><th>球隊</th><th style='text-align:center'>實力</th><th style='text-align:right'>出線%</th><th></th></tr></thead><tbody>{''.join(rows)}</tbody></table></div>")
+        rows.append(f"<tr><td>{fl(t)} {cn(t)}</td><td style='text-align:center;font-size:0.65rem;'>{rt(t)}</td><td style='text-align:center;font-size:0.65rem;color:#888;'>—</td><td style='text-align:center;font-size:0.65rem;color:#888;'>—</td><td style='text-align:center;font-size:0.65rem;color:#888;'>—</td><td style='text-align:center;font-size:0.65rem;color:#888;'>—</td><td style='text-align:right;'><span style='font-weight:700;color:#FFD700;'>—</span></td></tr>")
+    gh.append(f"<div class='gc'><div class='gh'>組 {g}</div><table class='gt'><thead><tr><th>球隊</th><th style='text-align:center'>實力</th><th style='text-align:center'>賽</th><th style='text-align:center'>勝</th><th style='text-align:center'>和</th><th style='text-align:center'>負</th><th style='text-align:right'>分</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div>")
 
 mm=[]
 cur=''
