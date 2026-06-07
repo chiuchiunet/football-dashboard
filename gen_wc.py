@@ -270,6 +270,43 @@ def conf(h,a):
     if d>=10: return 'medium','🟡'
     return 'low','🔴'
 
+KP={
+    'France':'麥巴比','England':'哈利卡尼','Brazil':'尼馬','Germany':'湯馬斯穆勒',
+    'Spain':'柏迪','Argentina':'美斯','Portugal':'C朗','Netherlands':'迪莊',
+    'Belgium':'迪布尼','Croatia':'摩迪','Uruguay':'科斯塔','Colombia':'占美利斯',
+    'Italy':'派路','Mexico':'Chicarito','USA':'達斯','Denmark':'艾歷臣',
+    'Senegal':'沙迪文尼','Morocco':'夏約頓','Japan':'久保建英','Australia':'馬田',
+    'Switzerland':'格列沙卡','Poland':'利雲','Sweden':'伊巴','Austria':'阿拉度',
+    'Algeria':'馬列斯','Ecuador':'華倫西亞','Ivory Coast':'哈拿','Egypt':'沙拿',
+    'Ghana':'奧巴美揚','Paraguay':'巴里奧斯','South Korea':'孫興慜',
+    'Saudi Arabia':'達瓦沙利','Qatar':'阿費夫','Iran':'阿茲蒙',
+    'Canada':'戴維斯','Tunisia':'卡斯里','Turkey':'杜辛',
+    'Scotland':'阿當斯','Norway':'夏蘭特','Czechia':'舒希克',
+    'Bosnia Herz':'比卡錫','New Zealand':'伍德',
+}
+
+def kp(team):
+    if team not in KP: return ''
+    return f"<span class='kp'>⭐ {KP[team]}</span>"
+
+def mc_prob(g, n=3000):
+    scores = {t: 0 for t in GD[g]}
+    for _ in range(n):
+        pts = {t: 0 for t in GD[g]}
+        for i in range(4):
+            for j in range(i+1, 4):
+                h, a = GD[g][i], GD[g][j]
+                hs, as_ = rt(h), rt(a)
+                hp, dp, ap_ = prob(hs, as_)
+                r = random.random() * 100
+                if r < hp: pts[h] += 3
+                elif r < hp + dp: pts[h] += 1; pts[a] += 1
+                else: pts[a] += 3
+        sorted_pts = sorted(pts.items(), key=lambda x: -x[1])
+        for rank, (t, _) in enumerate(sorted_pts[:2]):
+            scores[t] += 1
+    return {t: round(scores[t]/n*100) for t in GD[g]}
+
 SN={'GS':'分組','R32':'32強','R16':'16強','QF':'8強','SF':'準決','3RD':'季軍','FNL':'決賽'}
 IC={'GS':'📅','R32':'🎯','R16':'⚡','QF':'🔥','SF':'🏆','3RD':'🥉','FNL':'🏆'}
 
@@ -284,14 +321,20 @@ if d2.total_seconds()>0:
 else:
     cdown="進行中！" 
 
+mc_cache={}
+for g in 'ABCDEFGHIJKL':
+    mc_cache[g]=mc_prob(g,3000)
+
 gh=[]
 for g in 'ABCDEFGHIJKL':
+    qps=mc_cache[g]
     ts=GD[g]
     rows=[]
     for t in sorted(ts,key=lambda x:-rt(x)):
-        rows.append(f"<tr><td>{fl(t)} {cn(t)}</td><td style='text-align:center;font-size:0.65rem;'>{rt(t)}</td><td style='text-align:center;font-size:0.65rem;color:#888;'>—</td><td style='text-align:center;font-size:0.65rem;color:#888;'>—</td><td style='text-align:center;font-size:0.65rem;color:#888;'>—</td><td style='text-align:center;font-size:0.65rem;color:#888;'>—</td><td style='text-align:right;'><span style='font-weight:700;color:#FFD700;'>—</span></td></tr>")
-    gh.append(f"<div class='gc'><div class='gh'>組 {g}</div><table class='gt'><thead><tr><th>球隊</th><th style='text-align:center'>實力</th><th style='text-align:center'>賽</th><th style='text-align:center'>勝</th><th style='text-align:center'>和</th><th style='text-align:center'>負</th><th style='text-align:right'>分</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div>")
+        rows.append(f"<tr><td>{fl(t)} {cn(t)}</td><td style='text-align:center;font-size:0.65rem;'>{rt(t)}</td><td style='text-align:center;font-size:0.65rem;color:#888;'>—</td><td style='text-align:center;font-size:0.65rem;color:#888;'>—</td><td style='text-align:center;font-size:0.65rem;color:#888;'>—</td><td style='text-align:center;font-size:0.65rem;color:#888;'>—</td><td style='text-align:right;'><span style='font-weight:700;color:#FFD700;'>—</span></td><td style='text-align:center;font-size:0.55rem;color:#888;'>{qps.get(t,'-')}</td></tr>")
+    gh.append(f"<div class='gc'><div class='gh'>組 {g}</div><table class='gt'><thead><tr><th>球隊</th><th style='text-align:center'>實力</th><th style='text-align:center'>賽</th><th style='text-align:center'>勝</th><th style='text-align:center'>和</th><th style='text-align:center'>負</th><th style='text-align:right'>分</th><th style='text-align:center'>出線%</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div>")
 
+chan_map={'Mexico City':'Now618','Guadalajara':'Now 618','Toronto':'Now638','Los Angeles':'Now 638','San Francisco':'Now 638','New York':'Now638','Boston':'Now 638','Vancouver':'Now638','Houston':'Now 638','Philadelphia':'Now 638','Dallas':'Now 638','Monterrey':'Now 638','Atlanta':'Now 638','Seattle':'Now 638','Miami':'Now 638','Kansas City':'Now 638'}
 mm=[]
 cur=''
 for m in ALL_MATCHES:
@@ -305,16 +348,17 @@ for m in ALL_MATCHES:
         mm.append(f"<div class='md' data-stage='{st}'>{icon} {day} <span style='font-size:0.65rem;color:#888;margin-left:6px;'>({lbl})</span></div>")
         cur=day
     if h in TBD or a in TBD:
-        mm.append(f"<div class='mc' data-stage='{st}' data-home='{h}' data-away='{a}'><div class='mhd'><span class='mcomp'>{lbl} </span><span class='conf {cf_cls}'>{cf_icon}</span><span class='mhkt'>🕐 {hk} HK{plus}</span><span class='mvenue'>🏟️ {city}</span></div><div class='mbody' style='justify-content:center;'><span style='color:#888;font-size:0.75rem;'>⚠️ 待定 - 分組賽後揭曉</span></div></div>")
+        mm.append(f"<div class='mc' data-stage='{st}' data-home='{h}' data-away='{a}'><div class='mhd'><span class='mcomp'>{lbl} </span><span class='conf {cf_cls}'>{cf_icon}</span><span class='mhkt'>🕐 {hk} HK{plus}</span><span class='mvenue'>🏟️ {city}</span><span class='mchan'>📺 {chan}</span></div><div class='mbody' style='justify-content:center;'><span style='color:#888;font-size:0.75rem;'>⚠️ 待定 - 分組賽後揭曉</span></div></div>")
     else:
         hs,as_=rt(h),rt(a)
         hp,dp,ap_=prob(hs,as_)
         xh,xa=xg(hs,as_)
         hsc,asc=score(hs,as_)
         cf_cls,cf_icon=conf(hs,as_)
+        chan=chan_map.get(city,'Now TV')
         rf_h = get_recent_form_html(h)
         rf_a = get_recent_form_html(a)
-        mm.append(f"<div class='mc' data-stage='{st}' data-home='{h}' data-away='{a}'><div class='mhd'><span class='mcomp'>{lbl} </span><span class='conf {cf_cls}'>{cf_icon}</span><span class='mhkt'>🕐 {hk} HK{plus}</span><span class='mvenue'>🏟️ {city}</span></div><div class='mbody'><div class='mteam'>{fl(h)} {cn(h)}<span class='str'>{hs}</span><div class='mr'>{rf_h}</div></div><div class='mscore'>{hsc}⚽{asc}</div><div class='mteam'>{fl(a)} {cn(a)}<span class='str'>{as_}</span><div class='mr'>{rf_a}</div></div></div><div class='mfoot'><div class='mbar'><div class='mp' style='width:{hp:.0f}%'><span>H{hp:.0f}%</span></div><div class='mpd' style='width:{dp:.0f}%'><span>D{dp:.0f}%</span></div><div class='mpa' style='width:{ap_:.0f}%'><span>A{ap_:.0f}%</span></div></div><div class='mxg'>xG {xh}-{xa} | O{int(xh+xa+0.5)}</div></div></div>")
+        mm.append(f"<div class='mc' data-stage='{st}' data-home='{h}' data-away='{a}'><div class='mhd'><span class='mcomp'>{lbl} </span><span class='conf {cf_cls}'>{cf_icon}</span><span class='mhkt'>🕐 {hk} HK{plus}</span><span class='mvenue'>🏟️ {city}</span><span class='mchan'>📺 {chan}</span></div><div class='mbody'><div class='mteam'>{fl(h)} {cn(h)}<span class='str'>{hs}</span>{kp(h)}<div class='mr'>{rf_h}</div></div><div class='mscore'>{hsc}⚽{asc}</div><div class='mteam'>{fl(a)} {cn(a)}<span class='str'>{as_}</span>{kp(a)}<div class='mr'>{rf_a}</div></div></div><div class='mfoot'><div class='mbar'><div class='mp' style='width:{hp:.0f}%'><span>H{hp:.0f}%</span></div><div class='mpd' style='width:{dp:.0f}%'><span>D{dp:.0f}%</span></div><div class='mpa' style='width:{ap_:.0f}%'><span>A{ap_:.0f}%</span></div></div><div class='mxg'>xG {xh}-{xa} | O{int(xh+xa+0.5)} | ⚽{int(xh+xa+0.5)}球</div></div></div>")
 
 all_t=[]
 for ts in GD.values(): all_t.extend(ts)
@@ -323,7 +367,7 @@ sd=''.join([f"<div class='sb'><span class='sl'>{rt(t)}</span><div class='sb2'><d
 
 gs_c=72; r32_c=16; r16_c=8; qf_c=4; sf_c=2; f_c=2
 
-CSS="""*{margin:0;padding:0;box-sizing:border-box;}body{font-family:"Noto Sans HK",sans-serif;background:#080810;color:#f0f0f5;padding:12px;}.wrap{max-width:1200px;margin:0 auto;}.hero{background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid #FFD700;border-radius:14px;padding:22px;text-align:center;margin-bottom:16px;}.hero h1{font-size:1.8rem;color:#FFD700;margin-bottom:4px;}.hero p{color:#8888a0;font-size:0.75rem;margin-top:4px;}.cd{margin-top:12px;display:flex;justify-content:center;gap:14px;flex-wrap:wrap;}.cdi{text-align:center;}.cdn{font-size:1.3rem;font-weight:700;color:#FFD700;}.cdl{font-size:0.5rem;color:#8888a0;text-transform:uppercase;}.stats{display:flex;gap:6px;margin-bottom:16px;}.sc{flex:1;background:#16161d;border:1px solid #2a2a3a;border-radius:8px;padding:8px;text-align:center;}.sc:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(255,215,0,0.15);}.scn{font-size:1rem;font-weight:700;color:#FFD700;}.scl{font-size:0.5rem;color:#8888a0;}.tab-nav{display:flex;gap:4px;margin-bottom:14px;flex-wrap:wrap;}.tab{background:#16161d;border:1px solid #2a2a3a;color:#f0f0f5;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:0.75rem;transition:all 0.2s;}.tab:hover{background:#2a2a3a;border-color:#FFD700;}.tab.active{background:#FFD700;color:#000;font-weight:700;}.content{display:none;}.content.show{display:block;}h2{font-size:0.9rem;color:#FFD700;margin:18px 0 8px;border-bottom:1px solid #2a2a3a;padding-bottom:4px;}.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-bottom:20px;}.gc{background:#16161d;border:1px solid #2a2a3a;border-radius:10px;overflow:hidden;}.gc:hover{border-color:#FFD700;transform:translateY(-2px);}.gh{background:linear-gradient(90deg,#2a2a3a,#1a1a2e);padding:6px 10px;font-weight:700;font-size:0.75rem;color:#FFD700;}.gt{width:100%;border-collapse:collapse;font-size:0.62rem;}.gt th{text-align:left;padding:4px 6px;color:#8888a0;border-bottom:1px solid #2a2a3a;}.gt td{padding:4px 6px;border-bottom:1px solid #1a1a2e;}.str{color:#888;font-size:0.7em;margin-left:3px;}.rf{display:flex;gap:3px;margin-top:3px;flex-wrap:wrap;}.rf span{font-size:0.55rem;padding:1px 4px;border-radius:3px;font-weight:600;}.rfw{background:rgba(74,222,128,0.3);color:#4ade80;}.rfl{background:rgba(248,113,113,0.3);color:#f87171;}.rfd{background:rgba(148,148,160,0.3);color:#888;}.rfup{background:rgba(255,215,0,0.2);color:#FFD700;}.rfnil{font-size:0.55rem;color:#555;}.mr{margin-top:4px;}.mteam{line-height:1.3;}.ml{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}.md{background:#FFD700;color:#000;font-size:0.7rem;font-weight:700;padding:5px 12px;border-radius:5px;margin:14px 0 6px;}.mc{background:#16161d;border:1px solid #2a2a3a;border-radius:10px;overflow:hidden;transition:all 0.2s;}.mc:hover{border-color:#FFD700;transform:translateY(-1px);}.mhd{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#1a1a2e;border-bottom:1px solid #2a2a3a;gap:6px;flex-wrap:wrap;}.mcomp{font-size:0.65rem;font-weight:700;color:#FFD700;}.mhkt{font-size:0.6rem;color:#FFD700;}.mvenue{font-size:0.6rem;color:#8888a0;}.mbody{display:flex;align-items:center;padding:12px;gap:10px;flex-wrap:wrap;}.mteam{flex:1;font-size:0.85rem;font-weight:600;min-width:80px;}.mscore{font-size:1.4rem;font-weight:700;color:#FFD700;padding:0 12px;white-space:nowrap;}.mfoot{padding:6px 10px;border-top:1px solid #2a2a3a;}.mbar{display:flex;height:20px;border-radius:4px;overflow:hidden;gap:2px;margin-bottom:4px;}.mp{background:rgba(74,222,128,0.6);display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mpd{background:rgba(148,148,160,0.6);display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mpa{background:rgba(248,113,113,0.6);display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mxg{font-size:0.58rem;color:#8888a0;}.sd{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:20px;}.sb{display:flex;align-items:center;gap:6px;}.sl{font-size:0.65rem;color:#8888a0;width:32px;text-align:right;}.sb2{flex:1;height:16px;background:#1a1a2e;border-radius:3px;overflow:hidden;}.sbf{height:100%;background:linear-gradient(90deg,#FFD700,#e94560);border-radius:3px;}.sn{font-size:0.65rem;color:#FFD700;font-weight:700;width:16px;}.ft{text-align:center;padding:16px 0;color:#8888a0;font-size:0.6rem;border-top:1px solid #2a2a3a;margin-top:20px;}.sch-bar{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}.sf-btn{background:#16161d;border:1px solid #2a2a3a;color:#8888a0;padding:5px 10px;border-radius:8px;cursor:pointer;font-size:0.7rem;transition:all 0.2s;}.sf-btn:hover{border-color:#FFD700;color:#FFD700;}.sf-btn.active{background:#FFD700;color:#000;font-weight:700;}.fav-filter.active{background:#FFD700;color:#000;}.fav-filter{background:#16161d;border:1px solid #FFD700;color:#FFD700;}@media(max-width:600px){.hero{padding:14px}.hero h1{font-size:1.4rem}.tab{padding:6px 10px;font-size:0.7rem}.mscore{font-size:1.1rem}.mteam{font-size:0.75rem}.gg{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}}"""
+CSS="""*{margin:0;padding:0;box-sizing:border-box;}body{font-family:"Noto Sans HK",sans-serif;background:#080810;color:#f0f0f5;padding:12px;}.wrap{max-width:1200px;margin:0 auto;}.hero{background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid #FFD700;border-radius:14px;padding:22px;text-align:center;margin-bottom:16px;}.hero h1{font-size:1.8rem;color:#FFD700;margin-bottom:4px;}.hero p{color:#8888a0;font-size:0.75rem;margin-top:4px;}.cd{margin-top:12px;display:flex;justify-content:center;gap:14px;flex-wrap:wrap;}.cdi{text-align:center;}.cdn{font-size:1.3rem;font-weight:700;color:#FFD700;}.cdl{font-size:0.5rem;color:#8888a0;text-transform:uppercase;}.stats{display:flex;gap:6px;margin-bottom:16px;}.sc{flex:1;background:#16161d;border:1px solid #2a2a3a;border-radius:8px;padding:8px;text-align:center;}.sc:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(255,215,0,0.15);}.scn{font-size:1rem;font-weight:700;color:#FFD700;}.scl{font-size:0.5rem;color:#8888a0;}.tab-nav{display:flex;gap:4px;margin-bottom:14px;flex-wrap:wrap;}.tab{background:#16161d;border:1px solid #2a2a3a;color:#f0f0f5;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:0.75rem;transition:all 0.2s;}.tab:hover{background:#2a2a3a;border-color:#FFD700;}.tab.active{background:#FFD700;color:#000;font-weight:700;}.content{display:none;}.content.show{display:block;}h2{font-size:0.9rem;color:#FFD700;margin:18px 0 8px;border-bottom:1px solid #2a2a3a;padding-bottom:4px;}.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-bottom:20px;}.gc{background:#16161d;border:1px solid #2a2a3a;border-radius:10px;overflow:hidden;}.gc:hover{border-color:#FFD700;transform:translateY(-2px);}.gh{background:linear-gradient(90deg,#2a2a3a,#1a1a2e);padding:6px 10px;font-weight:700;font-size:0.75rem;color:#FFD700;}.gt{width:100%;border-collapse:collapse;font-size:0.62rem;}.gt th{text-align:left;padding:4px 6px;color:#8888a0;border-bottom:1px solid #2a2a3a;}.gt td{padding:4px 6px;border-bottom:1px solid #1a1a2e;}.str{color:#888;font-size:0.7em;margin-left:3px;}.rf{display:flex;gap:3px;margin-top:3px;flex-wrap:wrap;}.rf span{font-size:0.55rem;padding:1px 4px;border-radius:3px;font-weight:600;}.rfw{background:rgba(74,222,128,0.3);color:#4ade80;}.rfl{background:rgba(248,113,113,0.3);color:#f87171;}.rfd{background:rgba(148,148,160,0.3);color:#888;}.rfup{background:rgba(255,215,0,0.2);color:#FFD700;}.rfnil{font-size:0.55rem;color:#555;}.mr{margin-top:4px;}.mteam{line-height:1.3;}.ml{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}.md{background:#FFD700;color:#000;font-size:0.7rem;font-weight:700;padding:5px 12px;border-radius:5px;margin:14px 0 6px;}.mc{background:#16161d;border:1px solid #2a2a3a;border-radius:10px;overflow:hidden;transition:all 0.2s;}.mc:hover{border-color:#FFD700;transform:translateY(-1px);}.mhd{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#1a1a2e;border-bottom:1px solid #2a2a3a;gap:6px;flex-wrap:wrap;}.mcomp{font-size:0.65rem;font-weight:700;color:#FFD700;}.mhkt{font-size:0.6rem;color:#FFD700;}.mvenue{font-size:0.6rem;color:#8888a0;}.mbody{display:flex;align-items:center;padding:12px;gap:10px;flex-wrap:wrap;}.mteam{flex:1;font-size:0.85rem;font-weight:600;min-width:80px;}.mscore{font-size:1.4rem;font-weight:700;color:#FFD700;padding:0 12px;white-space:nowrap;}.mfoot{padding:6px 10px;border-top:1px solid #2a2a3a;}.mbar{display:flex;height:20px;border-radius:4px;overflow:hidden;gap:2px;margin-bottom:4px;}.mp{background:rgba(74,222,128,0.6);display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mpd{background:rgba(148,148,160,0.6);display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mpa{background:rgba(248,113,113,0.6);display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mxg{font-size:0.58rem;color:#8888a0;}.sd{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:20px;}.sb{display:flex;align-items:center;gap:6px;}.sl{font-size:0.65rem;color:#8888a0;width:32px;text-align:right;}.sb2{flex:1;height:16px;background:#1a1a2e;border-radius:3px;overflow:hidden;}.sbf{height:100%;background:linear-gradient(90deg,#FFD700,#e94560);border-radius:3px;}.sn{font-size:0.65rem;color:#FFD700;font-weight:700;width:16px;}.ft{text-align:center;padding:16px 0;color:#8888a0;font-size:0.6rem;border-top:1px solid #2a2a3a;margin-top:20px;}.sch-bar{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}.sf-btn{background:#16161d;border:1px solid #2a2a3a;color:#8888a0;padding:5px 10px;border-radius:8px;cursor:pointer;font-size:0.7rem;transition:all 0.2s;}.sf-btn:hover{border-color:#FFD700;color:#FFD700;}.sf-btn.active{background:#FFD700;color:#000;font-weight:700;}.kp{font-size:0.55rem;color:#FFD700;display:block;margin-top:2px;}.mchan{font-size:0.55rem;color:#8888a0;margin-left:6px;}.fav-filter.active{background:#FFD700;color:#000;}.fav-filter{background:#16161d;border:1px solid #FFD700;color:#FFD700;}@media(max-width:600px){.hero{padding:14px}.hero h1{font-size:1.4rem}.tab{padding:6px 10px;font-size:0.7rem}.mscore{font-size:1.1rem}.mteam{font-size:0.75rem}.gg{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}}"""
 
 html=f"""<!DOCTYPE html>
 <html lang='zh-HK'>
