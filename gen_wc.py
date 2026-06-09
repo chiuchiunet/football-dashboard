@@ -1,7 +1,24 @@
 #!/usr/bin/env python3
-"""World Cup 2026 Dashboard Generator - Full 104 Matches + Recent Form"""
+"""World Cup 2026 Dashboard Generator - Full 104 Matches + Recent Form + Real Results"""
 from datetime import date, datetime
-import random, json
+import random, json, os
+
+# Load real match results (fetched from worldcup26.ir)
+RESULTS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'real_results.json')
+try:
+    with open(RESULTS_FILE, 'r', encoding='utf-8') as f:
+        REAL_DATA = json.load(f)
+    REAL_RESULTS = REAL_DATA.get('matches', {})
+    FETCHED_AT = REAL_DATA.get('fetched_at', 'N/A')
+except:
+    REAL_RESULTS = {}
+    FETCHED_AT = 'N/A'
+
+def get_real_result(match_id):
+    """Get actual result for a match ID (1-indexed from ALL_MATCHES)"""
+    # match_id is 1-indexed position in ALL_MATCHES
+    # worldcup26.ir uses string IDs like '1', '2', etc.
+    return REAL_RESULTS.get(str(match_id), {})
 
 CN = {
     'Argentina':'阿根廷','France':'法國','Spain':'西班牙','Brazil':'巴西',
@@ -533,9 +550,15 @@ for g in 'ABCDEFGHIJKL':
     gh.append(f"<div class='gc'><div class='gh'>組 {g}</div><table class='gt'><thead><tr><th>球隊</th><th style='text-align:center'>實力</th><th style='text-align:center'>賽</th><th style='text-align:center'>勝</th><th style='text-align:center'>和</th><th style='text-align:center'>負</th><th style='text-align:right'>分</th><th style='text-align:center'>出線%</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div>")
 
 chan_map={'Mexico City':'Now618','Guadalajara':'Now 618','Toronto':'Now638','Los Angeles':'Now 638','San Francisco':'Now 638','New York':'Now638','Boston':'Now 638','Vancouver':'Now638','Houston':'Now 638','Philadelphia':'Now 638','Dallas':'Now 638','Monterrey':'Now 638','Atlanta':'Now 638','Seattle':'Now 638','Miami':'Now 638','Kansas City':'Now 638'}
+
+# --- Accuracy tracking ---
+acc_correct = 0   # exact score
+acc_winner = 0   # correct winner/draw
+acc_total = 0    # total finished matches
+
 mm=[]
 cur=''
-for m in ALL_MATCHES:
+for idx, m in enumerate(ALL_MATCHES):
     day,h,a,et,city=m
     hk,nd=et_to_hk(et)
     plus=' (+1)' if nd else ''
@@ -546,7 +569,7 @@ for m in ALL_MATCHES:
         mm.append(f"<div class='md' data-stage='{st}'>{icon} {day} <span style='font-size:0.65rem;color:#888;margin-left:6px;'>({lbl})</span></div>")
         cur=day
     if h in TBD or a in TBD:
-        mm.append(f"<div class='mc' data-stage='{st}' data-home='{h}' data-away='{a}'><div class='mhd'><span class='mcomp'>{lbl} </span><span class='conf {cf_cls}'>{cf_icon}</span><span class='mhkt'>🕐 {hk} HK{plus}</span><span class='mvenue'>🏟️ {city}</span><span class='mchan'>📺 {chan}</span></div><div class='mbody' style='justify-content:center;'><span style='color:#888;font-size:0.75rem;'>⚠️ 待定 - 分組賽後揭曉</span></div></div>")
+        mm.append(f"<div class='mc' data-stage='{st}' data-home='{h}' data-away='{a}'><div class='mhd'><span class='mcomp'>{lbl} </span><span class='mhkt'>🕐 {hk} HK{plus}</span><span class='mvenue'>🏟️ {city}</span></div><div class='mbody' style='justify-content:center;'><span style='color:#888;font-size:0.75rem;'>⚠️ 待定 - 分組賽後揭曉</span></div></div>")
     else:
         hs,as_=rt(h),rt(a)
         hp,dp,ap_=prob(hs,as_)
@@ -556,7 +579,38 @@ for m in ALL_MATCHES:
         chan=chan_map.get(city,'Now TV')
         rf_h = get_recent_form_html(h)
         rf_a = get_recent_form_html(a)
-        mm.append(f"<div class='mc' data-stage='{st}' data-home='{h}' data-away='{a}'><div class='mhd'><span class='mcomp'>{lbl} </span><span class='conf {cf_cls}'>{cf_icon}</span><span class='mhkt'>🕐 {hk} HK{plus}</span><span class='mvenue'>🏟️ {city}</span><span class='mchan'>📺 {chan}</span></div><div class='mbody'><div class='mteam'>{fl(h)} {cn(h)}<span class='str'>{hs}</span>{kp(h)}<div class='mr'>{rf_h}</div></div><div class='mscore'>{hsc}⚽{asc}</div><div class='mteam'>{fl(a)} {cn(a)}<span class='str'>{as_}</span>{kp(a)}<div class='mr'>{rf_a}</div></div></div><div class='mfoot'><div class='mbar'><div class='mp' style='width:{hp:.0f}%'><span>H{hp:.0f}%</span></div><div class='mpd' style='width:{dp:.0f}%'><span>D{dp:.0f}%</span></div><div class='mpa' style='width:{ap_:.0f}%'><span>A{ap_:.0f}%</span></div></div><div class='mxg'>xG {xh}-{xa} | O{int(xh+xa+0.5)} | ⚽{int(xh+xa+0.5)}球</div></div></div>")
+        
+        # Check for real result
+        match_id = str(idx + 1)
+        real = REAL_RESULTS.get(match_id, {})
+        real_finished = real.get('finished', False)
+        real_hs = real.get('home_score')
+        real_as = real.get('away_score')
+        
+        # Build comparison HTML
+        comparison_html = ''
+        if real_finished and real_hs is not None and real_as is not None:
+            acc_total += 1
+            # Exact score?
+            if real_hs == hsc and real_as == asc:
+                acc_correct += 1
+                acc_winner += 1
+                badge = '<span class="pred-badge correct">✅ 完全估中！</span>'
+                badge_cls = 'mc-correct'
+            elif (real_hs > real_as) == (hsc > asc) or real_hs == hsc and real_as == asc:
+                # Same winner (or both draw)
+                acc_winner += 1
+                badge = '<span class="pred-badge partial">🟡 估中勝方</span>'
+                badge_cls = 'mc-partial'
+            else:
+                badge = '<span class="pred-badge wrong">❌ 估錯</span>'
+                badge_cls = 'mc-wrong'
+            comparison_html = f"""<div class='cmp'><div class='cmp-pred'><span class='cmpl'>預測</span><span class='cmpv'>{hsc}-{asc}</span></div><div class='cmp-arrow'>→</div><div class='cmp-real'><span class='cmpl'>實際</span><span class='cmpv'>{real_hs}-{real_as}</span></div><div class='cmp-badge'>{badge}</div></div>"""
+            card_cls = f"mc {badge_cls}"
+        else:
+            card_cls = 'mc'
+        
+        mm.append(f"""<div class='{card_cls}' data-stage='{st}' data-home='{h}' data-away='{a}'><div class='mhd'><span class='mcomp'>{lbl} </span><span class='conf {cf_cls}'>{cf_icon}</span><span class='mhkt'>🕐 {hk} HK{plus}</span><span class='mvenue'>🏟️ {city}</span><span class='mchan'>📺 {chan}</span></div><div class='mbody'><div class='mteam'>{fl(h)} {cn(h)}<span class='str'>{hs}</span>{kp(h)}<div class='mr'>{rf_h}</div></div><div class='mscore'>{hsc}⚽{asc}</div><div class='mteam'>{fl(a)} {cn(a)}<span class='str'>{as_}</span>{kp(a)}<div class='mr'>{rf_a}</div></div>{comparison_html}<div class='mfoot'><div class='mbar'><div class='mp' style='width:{hp:.0f}%'><span>H{hp:.0f}%</span></div><div class='mpd' style='width:{dp:.0f}%'><span>D{dp:.0f}%</span></div><div class='mpa' style='width:{ap_:.0f}%'><span>A{ap_:.0f}%</span></div></div><div class='mxg'>xG {xh}-{xa} | O{int(xh+xa+0.5)} | ⚽{int(xh+xa+0.5)}球</div></div></div>""")
 
 all_t=[]
 for ts in GD.values(): all_t.extend(ts)
@@ -603,12 +657,62 @@ for rank, (t, stages) in enumerate(trophy_sorted[:8]):
     </div>""")
 medal_html = ''.join(medal)
 
+# Accuracy stats HTML
+if acc_total > 0:
+    exact_pct = acc_correct / acc_total * 100
+    winner_pct = acc_winner / acc_total * 100
+    acc_html = f"""<div class='acc-stats'>
+    <div class='acc-item'>
+        <div class='acc-val'>{acc_correct}/{acc_total}</div>
+        <div class='acc-label'>✅ 完全估中</div>
+        <div class='acc-pct'>{exact_pct:.0f}%</div>
+    </div>
+    <div class='acc-item'>
+        <div class='acc-val'>{acc_winner}/{acc_total}</div>
+        <div class='acc-label'>🟡 估中勝方</div>
+        <div class='acc-pct'>{winner_pct:.0f}%</div>
+    </div>
+    <div class='acc-note'>📊 預測 vs 實際 · 數據更新: {FETCHED_AT[:16]}</div>
+</div>"""
+else:
+    acc_html = "<div class='acc-stats'><div class='acc-note'>📊 世界盃 6月11日開始 · 預測即將揭曉！</div></div>"
+
 gs_c=72; r32_c=16; r16_c=8; qf_c=4; sf_c=2; f_c=2
 
 CSS="""*{margin:0;padding:0;box-sizing:border-box;}body{font-family:"Noto Sans HK",sans-serif;background:linear-gradient(160deg,#080812 0%,#0d0d1a 50%,#080812 100%);color:#f5f5f7;padding:12px;min-height:100vh;}.wrap{max-width:1200px;margin:0 auto;}.hero{background:linear-gradient(135deg,rgba(26,26,46,0.95),rgba(22,33,62,0.9));border:1px solid rgba(255,215,0,0.3);border-radius:18px;padding:24px;text-align:center;margin-bottom:16px;backdrop-filter:blur(20px);box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.05);position:relative;overflow:hidden;}.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at center,rgba(255,215,0,0.06) 0%,transparent 60%);pointer-events:none;}.hero h1{font-size:1.9rem;background:linear-gradient(135deg,#FFD700,#FF8C00,#FFD700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;font-weight:800;letter-spacing:-0.5px;}.hero p{color:#9ca3af;font-size:0.78rem;margin-top:4px;}.cd{margin-top:14px;display:flex;justify-content:center;gap:16px;flex-wrap:wrap;}.cdi{text-align:center;padding:8px 16px;background:rgba(255,215,0,0.05);border-radius:12px;border:1px solid rgba(255,215,0,0.1);}.cdn{font-size:1.4rem;font-weight:800;background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}.cdl{font-size:0.5rem;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;}.ctd{font-size:0.6rem;color:#FF8C00;margin-top:4px;}.stats{display:flex;gap:6px;margin-bottom:16px;}.sc{flex:1;background:rgba(22,22,29,0.8);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:10px;text-align:center;cursor:pointer;backdrop-filter:blur(10px);transition:all 0.3s cubic-bezier(0.4,0,0.2,1);}.sc:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(255,215,0,0.15);border-color:rgba(255,215,0,0.3);}.scn{font-size:1.1rem;font-weight:700;background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}.scl{font-size:0.5rem;color:#9ca3af;}.tab-nav{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}.tab{background:rgba(22,22,29,0.6);border:1px solid rgba(255,255,255,0.06);color:#9ca3af;padding:10px 16px;border-radius:50px;cursor:pointer;font-size:0.75rem;transition:all 0.3s;backdrop-filter:blur(10px);}.tab:hover{background:rgba(255,215,0,0.1);border-color:rgba(255,215,0,0.3);color:#FFD700;}.tab.active{background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;font-weight:700;box-shadow:0 4px 16px rgba(255,215,0,0.3);}.content{display:none;}.content.show{display:block;}h2{font-size:0.95rem;color:#FFD700;margin:20px 0 10px;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:6px;font-weight:600;}.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:20px;}.gc{background:rgba(22,22,29,0.7);border:1px solid rgba(255,255,255,0.06);border-radius:14px;overflow:hidden;backdrop-filter:blur(10px);transition:all 0.3s;}.gc:hover{border-color:rgba(255,215,0,0.4);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3);}.gh{background:linear-gradient(90deg,rgba(42,42,58,0.9),rgba(26,26,46,0.9));padding:8px 12px;font-weight:700;font-size:0.75rem;color:#FFD700;border-bottom:1px solid rgba(255,255,255,0.04);}.gt{width:100%;border-collapse:collapse;font-size:0.62rem;}.gt th{text-align:left;padding:5px 8px;color:#9ca3af;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:500;}.gt td{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.02);}.str{color:#9ca3af;font-size:0.7em;margin-left:4px;}.rf{display:flex;gap:3px;margin-top:4px;flex-wrap:wrap;}.rf span{font-size:0.55rem;padding:2px 5px;border-radius:4px;font-weight:600;}.rfw{background:rgba(34,197,94,0.25);color:#22c55e;border:1px solid rgba(34,197,94,0.3);}.rfl{background:rgba(239,68,68,0.25);color:#ef4444;border:1px solid rgba(239,68,68,0.3);}.rfd{background:rgba(148,148,160,0.2);color:#9ca3af;}.rfup{background:rgba(255,215,0,0.15);color:#FFD700;}.rfnil{font-size:0.55rem;color:#555;}.mr{margin-top:4px;}.mteam{line-height:1.4;}.ml{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}.md{background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;font-size:0.72rem;font-weight:700;padding:6px 14px;border-radius:8px;margin:16px 0 8px;box-shadow:0 4px 12px rgba(255,215,0,0.2);}.md.hidden,.mc.hidden{display:none;}.mc{background:rgba(22,22,29,0.75);border:1px solid rgba(255,255,255,0.06);border-radius:14px;overflow:hidden;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);backdrop-filter:blur(12px);}.mc:hover{border-color:rgba(255,215,0,0.4);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3),0 0 20px rgba(255,215,0,0.08);}.mc.fav{border-color:rgba(255,215,0,0.5);box-shadow:0 0 20px rgba(255,215,0,0.2);}.mhd{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:rgba(26,26,46,0.6);border-bottom:1px solid rgba(255,255,255,0.04);gap:8px;flex-wrap:wrap;}.mcomp{font-size:0.65rem;font-weight:700;color:#FFD700;}.conf{font-size:0.6rem;padding:2px 8px;border-radius:50px;font-weight:600;margin-right:6px;}.conf.high{background:rgba(34,197,94,0.2);color:#22c55e;border:1px solid rgba(34,197,94,0.3);}.conf.medium{background:rgba(234,179,8,0.2);color:#eab308;border:1px solid rgba(234,179,8,0.3);}.conf.low{background:rgba(239,68,68,0.2);color:#ef4444;border:1px solid rgba(239,68,68,0.3);}.mhkt{font-size:0.6rem;color:#FF8C00;}.mvenue{font-size:0.6rem;color:#9ca3af;}.mbody{display:flex;align-items:center;padding:14px;gap:12px;flex-wrap:wrap;}.mteam{flex:1;font-size:0.88rem;font-weight:600;min-width:80px;}.mscore{font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 14px;white-space:nowrap;}.mfoot{padding:8px 12px;border-top:1px solid rgba(255,255,255,0.04);}.mbar{display:flex;height:22px;border-radius:6px;overflow:hidden;gap:2px;margin-bottom:4px;}.mp{background:linear-gradient(90deg,rgba(34,197,94,0.7),rgba(34,197,94,0.5));display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mpd{background:linear-gradient(90deg,rgba(148,148,160,0.7),rgba(148,148,160,0.5));display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mpa{background:linear-gradient(90deg,rgba(239,68,68,0.7),rgba(239,68,68,0.5));display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mxg{font-size:0.58rem;color:#9ca3af;}.sd{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:20px;}.sb{display:flex;align-items:center;gap:6px;}.sl{font-size:0.65rem;color:#9ca3af;width:32px;text-align:right;}.sb2{flex:1;height:16px;background:rgba(26,26,46,0.8);border-radius:4px;overflow:hidden;}.sbf{height:100%;background:linear-gradient(90deg,#FFD700,#FF6B35,#FF4500);border-radius:4px;}.sn{font-size:0.65rem;color:#FFD700;font-weight:700;width:16px;}.ft{text-align:center;padding:20px 0;color:#9ca3af;font-size:0.6rem;border-top:1px solid rgba(255,255,255,0.04);margin-top:20px;}.sch-bar{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}.sf-btn{background:rgba(22,22,29,0.6);border:1px solid rgba(255,255,255,0.06);color:#9ca3af;padding:6px 12px;border-radius:50px;cursor:pointer;font-size:0.7rem;transition:all 0.3s;backdrop-filter:blur(10px);}.sf-btn:hover{border-color:rgba(255,215,0,0.3);color:#FFD700;}.sf-btn.active{background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;font-weight:700;box-shadow:0 4px 12px rgba(255,215,0,0.2);}.fav-filter.active{background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;}.fav-filter{background:rgba(22,22,29,0.6);border:1px solid rgba(255,215,0,0.4);color:#FFD700;}.kp{font-size:0.55rem;color:#FF8C00;display:block;margin-top:3px;font-weight:500;}
 .mr{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}.medal-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}.medal-card{flex:1;min-width:100px;background:rgba(22,22,29,0.8);border-radius:14px;padding:14px;text-align:center;border:1px solid rgba(255,255,255,0.06);transition:all 0.3s;}.medal-card.gold{border-color:rgba(255,215,0,0.5);background:linear-gradient(135deg,rgba(255,215,0,0.1),rgba(22,22,29,0.8));}.medal-card.silver{border-color:rgba(192,192,192,0.4);}.medal-card.bronze{border-color:rgba(205,127,50,0.4);}.medal-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,0.3);}.mrank{font-size:1.5rem;margin-bottom:6px;}.mflag{font-size:1.8rem;margin-bottom:4px;}.mname{font-size:0.72rem;font-weight:600;color:#f5f5f7;margin-bottom:6px;}.mwin{font-size:1.1rem;font-weight:800;color:#FFD700;}.msf{font-size:0.65rem;color:#9ca3af;}.trophy-legend{display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}.tpc{font-size:0.65rem;padding:2px 8px;border-radius:50px;font-weight:600;}.tw{background:rgba(255,215,0,0.2);color:#FFD700;}.tf{background:rgba(148,163,184,0.2);color:#c0c0c0;}.ts{background:rgba(239,68,68,0.2);color:#ef4444;}.tq{background:rgba(234,179,8,0.2);color:#eab308;}.tr{background:rgba(34,197,94,0.2);color:#22c55e;}.ttbl{width:100%;border-collapse:collapse;font-size:0.65rem;}.ttbl th{text-align:left;padding:8px 10px;color:#9ca3af;border-bottom:1px solid rgba(255,255,255,0.08);font-weight:500;}.ttbl td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.03);}.ttbl tr:hover td{background:rgba(255,215,0,0.05);}.tpbar{display:flex;height:10px;border-radius:5px;overflow:hidden;gap:1px;}.tpw{background:linear-gradient(90deg,#FFD700,#FF8C00);}.tpf{background:rgba(192,192,192,0.6);}.tps{background:rgba(239,68,68,0.6);}.tpq{background:rgba(234,179,8,0.6);}.tpr{background:rgba(34,197,94,0.6);}.mchan{font-size:0.55rem;color:#9ca3af;margin-left:6px;}.bracket{margin-top:10px;}.bround{margin-bottom:20px;}.bround h3{font-size:0.85rem;color:#FFD700;margin:0 0 10px;padding:6px 12px;background:rgba(255,215,0,0.1);border-radius:8px;border-left:3px solid #FFD700;}.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}.bgrid.finals-grid{grid-template-columns:repeat(2,1fr);max-width:500px;}.bmc{background:rgba(22,22,29,0.8);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px;transition:all 0.3s;}.bmc:hover{border-color:rgba(255,215,0,0.4);box-shadow:0 4px 16px rgba(0,0,0,0.2);}.bmc.tbd{opacity:0.5;}.bmtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.04);}.bmlbl{font-size:0.7rem;font-weight:700;color:#FFD700;}.bmhk{font-size:0.6rem;color:#9ca3af;}.bmteams{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;}.btm{flex:1;font-size:0.8rem;font-weight:600;}.bscore{font-size:1.3rem;font-weight:800;background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 8px;white-space:nowrap;}.bmtbd{color:#666;font-size:0.8rem;}.bmbbar{display:flex;height:18px;border-radius:4px;overflow:hidden;gap:1px;}.bmp{flex:0 0 auto;background:linear-gradient(90deg,rgba(34,197,94,0.8),rgba(34,197,94,0.6));display:flex;align-items:center;justify-content:center;font-size:0.5rem;color:#fff;font-weight:600;min-width:20px;}.bmd{flex:0 0 auto;background:rgba(148,148,160,0.6);display:flex;align-items:center;justify-content:center;font-size:0.5rem;color:#fff;font-weight:600;min-width:20px;}.bma{flex:0 0 auto;background:linear-gradient(90deg,rgba(239,68,68,0.8),rgba(239,68,68,0.6));display:flex;align-items:center;justify-content:center;font-size:0.5rem;color:#fff;font-weight:600;min-width:20px;}
 .bnav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(13,13,26,0.95);backdrop-filter:blur(20px);border-top:1px solid rgba(255,215,0,0.2);padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));z-index:1000;box-shadow:0 -4px 20px rgba(0,0,0,0.3);}.bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:#9ca3af;cursor:pointer;padding:4px 8px;transition:all 0.2s;}.bni.active{color:#FFD700;}.bni:hover{color:#FFD700;}.bne{font-size:1.3rem;}.bnl{font-size:0.55rem;font-weight:500;}
-@media(max-width:600px){.bnav{display:flex;}.wrap{padding-bottom:70px;}}"""
+@media(max-width:600px){.bnav{display:flex;}.wrap{padding-bottom:70px;}}
+
+/* Accuracy stats */
+.acc-stats{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;justify-content:center;align-items:center;}
+.acc-item{text-align:center;padding:6px 14px;background:rgba(22,22,29,0.7);border-radius:10px;border:1px solid rgba(255,255,255,0.06);}
+.acc-val{font-size:1rem;font-weight:800;color:#FFD700;}
+.acc-label{font-size:0.5rem;color:#9ca3af;margin-top:2px;}
+.acc-pct{font-size:0.6rem;color:#22c55e;margin-top:2px;}
+.acc-note{font-size:0.58rem;color:#888;padding:6px 10px;}
+
+/* Prediction vs Actual comparison */
+.cmp{display:flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(0,0,0,0.3);border-radius:8px;margin:0 12px 8px;font-size:0.72rem;flex-wrap:wrap;}
+.cmp-pred,.cmp-real{display:flex;flex-direction:column;align-items:center;gap:1px;}
+.cmpl{font-size:0.5rem;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;}
+.cmpv{font-weight:800;font-size:1rem;}
+.cmp-pred .cmpv{color:#FFD700;}
+.cmp-real .cmpv{color:#22c55e;}
+.cmp-arrow{color:#888;font-size:1.1rem;}
+.cmp-badge{font-size:0.6rem;padding:2px 8px;border-radius:50px;margin-left:auto;}
+.pred-badge{padding:2px 8px;border-radius:50px;font-size:0.6rem;font-weight:600;}
+.correct{background:rgba(34,197,94,0.2);color:#22c55e;}
+.partial{background:rgba(234,179,8,0.2);color:#eab308;}
+.wrong{background:rgba(239,68,68,0.2);color:#ef4444;}
+
+/* Match card states */
+.mc-correct{border-color:rgba(34,197,94,0.4) !important;}
+.mc-partial{border-color:rgba(234,179,8,0.3) !important;}
+.mc-wrong{border-color:rgba(239,68,68,0.3) !important;}
+.mc-correct:hover{border-color:rgba(34,197,94,0.6) !important;}
+.mc-partial:hover{border-color:rgba(234,179,8,0.5) !important;}
+.mc-wrong:hover{border-color:rgba(239,68,68,0.5) !important;}"""
 
 html=f"""<!DOCTYPE html>
 <html lang='zh-HK'>
@@ -639,6 +743,7 @@ html=f"""<!DOCTYPE html>
 <div class='sc'><div class='scn'>{qf_c}</div><div class='scl'>8強</div></div>
 <div class='sc'><div class='scn'>{sf_c+f_c}</div><div class='scl'>決賽</div></div>
 </div>
+{acc_html}
 <div class='tab-nav'>
 <button class='tab active' onclick="showTab('groups')">📊 48隊 + 實力</button>
 <button class='tab' onclick="showTab('schedule')">📅 104場賽程</button>
