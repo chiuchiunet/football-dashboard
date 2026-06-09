@@ -307,6 +307,156 @@ def mc_prob(g, n=3000):
             scores[t] += 1
     return {t: round(scores[t]/n*100) for t in GD[g]}
 
+# ---- Full tournament Monte Carlo (捧盃概率) ----
+
+
+def resolve_r16():
+    """Simulate R16 matchups based on group results. Returns dict of match_key -> winner."""
+    winners = {}
+    # Groups A-L: top 2 advance
+    for g in 'ABCDEFGHIJKL':
+        pts = {t: 0 for t in GD[g]}
+        for i in range(4):
+            for j in range(i+1, 4):
+                h, a = GD[g][i], GD[g][j]
+                hs, as_ = rt(h), rt(a)
+                hp, dp, ap_ = prob(hs, as_)
+                r = random.random() * 100
+                if r < hp: pts[h] += 3
+                elif r < hp + dp: pts[h] += 1; pts[a] += 1
+                else: pts[a] += 3
+        sorted_pts = sorted(pts.items(), key=lambda x: (-x[1], -rt(x[0])))
+        winners[f'G{g}1'] = sorted_pts[0][0]
+        winners[f'G{g}2'] = sorted_pts[1][0]
+    
+    # R16 bracket (M49-M56)
+    r16_matches = [
+        ('G1A1','G1A2'),('G1A3','G1A4'),  # M49: A1 vs A2, A3 vs A4  (invalid - fix)
+    ]
+    # Real bracket based on WC2026 structure:
+    # M49: 1A vs 2B(C/D/E/F) depends on bracket
+    # Simplified: pair group winners vs runners-up from adjacent groups
+    r16_pairings = [
+        ('G1A1','G2A2'),   # M49
+        ('G3A1','G4A2'),   # M50
+        ('G5A1','G6A2'),   # M51
+        ('G7A1','G8A2'),   # M52
+        ('G2A1','G1A2'),   # M53
+        ('G4A1','G3A2'),   # M54
+        ('G6A1','G5A2'),   # M55
+        ('G8A1','G7A2'),   # M56
+    ]
+    results = {}
+    for i, (h, a) in enumerate(r16_pairings):
+        ht = winners.get(h, h)
+        at = winners.get(a, a)
+        if ht in TBD or at in TBD:
+            results[f'M{49+i}'] = None
+            continue
+        hs, as_ = rt(ht), rt(at)
+        hp, dp, ap_ = prob(hs, as_)
+        r = random.random() * 100
+        if r < hp: results[f'M{49+i}'] = ht
+        elif r < hp + dp:
+            results[f'M{49+i}'] = ht if random.random() < 0.5 else at
+        else: results[f'M{49+i}'] = at
+    return results
+
+def mc_tournament(n=10000):
+    """Run n full tournament simulations. Returns dict with stage advancement counts."""
+    stage_counts = {t: {'GS':0,'R16':0,'QF':0,'SF':0,'FNL':0,'WIN':0} for t in sum(GD.values(), [])}
+    
+    for _ in range(n):
+        # --- Group Stage ---
+        group_standings = {}
+        for g in 'ABCDEFGHIJKL':
+            pts = {t: 0 for t in GD[g]}
+            for i in range(4):
+                for j in range(i+1, 4):
+                    h, a = GD[g][i], GD[g][j]
+                    hs, as_ = rt(h), rt(a)
+                    hp, dp, ap_ = prob(hs, as_)
+                    r = random.random() * 100
+                    if r < hp: pts[h] += 3
+                    elif r < hp + dp: pts[h] += 1; pts[a] += 1
+                    else: pts[a] += 3
+            sorted_pts = sorted(pts.items(), key=lambda x: (-x[1], -rt(x[0])))
+            group_standings[g] = [t for t,_ in sorted_pts]
+            for rank, t in enumerate(sorted_pts[:2]):
+                stage_counts[t[0]]['GS'] += 1
+                if rank == 0: stage_counts[t[0]]['R16'] += 1
+        
+        # --- R16 ---
+        # Standard WC2026 bracket: A/B/C/D on one side, E/F/G/H on other
+        # 1A vs 2B, 1C vs 2D, 1E vs 2F, 1G vs 2H, 1B vs 2A, 1D vs 2C, 1F vs 2E, 1H vs 2G
+        r16_pairings = [
+            (0, 1),   # M49: 1A vs 2B
+            (2, 3),   # M50: 1C vs 2D
+            (4, 5),   # M51: 1E vs 2F
+            (6, 7),   # M52: 1G vs 2H
+            (1, 0),   # M53: 1B vs 2A
+            (3, 2),   # M54: 1D vs 2C
+            (5, 4),   # M55: 1F vs 2E
+            (7, 6),   # M56: 1H vs 2G
+        ]
+        group_order = list('ABCDEFGH')
+        r16_winners = []
+        for i, j in r16_pairings:
+            ga, gb = group_order[i], group_order[j]
+            ht = group_standings[ga][0]  # group winner
+            at = group_standings[gb][1]   # runner-up
+            if ht in TBD or at in TBD:
+                r16_winners.append(None); continue
+            hs, as_ = rt(ht), rt(at)
+            hp, dp, ap_ = prob(hs, as_)
+            r = random.random() * 100
+            winner = ht if r < hp else (at if r >= hp+dp else (ht if random.random()<0.5 else at))
+            r16_winners.append(winner)
+            stage_counts[winner]['QF'] += 1
+        
+        # --- QF ---
+        qf_pairings = [(0,1),(2,3),(4,5),(6,7)]
+        qf_winners = []
+        for i, j in qf_pairings:
+            ht = r16_winners[i]
+            at = r16_winners[j]
+            if not ht or not at:
+                qf_winners.append(None); continue
+            hs, as_ = rt(ht), rt(at)
+            hp, dp, ap_ = prob(hs, as_)
+            r = random.random() * 100
+            winner = ht if r < hp else (at if r >= hp+dp else (ht if random.random()<0.5 else at))
+            qf_winners.append(winner)
+            stage_counts[winner]['SF'] += 1
+        
+        # --- SF ---
+        sf_pairings = [(0,1),(2,3)]
+        sf_winners = []
+        for i, j in sf_pairings:
+            ht = qf_winners[i]
+            at = qf_winners[j]
+            if not ht or not at:
+                sf_winners.append(None); continue
+            hs, as_ = rt(ht), rt(at)
+            hp, dp, ap_ = prob(hs, as_)
+            r = random.random() * 100
+            winner = ht if r < hp else (at if r >= hp+dp else (ht if random.random()<0.5 else at))
+            sf_winners.append(winner)
+            stage_counts[winner]['FNL'] += 1
+        
+        # --- Final + 3rd ---
+        for i, j in [(0,1)]:
+            ht = sf_winners[i]
+            at = sf_winners[j]
+            if ht and at:
+                hs, as_ = rt(ht), rt(at)
+                hp, dp, ap_ = prob(hs, as_)
+                r = random.random() * 100
+                winner = ht if r < hp else (at if r >= hp+dp else (ht if random.random()<0.5 else at))
+                stage_counts[winner]['WIN'] += 1
+    
+    return {t: {s: round(c/n*100, 1) for s, c in counts.items()} for t, counts in stage_counts.items()}
+
 R16=[('7月4日','W37','W38','13:00','Houston'),('7月4日','W41','W42','17:00','Philadelphia'),('7月5日','W39','W40','22:00','New York'),('7月5日','W43','W44','02:00','Mexico City'),('7月6日','W45','W46','15:00','Dallas'),('7月6日','W47','W48','20:00','Seattle'),('7月7日','W49','W50','04:00','Atlanta'),('7月7日','W51','W52','16:00','Vancouver')]
 QF=[('7月9日','QF1-W','QF1-L','22:00','Boston'),('7月10日','QF2-W','QF2-L','15:00','Los Angeles'),('7月11日','QF3-W','QF3-L','17:00','Miami'),('7月11日','QF4-W','QF4-L','21:00','Kansas City')]
 SF=[('7月14日','SF1-W','SF1-L','15:00','Dallas'),('7月15日','SF2-W','SF2-L','15:00','Atlanta')]
@@ -337,6 +487,26 @@ def gen_b():
 
 SN={'GS':'分組','R32':'32強','R16':'16強','QF':'8強','SF':'準決','3RD':'季軍','FNL':'決賽'}
 IC={'GS':'📅','R32':'🎯','R16':'⚡','QF':'🔥','SF':'🏆','3RD':'🥉','FNL':'🏆'}
+
+# Trophy probability
+print('Running 10000 tournament simulations for trophy probability...')
+TROPHY = mc_tournament(10000)
+
+# Group qualified 2nd place helpers for R16 lookup
+def g2_str(g):
+    """Get 2nd place team name from group g based on current ratings."""
+    pts = {t: 0 for t in GD[g]}
+    for i in range(4):
+        for j in range(i+1, 4):
+            h, a = GD[g][i], GD[g][j]
+            hs, as_ = rt(h), rt(a)
+            hp, dp, ap_ = prob(hs, as_)
+            r = random.random() * 100
+            if r < hp: pts[h] += 3
+            elif r < hp + dp: pts[h] += 1; pts[a] += 1
+            else: pts[a] += 3
+    sorted_pts = sorted(pts.items(), key=lambda x: (-x[1], -rt(x[0])))
+    return sorted_pts[1][0]
 
 today=date.today().strftime('%Y-%m-%d')
 days_to_go=max(0,(date(2026,6,11)-date.today()).days)
@@ -393,9 +563,50 @@ for ts in GD.values(): all_t.extend(ts)
 all_t.sort(key=lambda t:-rt(t))
 sd=''.join([f"<div class='sb'><span class='sl'>{rt(t)}</span><div class='sb2'><div class='sbf' style='width:{rt(t)}%'></div></div><span class='sn'>{fl(t)}</span><span style='font-size:0.6rem;color:#aaa;margin-left:4px;'>{cn(t)}</span></div>" for t in all_t])
 
+# Trophy standings - sort by WIN%
+trophy_sorted = sorted(TROPHY.items(), key=lambda x: -x[1]['WIN'])
+
+# Build trophy HTML - top 16 with full stage breakdown
+trophy_rows = []
+for rank, (t, stages) in enumerate(trophy_sorted[:16]):
+    win_p = stages['WIN']
+    final_p = stages['FNL']
+    sf_p = stages['SF']
+    qf_p = stages['QF']
+    r16_p = stages['R16']
+    gs_p = stages['GS']
+    bar = f"""<div class='tpbar'><div class='tpw' style='width:{win_p*3:.0f}%'></div><div class='tpf' style='width:{(final_p-win_p)*3:.0f}%'></div><div class='tps' style='width:{(sf_p-final_p)*3:.0f}%'></div><div class='tpq' style='width:{(qf_p-sf_p)*3:.0f}%'></div><div class='tpr' style='width:{(r16_p-qf_p)*3:.0f}%'></div></div>"""
+    trophy_rows.append(f"""<tr>
+        <td style='text-align:center;font-weight:700;color:#FFD700;'>{rank+1}</td>
+        <td>{fl(t)} {cn(t)}</td>
+        <td style='text-align:center;font-size:0.7rem;'>{rt(t)}</td>
+        <td style='text-align:center;'><span class='tpc tw'>{win_p:.1f}%</span></td>
+        <td style='text-align:center;'><span class='tpc tf'>{final_p:.1f}%</span></td>
+        <td style='text-align:center;'><span class='tpc ts'>{sf_p:.1f}%</span></td>
+        <td style='text-align:center;'><span class='tpc tq'>{qf_p:.1f}%</span></td>
+        <td style='text-align:center;'><span class='tpc tr'>{r16_p:.1f}%</span></td>
+        <td>{bar}</td>
+    </tr>""")
+
+trophy_table_html = ''.join(trophy_rows)
+
+# Build medal table (top 8 by WIN%)
+medal = []
+for rank, (t, stages) in enumerate(trophy_sorted[:8]):
+    win_p = stages['WIN']
+    medal.append(f"""<div class='medal-card {'gold' if rank==0 else 'silver' if rank==1 else 'bronze'}'>
+        <div class='mrank'>{'🥇' if rank==0 else '🥈' if rank==1 else '🥉'}</div>
+        <div class='mflag'>{fl(t)}</div>
+        <div class='mname'>{cn(t)}</div>
+        <div class='mwin'>{win_p:.1f}%</div>
+        <div class='msf'>{stages['FNL']:.1f}%</div>
+    </div>""")
+medal_html = ''.join(medal)
+
 gs_c=72; r32_c=16; r16_c=8; qf_c=4; sf_c=2; f_c=2
 
-CSS="""*{margin:0;padding:0;box-sizing:border-box;}body{font-family:"Noto Sans HK",sans-serif;background:linear-gradient(160deg,#080812 0%,#0d0d1a 50%,#080812 100%);color:#f5f5f7;padding:12px;min-height:100vh;}.wrap{max-width:1200px;margin:0 auto;}.hero{background:linear-gradient(135deg,rgba(26,26,46,0.95),rgba(22,33,62,0.9));border:1px solid rgba(255,215,0,0.3);border-radius:18px;padding:24px;text-align:center;margin-bottom:16px;backdrop-filter:blur(20px);box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.05);position:relative;overflow:hidden;}.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at center,rgba(255,215,0,0.06) 0%,transparent 60%);pointer-events:none;}.hero h1{font-size:1.9rem;background:linear-gradient(135deg,#FFD700,#FF8C00,#FFD700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;font-weight:800;letter-spacing:-0.5px;}.hero p{color:#9ca3af;font-size:0.78rem;margin-top:4px;}.cd{margin-top:14px;display:flex;justify-content:center;gap:16px;flex-wrap:wrap;}.cdi{text-align:center;padding:8px 16px;background:rgba(255,215,0,0.05);border-radius:12px;border:1px solid rgba(255,215,0,0.1);}.cdn{font-size:1.4rem;font-weight:800;background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}.cdl{font-size:0.5rem;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;}.ctd{font-size:0.6rem;color:#FF8C00;margin-top:4px;}.stats{display:flex;gap:6px;margin-bottom:16px;}.sc{flex:1;background:rgba(22,22,29,0.8);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:10px;text-align:center;cursor:pointer;backdrop-filter:blur(10px);transition:all 0.3s cubic-bezier(0.4,0,0.2,1);}.sc:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(255,215,0,0.15);border-color:rgba(255,215,0,0.3);}.scn{font-size:1.1rem;font-weight:700;background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}.scl{font-size:0.5rem;color:#9ca3af;}.tab-nav{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}.tab{background:rgba(22,22,29,0.6);border:1px solid rgba(255,255,255,0.06);color:#9ca3af;padding:10px 16px;border-radius:50px;cursor:pointer;font-size:0.75rem;transition:all 0.3s;backdrop-filter:blur(10px);}.tab:hover{background:rgba(255,215,0,0.1);border-color:rgba(255,215,0,0.3);color:#FFD700;}.tab.active{background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;font-weight:700;box-shadow:0 4px 16px rgba(255,215,0,0.3);}.content{display:none;}.content.show{display:block;}h2{font-size:0.95rem;color:#FFD700;margin:20px 0 10px;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:6px;font-weight:600;}.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:20px;}.gc{background:rgba(22,22,29,0.7);border:1px solid rgba(255,255,255,0.06);border-radius:14px;overflow:hidden;backdrop-filter:blur(10px);transition:all 0.3s;}.gc:hover{border-color:rgba(255,215,0,0.4);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3);}.gh{background:linear-gradient(90deg,rgba(42,42,58,0.9),rgba(26,26,46,0.9));padding:8px 12px;font-weight:700;font-size:0.75rem;color:#FFD700;border-bottom:1px solid rgba(255,255,255,0.04);}.gt{width:100%;border-collapse:collapse;font-size:0.62rem;}.gt th{text-align:left;padding:5px 8px;color:#9ca3af;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:500;}.gt td{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.02);}.str{color:#9ca3af;font-size:0.7em;margin-left:4px;}.rf{display:flex;gap:3px;margin-top:4px;flex-wrap:wrap;}.rf span{font-size:0.55rem;padding:2px 5px;border-radius:4px;font-weight:600;}.rfw{background:rgba(34,197,94,0.25);color:#22c55e;border:1px solid rgba(34,197,94,0.3);}.rfl{background:rgba(239,68,68,0.25);color:#ef4444;border:1px solid rgba(239,68,68,0.3);}.rfd{background:rgba(148,148,160,0.2);color:#9ca3af;}.rfup{background:rgba(255,215,0,0.15);color:#FFD700;}.rfnil{font-size:0.55rem;color:#555;}.mr{margin-top:4px;}.mteam{line-height:1.4;}.ml{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}.md{background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;font-size:0.72rem;font-weight:700;padding:6px 14px;border-radius:8px;margin:16px 0 8px;box-shadow:0 4px 12px rgba(255,215,0,0.2);}.md.hidden,.mc.hidden{display:none;}.mc{background:rgba(22,22,29,0.75);border:1px solid rgba(255,255,255,0.06);border-radius:14px;overflow:hidden;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);backdrop-filter:blur(12px);}.mc:hover{border-color:rgba(255,215,0,0.4);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3),0 0 20px rgba(255,215,0,0.08);}.mc.fav{border-color:rgba(255,215,0,0.5);box-shadow:0 0 20px rgba(255,215,0,0.2);}.mhd{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:rgba(26,26,46,0.6);border-bottom:1px solid rgba(255,255,255,0.04);gap:8px;flex-wrap:wrap;}.mcomp{font-size:0.65rem;font-weight:700;color:#FFD700;}.conf{font-size:0.6rem;padding:2px 8px;border-radius:50px;font-weight:600;margin-right:6px;}.conf.high{background:rgba(34,197,94,0.2);color:#22c55e;border:1px solid rgba(34,197,94,0.3);}.conf.medium{background:rgba(234,179,8,0.2);color:#eab308;border:1px solid rgba(234,179,8,0.3);}.conf.low{background:rgba(239,68,68,0.2);color:#ef4444;border:1px solid rgba(239,68,68,0.3);}.mhkt{font-size:0.6rem;color:#FF8C00;}.mvenue{font-size:0.6rem;color:#9ca3af;}.mbody{display:flex;align-items:center;padding:14px;gap:12px;flex-wrap:wrap;}.mteam{flex:1;font-size:0.88rem;font-weight:600;min-width:80px;}.mscore{font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 14px;white-space:nowrap;}.mfoot{padding:8px 12px;border-top:1px solid rgba(255,255,255,0.04);}.mbar{display:flex;height:22px;border-radius:6px;overflow:hidden;gap:2px;margin-bottom:4px;}.mp{background:linear-gradient(90deg,rgba(34,197,94,0.7),rgba(34,197,94,0.5));display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mpd{background:linear-gradient(90deg,rgba(148,148,160,0.7),rgba(148,148,160,0.5));display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mpa{background:linear-gradient(90deg,rgba(239,68,68,0.7),rgba(239,68,68,0.5));display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mxg{font-size:0.58rem;color:#9ca3af;}.sd{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:20px;}.sb{display:flex;align-items:center;gap:6px;}.sl{font-size:0.65rem;color:#9ca3af;width:32px;text-align:right;}.sb2{flex:1;height:16px;background:rgba(26,26,46,0.8);border-radius:4px;overflow:hidden;}.sbf{height:100%;background:linear-gradient(90deg,#FFD700,#FF6B35,#FF4500);border-radius:4px;}.sn{font-size:0.65rem;color:#FFD700;font-weight:700;width:16px;}.ft{text-align:center;padding:20px 0;color:#9ca3af;font-size:0.6rem;border-top:1px solid rgba(255,255,255,0.04);margin-top:20px;}.sch-bar{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}.sf-btn{background:rgba(22,22,29,0.6);border:1px solid rgba(255,255,255,0.06);color:#9ca3af;padding:6px 12px;border-radius:50px;cursor:pointer;font-size:0.7rem;transition:all 0.3s;backdrop-filter:blur(10px);}.sf-btn:hover{border-color:rgba(255,215,0,0.3);color:#FFD700;}.sf-btn.active{background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;font-weight:700;box-shadow:0 4px 12px rgba(255,215,0,0.2);}.fav-filter.active{background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;}.fav-filter{background:rgba(22,22,29,0.6);border:1px solid rgba(255,215,0,0.4);color:#FFD700;}.kp{font-size:0.55rem;color:#FF8C00;display:block;margin-top:3px;font-weight:500;}.mchan{font-size:0.55rem;color:#9ca3af;margin-left:6px;}.bracket{margin-top:10px;}.bround{margin-bottom:20px;}.bround h3{font-size:0.85rem;color:#FFD700;margin:0 0 10px;padding:6px 12px;background:rgba(255,215,0,0.1);border-radius:8px;border-left:3px solid #FFD700;}.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}.bgrid.finals-grid{grid-template-columns:repeat(2,1fr);max-width:500px;}.bmc{background:rgba(22,22,29,0.8);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px;transition:all 0.3s;}.bmc:hover{border-color:rgba(255,215,0,0.4);box-shadow:0 4px 16px rgba(0,0,0,0.2);}.bmc.tbd{opacity:0.5;}.bmtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.04);}.bmlbl{font-size:0.7rem;font-weight:700;color:#FFD700;}.bmhk{font-size:0.6rem;color:#9ca3af;}.bmteams{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;}.btm{flex:1;font-size:0.8rem;font-weight:600;}.bscore{font-size:1.3rem;font-weight:800;background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 8px;white-space:nowrap;}.bmtbd{color:#666;font-size:0.8rem;}.bmbbar{display:flex;height:18px;border-radius:4px;overflow:hidden;gap:1px;}.bmp{flex:0 0 auto;background:linear-gradient(90deg,rgba(34,197,94,0.8),rgba(34,197,94,0.6));display:flex;align-items:center;justify-content:center;font-size:0.5rem;color:#fff;font-weight:600;min-width:20px;}.bmd{flex:0 0 auto;background:rgba(148,148,160,0.6);display:flex;align-items:center;justify-content:center;font-size:0.5rem;color:#fff;font-weight:600;min-width:20px;}.bma{flex:0 0 auto;background:linear-gradient(90deg,rgba(239,68,68,0.8),rgba(239,68,68,0.6));display:flex;align-items:center;justify-content:center;font-size:0.5rem;color:#fff;font-weight:600;min-width:20px;}
+CSS="""*{margin:0;padding:0;box-sizing:border-box;}body{font-family:"Noto Sans HK",sans-serif;background:linear-gradient(160deg,#080812 0%,#0d0d1a 50%,#080812 100%);color:#f5f5f7;padding:12px;min-height:100vh;}.wrap{max-width:1200px;margin:0 auto;}.hero{background:linear-gradient(135deg,rgba(26,26,46,0.95),rgba(22,33,62,0.9));border:1px solid rgba(255,215,0,0.3);border-radius:18px;padding:24px;text-align:center;margin-bottom:16px;backdrop-filter:blur(20px);box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.05);position:relative;overflow:hidden;}.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at center,rgba(255,215,0,0.06) 0%,transparent 60%);pointer-events:none;}.hero h1{font-size:1.9rem;background:linear-gradient(135deg,#FFD700,#FF8C00,#FFD700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;font-weight:800;letter-spacing:-0.5px;}.hero p{color:#9ca3af;font-size:0.78rem;margin-top:4px;}.cd{margin-top:14px;display:flex;justify-content:center;gap:16px;flex-wrap:wrap;}.cdi{text-align:center;padding:8px 16px;background:rgba(255,215,0,0.05);border-radius:12px;border:1px solid rgba(255,215,0,0.1);}.cdn{font-size:1.4rem;font-weight:800;background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}.cdl{font-size:0.5rem;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;}.ctd{font-size:0.6rem;color:#FF8C00;margin-top:4px;}.stats{display:flex;gap:6px;margin-bottom:16px;}.sc{flex:1;background:rgba(22,22,29,0.8);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:10px;text-align:center;cursor:pointer;backdrop-filter:blur(10px);transition:all 0.3s cubic-bezier(0.4,0,0.2,1);}.sc:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(255,215,0,0.15);border-color:rgba(255,215,0,0.3);}.scn{font-size:1.1rem;font-weight:700;background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}.scl{font-size:0.5rem;color:#9ca3af;}.tab-nav{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}.tab{background:rgba(22,22,29,0.6);border:1px solid rgba(255,255,255,0.06);color:#9ca3af;padding:10px 16px;border-radius:50px;cursor:pointer;font-size:0.75rem;transition:all 0.3s;backdrop-filter:blur(10px);}.tab:hover{background:rgba(255,215,0,0.1);border-color:rgba(255,215,0,0.3);color:#FFD700;}.tab.active{background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;font-weight:700;box-shadow:0 4px 16px rgba(255,215,0,0.3);}.content{display:none;}.content.show{display:block;}h2{font-size:0.95rem;color:#FFD700;margin:20px 0 10px;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:6px;font-weight:600;}.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:20px;}.gc{background:rgba(22,22,29,0.7);border:1px solid rgba(255,255,255,0.06);border-radius:14px;overflow:hidden;backdrop-filter:blur(10px);transition:all 0.3s;}.gc:hover{border-color:rgba(255,215,0,0.4);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3);}.gh{background:linear-gradient(90deg,rgba(42,42,58,0.9),rgba(26,26,46,0.9));padding:8px 12px;font-weight:700;font-size:0.75rem;color:#FFD700;border-bottom:1px solid rgba(255,255,255,0.04);}.gt{width:100%;border-collapse:collapse;font-size:0.62rem;}.gt th{text-align:left;padding:5px 8px;color:#9ca3af;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:500;}.gt td{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.02);}.str{color:#9ca3af;font-size:0.7em;margin-left:4px;}.rf{display:flex;gap:3px;margin-top:4px;flex-wrap:wrap;}.rf span{font-size:0.55rem;padding:2px 5px;border-radius:4px;font-weight:600;}.rfw{background:rgba(34,197,94,0.25);color:#22c55e;border:1px solid rgba(34,197,94,0.3);}.rfl{background:rgba(239,68,68,0.25);color:#ef4444;border:1px solid rgba(239,68,68,0.3);}.rfd{background:rgba(148,148,160,0.2);color:#9ca3af;}.rfup{background:rgba(255,215,0,0.15);color:#FFD700;}.rfnil{font-size:0.55rem;color:#555;}.mr{margin-top:4px;}.mteam{line-height:1.4;}.ml{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}.md{background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;font-size:0.72rem;font-weight:700;padding:6px 14px;border-radius:8px;margin:16px 0 8px;box-shadow:0 4px 12px rgba(255,215,0,0.2);}.md.hidden,.mc.hidden{display:none;}.mc{background:rgba(22,22,29,0.75);border:1px solid rgba(255,255,255,0.06);border-radius:14px;overflow:hidden;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);backdrop-filter:blur(12px);}.mc:hover{border-color:rgba(255,215,0,0.4);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3),0 0 20px rgba(255,215,0,0.08);}.mc.fav{border-color:rgba(255,215,0,0.5);box-shadow:0 0 20px rgba(255,215,0,0.2);}.mhd{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:rgba(26,26,46,0.6);border-bottom:1px solid rgba(255,255,255,0.04);gap:8px;flex-wrap:wrap;}.mcomp{font-size:0.65rem;font-weight:700;color:#FFD700;}.conf{font-size:0.6rem;padding:2px 8px;border-radius:50px;font-weight:600;margin-right:6px;}.conf.high{background:rgba(34,197,94,0.2);color:#22c55e;border:1px solid rgba(34,197,94,0.3);}.conf.medium{background:rgba(234,179,8,0.2);color:#eab308;border:1px solid rgba(234,179,8,0.3);}.conf.low{background:rgba(239,68,68,0.2);color:#ef4444;border:1px solid rgba(239,68,68,0.3);}.mhkt{font-size:0.6rem;color:#FF8C00;}.mvenue{font-size:0.6rem;color:#9ca3af;}.mbody{display:flex;align-items:center;padding:14px;gap:12px;flex-wrap:wrap;}.mteam{flex:1;font-size:0.88rem;font-weight:600;min-width:80px;}.mscore{font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 14px;white-space:nowrap;}.mfoot{padding:8px 12px;border-top:1px solid rgba(255,255,255,0.04);}.mbar{display:flex;height:22px;border-radius:6px;overflow:hidden;gap:2px;margin-bottom:4px;}.mp{background:linear-gradient(90deg,rgba(34,197,94,0.7),rgba(34,197,94,0.5));display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mpd{background:linear-gradient(90deg,rgba(148,148,160,0.7),rgba(148,148,160,0.5));display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mpa{background:linear-gradient(90deg,rgba(239,68,68,0.7),rgba(239,68,68,0.5));display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mxg{font-size:0.58rem;color:#9ca3af;}.sd{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:20px;}.sb{display:flex;align-items:center;gap:6px;}.sl{font-size:0.65rem;color:#9ca3af;width:32px;text-align:right;}.sb2{flex:1;height:16px;background:rgba(26,26,46,0.8);border-radius:4px;overflow:hidden;}.sbf{height:100%;background:linear-gradient(90deg,#FFD700,#FF6B35,#FF4500);border-radius:4px;}.sn{font-size:0.65rem;color:#FFD700;font-weight:700;width:16px;}.ft{text-align:center;padding:20px 0;color:#9ca3af;font-size:0.6rem;border-top:1px solid rgba(255,255,255,0.04);margin-top:20px;}.sch-bar{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}.sf-btn{background:rgba(22,22,29,0.6);border:1px solid rgba(255,255,255,0.06);color:#9ca3af;padding:6px 12px;border-radius:50px;cursor:pointer;font-size:0.7rem;transition:all 0.3s;backdrop-filter:blur(10px);}.sf-btn:hover{border-color:rgba(255,215,0,0.3);color:#FFD700;}.sf-btn.active{background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;font-weight:700;box-shadow:0 4px 12px rgba(255,215,0,0.2);}.fav-filter.active{background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;}.fav-filter{background:rgba(22,22,29,0.6);border:1px solid rgba(255,215,0,0.4);color:#FFD700;}.kp{font-size:0.55rem;color:#FF8C00;display:block;margin-top:3px;font-weight:500;}
+.mr{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}.medal-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}.medal-card{flex:1;min-width:100px;background:rgba(22,22,29,0.8);border-radius:14px;padding:14px;text-align:center;border:1px solid rgba(255,255,255,0.06);transition:all 0.3s;}.medal-card.gold{border-color:rgba(255,215,0,0.5);background:linear-gradient(135deg,rgba(255,215,0,0.1),rgba(22,22,29,0.8));}.medal-card.silver{border-color:rgba(192,192,192,0.4);}.medal-card.bronze{border-color:rgba(205,127,50,0.4);}.medal-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,0.3);}.mrank{font-size:1.5rem;margin-bottom:6px;}.mflag{font-size:1.8rem;margin-bottom:4px;}.mname{font-size:0.72rem;font-weight:600;color:#f5f5f7;margin-bottom:6px;}.mwin{font-size:1.1rem;font-weight:800;color:#FFD700;}.msf{font-size:0.65rem;color:#9ca3af;}.trophy-legend{display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}.tpc{font-size:0.65rem;padding:2px 8px;border-radius:50px;font-weight:600;}.tw{background:rgba(255,215,0,0.2);color:#FFD700;}.tf{background:rgba(148,163,184,0.2);color:#c0c0c0;}.ts{background:rgba(239,68,68,0.2);color:#ef4444;}.tq{background:rgba(234,179,8,0.2);color:#eab308;}.tr{background:rgba(34,197,94,0.2);color:#22c55e;}.ttbl{width:100%;border-collapse:collapse;font-size:0.65rem;}.ttbl th{text-align:left;padding:8px 10px;color:#9ca3af;border-bottom:1px solid rgba(255,255,255,0.08);font-weight:500;}.ttbl td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.03);}.ttbl tr:hover td{background:rgba(255,215,0,0.05);}.tpbar{display:flex;height:10px;border-radius:5px;overflow:hidden;gap:1px;}.tpw{background:linear-gradient(90deg,#FFD700,#FF8C00);}.tpf{background:rgba(192,192,192,0.6);}.tps{background:rgba(239,68,68,0.6);}.tpq{background:rgba(234,179,8,0.6);}.tpr{background:rgba(34,197,94,0.6);}.mchan{font-size:0.55rem;color:#9ca3af;margin-left:6px;}.bracket{margin-top:10px;}.bround{margin-bottom:20px;}.bround h3{font-size:0.85rem;color:#FFD700;margin:0 0 10px;padding:6px 12px;background:rgba(255,215,0,0.1);border-radius:8px;border-left:3px solid #FFD700;}.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}.bgrid.finals-grid{grid-template-columns:repeat(2,1fr);max-width:500px;}.bmc{background:rgba(22,22,29,0.8);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px;transition:all 0.3s;}.bmc:hover{border-color:rgba(255,215,0,0.4);box-shadow:0 4px 16px rgba(0,0,0,0.2);}.bmc.tbd{opacity:0.5;}.bmtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.04);}.bmlbl{font-size:0.7rem;font-weight:700;color:#FFD700;}.bmhk{font-size:0.6rem;color:#9ca3af;}.bmteams{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;}.btm{flex:1;font-size:0.8rem;font-weight:600;}.bscore{font-size:1.3rem;font-weight:800;background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 8px;white-space:nowrap;}.bmtbd{color:#666;font-size:0.8rem;}.bmbbar{display:flex;height:18px;border-radius:4px;overflow:hidden;gap:1px;}.bmp{flex:0 0 auto;background:linear-gradient(90deg,rgba(34,197,94,0.8),rgba(34,197,94,0.6));display:flex;align-items:center;justify-content:center;font-size:0.5rem;color:#fff;font-weight:600;min-width:20px;}.bmd{flex:0 0 auto;background:rgba(148,148,160,0.6);display:flex;align-items:center;justify-content:center;font-size:0.5rem;color:#fff;font-weight:600;min-width:20px;}.bma{flex:0 0 auto;background:linear-gradient(90deg,rgba(239,68,68,0.8),rgba(239,68,68,0.6));display:flex;align-items:center;justify-content:center;font-size:0.5rem;color:#fff;font-weight:600;min-width:20px;}
 .bnav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(13,13,26,0.95);backdrop-filter:blur(20px);border-top:1px solid rgba(255,215,0,0.2);padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));z-index:1000;box-shadow:0 -4px 20px rgba(0,0,0,0.3);}.bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:#9ca3af;cursor:pointer;padding:4px 8px;transition:all 0.2s;}.bni.active{color:#FFD700;}.bni:hover{color:#FFD700;}.bne{font-size:1.3rem;}.bnl{font-size:0.55rem;font-weight:500;}
 @media(max-width:600px){.bnav{display:flex;}.wrap{padding-bottom:70px;}}"""
 
@@ -433,6 +644,7 @@ html=f"""<!DOCTYPE html>
 <button class='tab' onclick="showTab('schedule')">📅 104場賽程</button>
 <button class='tab' onclick="showTab('strength')">📈 實力分佈</button>
 <button class='tab' onclick="showTab('bracket')">🏆 淘汰賽</button>
+<button class='tab' onclick="showTab('trophy')">🏅 捧盃概率</button>
 </div>
 <div id='groups' class='content show'>
 <h2>📊 12個小組 · 48支球隊</h2>
@@ -458,6 +670,22 @@ html=f"""<!DOCTYPE html>
 <div id='bracket' class='content'>
 <h2>🏆 淘汰賽 · 16強至決賽</h2>
 {gen_b()}
+</div>
+
+<div id='trophy' class='content'>
+<h2>🏅 捧盃概率 · 16強預測（10,000次模擬）</h2>
+<div class='medal-row'>{medal_html}</div>
+<div class='trophy-legend'>
+<span><span class='tpc tw'>🏆 捧盃</span></span>
+<span><span class='tpc tf'>🥚 入決賽</span></span>
+<span><span class='tpc ts'>🔥 入準決</span></span>
+<span><span class='tpc tq'>⚡ 入8強</span></span>
+<span><span class='tpc tr'>🎯 入16強</span></span>
+</div>
+<table class='ttbl'>
+<thead><tr><th style='width:30px;'>#</th><th>球隊</th><th style='width:40px;'>實力</th><th>🏆捧盃</th><th>🥚決賽</th><th>🔥準決</th><th>⚡8強</th><th>🎯16強</th><th style='width:200px;'>晉級線</th></tr></thead>
+<tbody>{trophy_table_html}</tbody>
+</table>
 </div>
 
 <div id='strength' class='content'>
