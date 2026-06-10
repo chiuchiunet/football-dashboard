@@ -274,6 +274,7 @@ def stage_of(day):
     m_num = int(parts[0])
     d_num = int(parts[1])
     if m_num == 6 and d_num <= 27: return 'GS'
+    if m_num == 6 and 28 <= d_num <= 30: return 'R32'
     if m_num == 7 and d_num <= 3: return 'R32'
     if m_num == 7 and 4 <= d_num <= 7: return 'R16'
     if m_num == 7 and 9 <= d_num <= 11: return 'QF'
