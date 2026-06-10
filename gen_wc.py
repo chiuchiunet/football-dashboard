@@ -491,15 +491,98 @@ def bm(d,h,a,et,city,lbl):
     return "<div class='bmc'><div class='bmtop'><span class='bmlbl'>"+lbl+"</span><span class='conf "+cf+"'>"+cfi+"</span><span class='bmhk'> "+hk+" HK"+pl+"</span></div><div class='bmteams'><div class='btm'>"+fl(h)+" "+cn(h)+" <span class='str'>"+str(hs)+"</span></div><div class='bscore'>"+str(hsc)+" - "+str(asc)+"</div><div class='btm'>"+fl(a)+" "+cn(a)+" <span class='str'>"+str(as_)+"</span></div></div><div class='bmbot'><div class='bmbbar'><div class='bmp' style='width:"+str(hp)+"%'><span>"+str(round(hp))+"%</span></div><div class='bmd' style='width:"+str(dp)+"%'><span>"+str(round(dp))+"%</span></div><div class='bma' style='width:"+str(ap_)+"%'><span>"+str(round(ap_))+"%</span></div></div></div></div>"
 
 def gen_b():
+    # Run one full bracket simulation to get real team names for gen_b() output
+    # --- Group Stage ---
+    group_standings = {}
+    for g in 'ABCDEFGHIJKL':
+        pts = {t: 0 for t in GD[g]}
+        for i in range(4):
+            for j in range(i+1, 4):
+                h, a = GD[g][i], GD[g][j]
+                hs, as_ = rt(h), rt(a)
+                hp, dp, ap_ = prob(hs, as_)
+                r = random.random() * 100
+                if r < hp: pts[h] += 3
+                elif r < hp + dp: pts[h] += 1; pts[a] += 1
+                else: pts[a] += 3
+        sorted_pts = sorted(pts.items(), key=lambda x: (-x[1], -rt(x[0])))
+        group_standings[g] = [t for t,_ in sorted_pts]
+
+    # --- R16 ---
+    r16_pairings = [
+        (0, 1),   # M49: 1A vs 2B
+        (2, 3),   # M50: 1C vs 2D
+        (4, 5),   # M51: 1E vs 2F
+        (6, 7),   # M52: 1G vs 2H
+        (1, 0),   # M53: 1B vs 2A
+        (3, 2),   # M54: 1D vs 2C
+        (5, 4),   # M55: 1F vs 2E
+        (7, 6),   # M56: 1H vs 2G
+    ]
+    group_order = list('ABCDEFGH')
+    r16_winners = []
+    r16_teams = []
+    for i, j in r16_pairings:
+        ga, gb = group_order[i], group_order[j]
+        ht = group_standings[ga][0]
+        at = group_standings[gb][1]
+        r16_teams.append((ht, at))
+        hs, as_ = rt(ht), rt(at)
+        hp, dp, ap_ = prob(hs, as_)
+        r = random.random() * 100
+        winner = ht if r < hp else (at if r >= hp+dp else (ht if random.random()<0.5 else at))
+        r16_winners.append(winner)
+
+    # --- QF ---
+    qf_pairings = [(0,1),(2,3),(4,5),(6,7)]
+    qf_winners = []
+    qf_teams = []
+    for i, j in qf_pairings:
+        ht = r16_winners[i]; at = r16_winners[j]
+        qf_teams.append((ht, at))
+        hs, as_ = rt(ht), rt(at)
+        hp, dp, ap_ = prob(hs, as_)
+        r = random.random() * 100
+        winner = ht if r < hp else (at if r >= hp+dp else (ht if random.random()<0.5 else at))
+        qf_winners.append(winner)
+
+    # --- SF ---
+    sf_pairings = [(0,1),(2,3)]
+    sf_winners = []
+    sf_teams = []
+    sf_losers = []
+    for i, j in sf_pairings:
+        ht = qf_winners[i]; at = qf_winners[j]
+        sf_teams.append((ht, at))
+        hs, as_ = rt(ht), rt(at)
+        hp, dp, ap_ = prob(hs, as_)
+        r = random.random() * 100
+        winner = ht if r < hp else (at if r >= hp+dp else (ht if random.random()<0.5 else at))
+        sf_winners.append(winner)
+        sf_losers.append(at if winner == ht else ht)
+
+    # --- Final + 3rd place ---
+    fn_teams = [(sf_losers[0], sf_losers[1]), (sf_winners[0], sf_winners[1])]
+
     h='<div class="bracket"><div class="bround"><h3>16強</h3><div class="bgrid">'
-    for i,m in enumerate(R16): h+=bm(m[0],m[1],m[2],m[3],m[4],'M'+str(i+49))
+    for i,m in enumerate(R16):
+        ht, at = r16_teams[i] if i < len(r16_teams) else (m[1], m[2])
+        h+=bm(m[0],ht,at,m[3],m[4],'M'+str(i+49))
     h+='</div></div><div class="bround"><h3>8強</h3><div class="bgrid">'
-    for i,m in enumerate(QF): h+=bm(m[0],m[1],m[2],m[3],m[4],'QF'+str(i+1))
+    for i,m in enumerate(QF):
+        ht, at = qf_teams[i] if i < len(qf_teams) else (m[1], m[2])
+        h+=bm(m[0],ht,at,m[3],m[4],'QF'+str(i+1))
     h+='</div></div><div class="bround"><h3>準決</h3><div class="bgrid">'
-    for i,m in enumerate(SF): h+=bm(m[0],m[1],m[2],m[3],m[4],'SF'+str(i+1))
+    for i,m in enumerate(SF):
+        ht, at = sf_teams[i] if i < len(sf_teams) else (m[1], m[2])
+        h+=bm(m[0],ht,at,m[3],m[4],'SF'+str(i+1))
     h+='</div></div><div class="bround finals"><h3>決賽</h3><div class="bgrid finals-grid">'
-    for m in TD: h+=bm(m[0],m[1],m[2],m[3],m[4],'季軍')
-    for m in FN: h+=bm(m[0],m[1],m[2],m[3],m[4],'決賽')
+    for i, m in enumerate(TD):
+        ht, at = fn_teams[i] if i < len(fn_teams) else (m[1], m[2])
+        h+=bm(m[0],ht,at,m[3],m[4],'季軍')
+    for i, m in enumerate(FN):
+        ht, at = fn_teams[len(TD)+i] if len(TD)+i < len(fn_teams) else (m[1], m[2])
+        h+=bm(m[0],ht,at,m[3],m[4],'決賽')
     h+='</div></div></div>'
     return h
 
