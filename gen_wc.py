@@ -898,18 +898,18 @@ html=f"""<!DOCTYPE html>
 <div class='sc'><div class='scn'>{sf_c+f_c}</div><div class='scl'>決賽</div></div>
 </div>
 {acc_html}
-<div class='tab-nav'>
+<!-- tab-nav removed -->
 <button class='tab active' onclick="this.classList.add('active')">📊 48隊 + 實力</button>
 <button class='tab' onclick="this.classList.add('active')">📅 104場賽程</button>
 <button class='tab' onclick="this.classList.add('active')">📈 實力分佈</button>
 <button class='tab' onclick="this.classList.add('active')">🏆 淘汰賽</button>
 <button class='tab' onclick="this.classList.add('active')">🏅 捧盃概率</button>
 </div>
-<div id='groups' class='content show'>
+<div id='groups'>
 <h2>📊 12個小組 · 48支球隊</h2>
 <div class='gg'>{''.join(gh)}</div>
 </div>
-<div id='schedule' class='content'>
+<div id='schedule'>
 <h2>📅 完整104場賽程 · 含預測比分 / xG / HK時間</h2>
 <div class="sch-bar">
 <select id="teamSearch" onchange="searchTeam(this.value)" style="background:#16161d;border:1px solid #2a2a3a;color:#f0f0f5;padding:6px 10px;border-radius:8px;font-size:0.75rem;flex:1;max-width:200px;appearance:auto;">
@@ -926,12 +926,12 @@ html=f"""<!DOCTYPE html>
 </div>
 <div class='ml'>{''.join(mm)}</div>
 </div>
-<div id='bracket' class='content'>
+<div id='bracket'>
 <h2>🏆 淘汰賽 · 16強至決賽</h2>
 {gen_b()}
 </div>
 
-<div id='trophy' class='content'>
+<div id='trophy'>
 <h2>🏅 捧盃概率 · 16強預測（10,000次模擬）</h2>
 <div class='medal-row'>{medal_html}</div>
 <div class='trophy-legend'>
@@ -947,7 +947,7 @@ html=f"""<!DOCTYPE html>
 </table>
 </div>
 
-<div id='strength' class='content'>
+<div id='strength'>
 <h2>📈 實力分佈（48支球隊）</h2>
 <div class='sd'>{sd}</div>
 </div>
