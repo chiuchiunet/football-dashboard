@@ -339,9 +339,12 @@
 <script>
 
 function showTab(tab){
+  console.log("showTab called:", tab);
+  alert("Tab clicked: " + tab);
   var ts=document.querySelectorAll(".tab");
   for(var i=0;i<ts.length;i++)ts[i].classList.remove("active");
   var cs=document.querySelectorAll(".content");
+  console.log("Content elements found:", cs.length);
   for(var i=0;i<cs.length;i++)cs[i].classList.remove("show");
   var ts2=document.querySelectorAll(".tab");
   for(var i=0;i<ts2.length;i++)if(ts2[i].getAttribute("onclick").indexOf(tab)>-1)ts2[i].classList.add("active");
