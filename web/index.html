@@ -74,11 +74,11 @@
     <div class='acc-note'>📊 預測 vs 實際 · 數據更新: 2026-06-12T04:32</div>
 </div>
 <div class='tab-nav'>
-<button class='tab active' onclick="showTab('groups')">📊 48隊 + 實力</button>
-<button class='tab' onclick="showTab('schedule')">📅 104場賽程</button>
-<button class='tab' onclick="showTab('strength')">📈 實力分佈</button>
-<button class='tab' onclick="showTab('bracket')">🏆 淘汰賽</button>
-<button class='tab' onclick="showTab('trophy')">🏅 捧盃概率</button>
+<button class='tab active' onclick="var t=document.querySelectorAll('.tab');for(var i=0;i<t.length;i++)t[i].classList.remove('active');this.classList.add('active');var c=document.querySelectorAll('.content');for(var i=0;i<c.length;i++)c[i].classList.remove('show');document.getElementById('groups').classList.add('show')">📊 48隊 + 實力</button>
+<button class='tab' onclick="var t=document.querySelectorAll('.tab');for(var i=0;i<t.length;i++)t[i].classList.remove('active');this.classList.add('active');var c=document.querySelectorAll('.content');for(var i=0;i<c.length;i++)c[i].classList.remove('show');document.getElementById('schedule').classList.add('show')">📅 104場賽程</button>
+<button class='tab' onclick="var t=document.querySelectorAll('.tab');for(var i=0;i<t.length;i++)t[i].classList.remove('active');this.classList.add('active');var c=document.querySelectorAll('.content');for(var i=0;i<c.length;i++)c[i].classList.remove('show');document.getElementById('strength').classList.add('show')">📈 實力分佈</button>
+<button class='tab' onclick="var t=document.querySelectorAll('.tab');for(var i=0;i<t.length;i++)t[i].classList.remove('active');this.classList.add('active');var c=document.querySelectorAll('.content');for(var i=0;i<c.length;i++)c[i].classList.remove('show');document.getElementById('bracket').classList.add('show')">🏆 淘汰賽</button>
+<button class='tab' onclick="var t=document.querySelectorAll('.tab');for(var i=0;i<t.length;i++)t[i].classList.remove('active');this.classList.add('active');var c=document.querySelectorAll('.content');for(var i=0;i<c.length;i++)c[i].classList.remove('show');document.getElementById('trophy').classList.add('show')">🏅 捧盃概率</button>
 </div>
 <div id='groups' class='content show'>
 <h2>📊 12個小組 · 48支球隊</h2>
