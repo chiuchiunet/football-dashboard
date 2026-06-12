@@ -20,6 +20,57 @@ def get_real_result(match_id):
     # worldcup26.ir uses string IDs like '1', '2', etc.
     return REAL_RESULTS.get(str(match_id), {})
 
+def calc_real_standings():
+    """Calculate group standings from REAL_RESULTS"""
+    standings = {g: {} for g in 'ABCDEFGHIJKL'}
+    
+    for match_id, m in REAL_RESULTS.items():
+        if not m.get('finished'): continue
+        g = m.get('group', '')
+        if g not in standings: continue
+        
+        home = m.get('home_team', '')
+        away = m.get('away_team', '')
+        hs = m.get('home_score', 0) or 0
+        as_ = m.get('away_score', 0) or 0
+        
+        # Initialize if needed
+        for t in [home, away]:
+            if t not in standings[g]:
+                standings[g][t] = {'pts': 0, 'W': 0, 'D': 0, 'L': 0, 'GF': 0, 'GA': 0, 'P': 0}
+            standings[g][t]['P'] += 1  # Played
+        
+        # Update scores for home team
+        if home in standings[g]:
+            standings[g][home]['GF'] += hs
+            standings[g][home]['GA'] += as_
+            if hs > as_:
+                standings[g][home]['pts'] += 3
+                standings[g][home]['W'] += 1
+            elif hs == as_:
+                standings[g][home]['pts'] += 1
+                standings[g][home]['D'] += 1
+            else:
+                standings[g][home]['L'] += 1
+        
+        # Update scores for away team
+        if away in standings[g]:
+            standings[g][away]['GF'] += as_
+            standings[g][away]['GA'] += hs
+            if as_ > hs:
+                standings[g][away]['pts'] += 3
+                standings[g][away]['W'] += 1
+            elif as_ == hs:
+                standings[g][away]['pts'] += 1
+                standings[g][away]['D'] += 1
+            else:
+                standings[g][away]['L'] += 1
+    
+    return standings
+
+REAL_STANDINGS = calc_real_standings()
+
+
 CN = {
     'Argentina':'阿根廷','France':'法國','Spain':'西班牙','Brazil':'巴西',
     'England':'英格蘭','Germany':'德國','Portugal':'葡萄牙','Netherlands':'荷蘭',
@@ -630,7 +681,22 @@ for g in 'ABCDEFGHIJKL':
     ts=GD[g]
     rows=[]
     for t in sorted(ts,key=lambda x:-rt(x)):
-        rows.append(f"<tr><td>{fl(t)} {cn(t)}</td><td style='text-align:center;font-size:0.65rem;'>{rt(t)}</td><td style='text-align:center;font-size:0.65rem;color:#888;'>—</td><td style='text-align:center;font-size:0.65rem;color:#888;'>—</td><td style='text-align:center;font-size:0.65rem;color:#888;'>—</td><td style='text-align:center;font-size:0.65rem;color:#888;'>—</td><td style='text-align:right;'><span style='font-weight:700;color:#FFD700;'>—</span></td><td style='text-align:center;font-size:0.55rem;color:#888;'>{qps.get(t,'-')}</td></tr>")
+        # Get real standings if available
+        rs = REAL_STANDINGS.get(g, {}).get(t, {})
+        p = rs.get('P', 0)
+        w = rs.get('W', 0)
+        d = rs.get('D', 0)
+        l = rs.get('L', 0)
+        pts = rs.get('pts', 0)
+        if p == 0:
+            p_str = w_str = d_str = l_str = pts_str = "—"
+        else:
+            p_str = str(p)
+            w_str = str(w)
+            d_str = str(d)
+            l_str = str(l)
+            pts_str = str(pts)
+        rows.append(f"<tr><td>{fl(t)} {cn(t)}</td><td style='text-align:center;font-size:0.65rem;'>{rt(t)}</td><td style='text-align:center;font-size:0.65rem;'>{p_str}</td><td style='text-align:center;font-size:0.65rem;'>{w_str}</td><td style='text-align:center;font-size:0.65rem;'>{d_str}</td><td style='text-align:center;font-size:0.65rem;'>{l_str}</td><td style='text-align:right;'><span style='font-weight:700;color:#FFD700;'>{pts_str}</span></td><td style='text-align:center;font-size:0.55rem;color:#888;'>{qps.get(t,'-')}</td></tr>")
     gh.append(f"<div class='gc'><div class='gh'>組 {g}</div><table class='gt'><thead><tr><th>球隊</th><th style='text-align:center'>實力</th><th style='text-align:center'>賽</th><th style='text-align:center'>勝</th><th style='text-align:center'>和</th><th style='text-align:center'>負</th><th style='text-align:right'>分</th><th style='text-align:center'>出線%</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div>")
 
 chan_map={'Mexico City':'Now618','Guadalajara':'Now 618','Toronto':'Now638','Los Angeles':'Now 638','San Francisco':'Now 638','New York':'Now638','Boston':'Now 638','Vancouver':'Now638','Houston':'Now 638','Philadelphia':'Now 638','Dallas':'Now 638','Monterrey':'Now 638','Atlanta':'Now 638','Seattle':'Now 638','Miami':'Now 638','Kansas City':'Now 638'}
