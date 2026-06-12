@@ -956,8 +956,8 @@ function showTab(tab){{
   for(var i=0;i<ts.length;i++)ts[i].classList.remove("active");
   var cs=document.querySelectorAll(".content");
   for(var i=0;i<cs.length;i++)cs[i].classList.remove("show");
-  var ts2=document.querySelectorAll(".tab");
-  for(var i=0;i<ts2.length;i++)if(ts2[i].getAttribute("onclick").indexOf(tab)>-1)ts2[i].classList.add("active");
+  var target = document.getElementById(tab);
+  if(target) target.classList.add("show");
   document.getElementById(tab).classList.add("show");
 }}
 function filterStage(stage,btn){{
