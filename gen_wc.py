@@ -958,8 +958,7 @@ html=f"""<!DOCTYPE html>
 function showTab(tab){{
   var ts=document.querySelectorAll(".tab");
   for(var i=0;i<ts.length;i++)ts[i].classList.remove("active");
-  var cs=document.querySelectorAll(".content");
-  for(var i=0;i<cs.length;i++)cs[i].classList.remove("show");
+  /* tabs removed */
   var target = document.getElementById(tab);
   if(target) target.classList.add("show");
   document.getElementById(tab).classList.add("show");
