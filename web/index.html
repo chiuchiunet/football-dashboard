@@ -326,14 +326,13 @@
 </div>
 <script>
 
-function showTab(tab){
-  var ts=document.querySelectorAll(".tab");
-  for(var i=0;i<ts.length;i++)ts[i].classList.remove("active");
-  var cs=document.querySelectorAll(".content");
-  for(var i=0;i<cs.length;i++)cs[i].classList.remove("show");
-  var ts2=document.querySelectorAll(".tab");
-  for(var i=0;i<ts2.length;i++)if(ts2[i].getAttribute("onclick").indexOf(tab)>-1)ts2[i].classList.add("active");
-  document.getElementById(tab).classList.add("show");
+showTab(tab){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.content').forEach(c=>c.classList.remove('show'));
+  const btn = document.querySelector('.tab[onclick*="'+tab+'"]');
+  if(btn) btn.classList.add('active');
+  const content = document.getElementById(tab);
+  if(content) content.classList.add('show');
 }
 function filterStage(stage,btn){
   var bs=document.querySelectorAll(".sf-btn");
