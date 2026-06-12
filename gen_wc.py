@@ -898,12 +898,12 @@ html=f"""<!DOCTYPE html>
 <div class='sc'><div class='scn'>{sf_c+f_c}</div><div class='scl'>決賽</div></div>
 </div>
 {acc_html}
-<!-- tab-nav removed -->
-<button class='tab active' onclick="this.classList.add('active')">📊 48隊 + 實力</button>
-<button class='tab' onclick="this.classList.add('active')">📅 104場賽程</button>
-<button class='tab' onclick="this.classList.add('active')">📈 實力分佈</button>
-<button class='tab' onclick="this.classList.add('active')">🏆 淘汰賽</button>
-<button class='tab' onclick="this.classList.add('active')">🏅 捧盃概率</button>
+<div style="display:flex;gap:8px;margin:16px 0;flex-wrap:wrap;justify-content:center;">
+<button onclick="showSection('overview')" style="padding:12px 20px;background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;border:none;border-radius:50px;font-size:0.8rem;font-weight:700;cursor:pointer;">🏠 Overview</button>
+<button onclick="showSection('groups')" style="padding:12px 20px;background:rgba(30,30,45,0.9);color:#9ca3af;border:1px solid rgba(255,255,255,0.1);border-radius:50px;font-size:0.8rem;cursor:pointer;">📊 Groups</button>
+<button onclick="showSection('schedule')" style="padding:12px 20px;background:rgba(30,30,45,0.9);color:#9ca3af;border:1px solid rgba(255,255,255,0.1);border-radius:50px;font-size:0.8rem;cursor:pointer;">📅 Schedule</button>
+<button onclick="showSection('knockout')" style="padding:12px 20px;background:rgba(30,30,45,0.9);color:#9ca3af;border:1px solid rgba(255,255,255,0.1);border-radius:50px;font-size:0.8rem;cursor:pointer;">🏆 Knockout</button>
+<button onclick="showSection('trophy')" style="padding:12px 20px;background:rgba(30,30,45,0.9);color:#9ca3af;border:1px solid rgba(255,255,255,0.1);border-radius:50px;font-size:0.8rem;cursor:pointer;">🏅 Trophy</button>
 </div>
 <div id='sec-overview' class='section' style='display:block'><div id='groups'>
 <h2 style='font-size:1.5rem;margin-bottom:20px;'>📊 12個小組 · 48支球隊</h2><div style='margin-bottom:30px;'> · 48支球隊</h2>
@@ -954,16 +954,19 @@ html=f"""<!DOCTYPE html>
 </div>
 <script>
 
-function showTab(tab){{
-  var ts=document.querySelectorAll(".tab");
-  for(var i=0;i<ts.length;i++)ts[i].classList.remove("active");
-  var cs=document.querySelectorAll(".content");
-  for(var i=0;i<cs.length;i++)cs[i].style.display="none";
-  var t=document.getElementById(id);
-  if(t) t.style.display="block";
-  var target = document.getElementById(tab);
-  if(target) target.classList.add("show");
-  document.getElementById(tab).classList.add("show");
+function showSection(id){{
+  var secs = document.querySelectorAll(".section");
+  for(var i=0;i<secs.length;i++) secs[i].style.display="none";
+  document.getElementById("sec-"+id).style.display="block";
+  var btns = document.querySelectorAll("[onclick^=showSection]");
+  for(var i=0;i<btns.length;i++){{
+    btns[i].style.background="rgba(30,30,45,0.9)";
+    btns[i].style.color="#9ca3af";
+    btns[i].style.border="1px solid rgba(255,255,255,0.1)";
+  }}
+  event.target.style.background="linear-gradient(135deg,#FFD700,#FF8C00)";
+  event.target.style.color="#000";
+  event.target.style.border="none";
 }}
 function filterStage(stage,btn){{
   var bs=document.querySelectorAll(".sf-btn");
