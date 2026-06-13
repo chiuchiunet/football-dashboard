@@ -74,20 +74,34 @@
     <div class='acc-note'>📊 預測 vs 實際 · 數據更新: 2026-06-12T04:32</div>
 </div>
 <div class='tab-nav' style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
-<a href="#groups" class="tab active" onclick="switchTab(this,'groups')">📊 48隊 + 實力</a>
-<a href="#schedule" class="tab" onclick="switchTab(this,'schedule')">📅 104場賽程</a>
-<a href="#strength" class="tab" onclick="switchTab(this,'strength')">📈 實力分佈</a>
-<a href="#bracket" class="tab" onclick="switchTab(this,'bracket')">🏆 淘汰賽</a>
-<a href="#trophy" class="tab" onclick="switchTab(this,'trophy')">🏅 捧盃概率</a>
+<button class="tab active" id="btn-groups" onclick="showTab('groups')">📊 48隊 + 實力</button>
+<button class="tab" id="btn-schedule" onclick="showTab('schedule')">📅 104場賽程</button>
+<button class="tab" id="btn-strength" onclick="showTab('strength')">📈 實力分佈</button>
+<button class="tab" id="btn-bracket" onclick="showTab('bracket')">🏆 淘汰賽</button>
+<button class="tab" id="btn-trophy" onclick="showTab('trophy')">🏅 捧盃概率</button>
 </div>
 <script>
-function switchTab(btn,id){
-  var tabs = document.querySelectorAll('.tab');
-  for(var i=0;i<tabs.length;i++){tabs[i].classList.remove('active');}
-  btn.classList.add('active');
-  var contents = document.querySelectorAll('.content');
-  for(var i=0;i<contents.length;i++){contents[i].classList.remove('show');}
+function showTab(id){
+  // Update URL hash
+  window.location.hash = id;
+  // Update buttons
+  var btns = document.querySelectorAll('.tab');
+  for(var i=0;i<btns.length;i++){btns[i].classList.remove('active');}
+  document.getElementById('btn-'+id).classList.add('active');
+  // Update sections
+  var secs = document.querySelectorAll('.content');
+  for(var i=0;i<secs.length;i++){secs[i].classList.remove('show');}
   document.getElementById(id).classList.add('show');
+}
+// Handle browser back/forward
+window.onhashchange = function(){
+  var id = window.location.hash.replace('#','') || 'groups';
+  showTab(id);
+}
+// Init from hash
+if(window.location.hash){
+  var id = window.location.hash.replace('#','');
+  if(id && id !== 'groups'){showTab(id);}
 }
 </script>
 <div id='groups' class='content show'>
