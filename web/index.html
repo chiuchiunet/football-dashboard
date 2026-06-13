@@ -82,6 +82,8 @@
 </div>
 <script>
 function showTab(id){
+  console.log("showTab called:", id);
+  alert("Switching to: " + id);
   // Update URL hash
   window.location.hash = id;
   // Update all buttons - remove active
