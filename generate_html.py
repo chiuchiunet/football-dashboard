@@ -51,7 +51,7 @@ def get_accuracy_stats() -> dict:
                    SUM(mr.prediction_correct_outcome) as correct
             FROM match_results mr
             JOIN matches m ON mr.match_id = m.match_id
-            WHERE m.competition_code IN ('CL', 'PL') AND m.home_team_name != 'TBD'
+            WHERE m.competition_code IN ('CL', 'PL')
             GROUP BY m.competition_code
         """).fetchall()
 
@@ -269,40 +269,32 @@ def get_comp_gradient(code: str) -> str:
     return COMP_GRADIENTS.get(code, "linear-gradient(135deg, #667eea 0%, #764ba2 100%)")
 
 
-def get_predictions(days_ahead: int = 14, finished_lookback: int = 30) -> list:
+def get_predictions(days_ahead: int = 7) -> list:
     """Fetch predictions directly from database as tuples."""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.execute("""
         SELECT m.match_id, m.utc_date, m.competition_code, m.home_team_name, m.away_team_name,
                m.home_team_id, m.away_team_id,
-               COALESCE(p.home_win_prob, 0.33) AS home_win_prob,
-               COALESCE(p.draw_prob, 0.33) AS draw_prob,
-               COALESCE(p.away_win_prob, 0.33) AS away_win_prob,
-               COALESCE(p.over_2_5_prob, 0.5) AS over_2_5_prob,
-               COALESCE(p.under_2_5_prob, 0.5) AS under_2_5_prob,
-               COALESCE(p.btts_yes_prob, 0.5) AS btts_yes_prob,
-               COALESCE(p.btts_no_prob, 0.5) AS btts_no_prob,
-               COALESCE(p.expected_home_goals, 1.0) AS expected_home_goals,
-               COALESCE(p.expected_away_goals, 1.0) AS expected_away_goals,
-               COALESCE(p.home_half_prob, 0.33) AS home_half_prob,
-               COALESCE(p.draw_half_prob, 0.33) AS draw_half_prob,
-               COALESCE(p.away_half_prob, 0.33) AS away_half_prob,
-               COALESCE(p.expected_home_half_goals, 0.5) AS expected_home_half_goals,
-               COALESCE(p.expected_away_half_goals, 0.5) AS expected_away_half_goals,
-               COALESCE(p.recommended_bets, '') AS recommended_bets,
+               p.home_win_prob, p.draw_prob, p.away_win_prob,
+               p.over_2_5_prob, p.under_2_5_prob,
+               p.btts_yes_prob, p.btts_no_prob,
+               p.expected_home_goals, p.expected_away_goals,
+               p.home_half_prob, p.draw_half_prob, p.away_half_prob,
+               p.expected_home_half_goals, p.expected_away_half_goals,
+               p.recommended_bets,
                m.status,
                COALESCE(mr.actual_home_score, m.home_score) AS actual_home_score,
                COALESCE(mr.actual_away_score, m.away_score) AS actual_away_score,
                mr.prediction_correct_outcome
         FROM matches m
-        LEFT JOIN predictions p ON p.match_id = m.match_id
+        JOIN predictions p ON p.match_id = m.match_id
         AND p.prediction_id = (
             SELECT MAX(p2.prediction_id)
             FROM predictions p2
             WHERE p2.match_id = m.match_id
         )
         LEFT JOIN match_results mr ON mr.match_id = m.match_id
-        WHERE m.competition_code IN ('CL', 'PL') AND m.home_team_name != 'TBD'
+        WHERE m.competition_code IN ('CL', 'PL')
         AND (
             (
                 m.status IN ('SCHEDULED', 'TIMED')
@@ -314,7 +306,7 @@ def get_predictions(days_ahead: int = 14, finished_lookback: int = 30) -> list:
             )
         )
         ORDER BY m.competition_code, datetime(m.utc_date) ASC
-    """, [f"+{days_ahead} days", f"-{finished_lookback} days"])
+    """, [f"+{days_ahead} days", f"-{days_ahead} days"])
     rows = cursor.fetchall()
     conn.close()
     return rows
@@ -652,10 +644,11 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
         comp_gradient = get_comp_gradient(comp_code)
         cards = "\n".join(prediction_card(row) for row in comp_rows)
         comp_sections.append(f"""
-        <div class="comp-group">
+        <div class="comp-group collapsed">
             <div class="comp-header" style="background: {comp_gradient}">
                 <span class="comp-name">{comp_cn}</span>
                 <span class="comp-count">{len(comp_rows)} 場</span>
+                <span class="comp-toggle">▼</span>
             </div>
             <div class="comp-matches">{cards}</div>
         </div>
@@ -693,6 +686,10 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
                 <button class="filter-btn active" type="button" data-filter="all">全部 <span>{len(rows)}</span></button>
                 <button class="filter-btn" type="button" data-filter="finished">已完賽 <span>{finished_count}</span></button>
                 <button class="filter-btn" type="button" data-filter="predicting">預測中 <span>{predicting_count}</span></button>
+            </div>
+            <div class="collapse-controls">
+                <button class="collapse-btn" type="button" id="expand-all">📂 展開全部</button>
+                <button class="collapse-btn" type="button" id="collapse-all">📁 收合全部</button>
             </div>
         </div>
         <div class="filter-empty" id="filter-empty" hidden>⚠️ 呢個分類暫時冇賽事</div>
@@ -874,6 +871,30 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             background: rgba(255,255,255,0.22);
         }}
 
+        .collapse-controls {{
+            display: flex;
+            gap: 8px;
+        }}
+
+        .collapse-btn {{
+            border: 1px solid rgba(34,197,94,0.28);
+            background: #ffffff;
+            color: #166534;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 0.95em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 6px 18px rgba(21,128,61,0.08);
+        }}
+
+        .collapse-btn:hover {{
+            background: #16a34a;
+            border-color: #16a34a;
+            color: #ffffff;
+        }}
+
         .filter-empty {{
             text-align: center;
             margin: 0 0 25px;
@@ -925,10 +946,26 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
             margin-bottom: 15px;
             color: #166534;
             font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            transition: opacity 0.2s;
         }}
+
+        .comp-header:hover {{ opacity: 0.88; }}
 
         .comp-name {{ font-size: 1.1em; }}
         .comp-count {{ font-size: 0.85em; opacity: 0.9; }}
+
+        .comp-toggle {{
+            font-size: 0.8em;
+            transition: transform 0.25s ease;
+            margin-left: 8px;
+        }}
+
+
+        .comp-group.collapsed .comp-toggle {{ transform: rotate(-90deg); }}
+        .comp-group.collapsed .comp-matches {{ display: none; }}
+        .comp-group.collapsed .comp-header {{ margin-bottom: 0; border-radius: 12px; }}
 
         .match-card {{
             background: {COLORS['bg_card']};
@@ -1405,13 +1442,36 @@ def generate_html(predictions, title: str = "⚽ 足球預測報告") -> str:
                 applyFilters();
             }});
         }}
+
+        // Collapsible comp sections
+        const expandAllBtn = document.getElementById('expand-all');
+        const collapseAllBtn = document.getElementById('collapse-all');
+
+        document.querySelectorAll('.comp-header').forEach((header) => {{
+            header.addEventListener('click', () => {{
+                header.closest('.comp-group').classList.toggle('collapsed');
+            }});
+        }});
+
+        if (expandAllBtn) {{
+            expandAllBtn.addEventListener('click', () => {{
+                document.querySelectorAll('.comp-group').forEach((g) => g.classList.remove('collapsed'));
+            }});
+        }}
+
+
+        if (collapseAllBtn) {{
+            collapseAllBtn.addEventListener('click', () => {{
+                document.querySelectorAll('.comp-group').forEach((g) => g.classList.add('collapsed'));
+            }});
+        }}
     </script>
 </body>
 </html>"""
 
 
 def main():
-    predictions = get_predictions(days_ahead=14, finished_lookback=30)
+    predictions = get_predictions(days_ahead=7)
     html = generate_html(predictions)
     html = "\n".join(line.rstrip() for line in html.splitlines()) + "\n"
     output = Path(__file__).resolve().parent / "web" / "index.html"
