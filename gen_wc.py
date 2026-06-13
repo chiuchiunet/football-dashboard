@@ -2,6 +2,15 @@
 """World Cup 2026 Dashboard Generator - Full 104 Matches + Recent Form"""
 from datetime import date, datetime
 import random, json
+import os
+# Load real match results
+RESULTS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "real_results.json")
+try:
+    with open(RESULTS_FILE, "r", encoding="utf-8") as f:
+        REAL_DATA = json.load(f)
+    REAL_RESULTS = REAL_DATA.get("matches", {})
+except:
+    REAL_RESULTS = {}
 
 CN = {
     'Argentina':'阿根廷','France':'法國','Spain':'西班牙','Brazil':'巴西',
@@ -533,9 +542,12 @@ for g in 'ABCDEFGHIJKL':
     gh.append(f"<div class='gc'><div class='gh'>組 {g}</div><table class='gt'><thead><tr><th>球隊</th><th style='text-align:center'>實力</th><th style='text-align:center'>賽</th><th style='text-align:center'>勝</th><th style='text-align:center'>和</th><th style='text-align:center'>負</th><th style='text-align:right'>分</th><th style='text-align:center'>出線%</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div>")
 
 chan_map={'Mexico City':'Now618','Guadalajara':'Now 618','Toronto':'Now638','Los Angeles':'Now 638','San Francisco':'Now 638','New York':'Now638','Boston':'Now 638','Vancouver':'Now638','Houston':'Now 638','Philadelphia':'Now 638','Dallas':'Now 638','Monterrey':'Now 638','Atlanta':'Now 638','Seattle':'Now 638','Miami':'Now 638','Kansas City':'Now 638'}
+acc_correct = 0   # exact score
+acc_winner = 0   # correct winner/draw
+acc_total = 0    # total finished matches
 mm=[]
 cur=''
-for m in ALL_MATCHES:
+for idx, m in enumerate(ALL_MATCHES):
     day,h,a,et,city=m
     hk,nd=et_to_hk(et)
     plus=' (+1)' if nd else ''
@@ -546,7 +558,7 @@ for m in ALL_MATCHES:
         mm.append(f"<div class='md' data-stage='{st}'>{icon} {day} <span style='font-size:0.65rem;color:#888;margin-left:6px;'>({lbl})</span></div>")
         cur=day
     if h in TBD or a in TBD:
-        mm.append(f"<div class='mc' data-stage='{st}' data-home='{h}' data-away='{a}'><div class='mhd'><span class='mcomp'>{lbl} </span><span class='conf {cf_cls}'>{cf_icon}</span><span class='mhkt'>🕐 {hk} HK{plus}</span><span class='mvenue'>🏟️ {city}</span><span class='mchan'>📺 {chan}</span></div><div class='mbody' style='justify-content:center;'><span style='color:#888;font-size:0.75rem;'>⚠️ 待定 - 分組賽後揭曉</span></div></div>")
+        mm.append(f"<div class='mc' data-stage='{st}' data-home='{h}' data-away='{a}'><div class='mhd'><span class='mcomp'>{lbl} </span><span class='mhkt'>🕐 {hk} HK{plus}</span><span class='mvenue'>🏟️ {city}</span></div><div class='mbody' style='justify-content:center;'><span style='color:#888;font-size:0.75rem;'>⚠️ 待定 - 分組賽後揭曉</span></div></div>")
     else:
         hs,as_=rt(h),rt(a)
         hp,dp,ap_=prob(hs,as_)
@@ -556,7 +568,38 @@ for m in ALL_MATCHES:
         chan=chan_map.get(city,'Now TV')
         rf_h = get_recent_form_html(h)
         rf_a = get_recent_form_html(a)
-        mm.append(f"<div class='mc' data-stage='{st}' data-home='{h}' data-away='{a}'><div class='mhd'><span class='mcomp'>{lbl} </span><span class='conf {cf_cls}'>{cf_icon}</span><span class='mhkt'>🕐 {hk} HK{plus}</span><span class='mvenue'>🏟️ {city}</span><span class='mchan'>📺 {chan}</span></div><div class='mbody'><div class='mteam'>{fl(h)} {cn(h)}<span class='str'>{hs}</span>{kp(h)}<div class='mr'>{rf_h}</div></div><div class='mscore'>{hsc}⚽{asc}</div><div class='mteam'>{fl(a)} {cn(a)}<span class='str'>{as_}</span>{kp(a)}<div class='mr'>{rf_a}</div></div></div><div class='mfoot'><div class='mbar'><div class='mp' style='width:{hp:.0f}%'><span>H{hp:.0f}%</span></div><div class='mpd' style='width:{dp:.0f}%'><span>D{dp:.0f}%</span></div><div class='mpa' style='width:{ap_:.0f}%'><span>A{ap_:.0f}%</span></div></div><div class='mxg'>xG {xh}-{xa} | O{int(xh+xa+0.5)} | ⚽{int(xh+xa+0.5)}球</div></div></div>")
+        
+        # Check for real result
+        match_id = str(idx + 1)
+        real = REAL_RESULTS.get(match_id, {})
+        real_finished = real.get('finished', False)
+        real_hs = real.get('home_score')
+        real_as = real.get('away_score')
+        
+        # Build comparison HTML
+        comparison_html = ''
+        if real_finished and real_hs is not None and real_as is not None:
+            acc_total += 1
+            # Exact score?
+            if real_hs == hsc and real_as == asc:
+                acc_correct += 1
+                acc_winner += 1
+                badge = '<span class="pred-badge correct">✅ 完全估中！</span>'
+                badge_cls = 'mc-correct'
+            elif (real_hs > real_as) == (hsc > asc) or real_hs == hsc and real_as == asc:
+                # Same winner (or both draw)
+                acc_winner += 1
+                badge = '<span class="pred-badge partial">🟡 估中勝方</span>'
+                badge_cls = 'mc-partial'
+            else:
+                badge = '<span class="pred-badge wrong">❌ 估錯</span>'
+                badge_cls = 'mc-wrong'
+            comparison_html = f"""<div class='cmp'><div class='cmp-pred'><span class='cmpl'>預測</span><span class='cmpv'>{hsc}-{asc}</span></div><div class='cmp-arrow'>→</div><div class='cmp-real'><span class='cmpl'>實際</span><span class='cmpv'>{real_hs}-{real_as}</span></div><div class='cmp-badge'>{badge}</div></div>"""
+            card_cls = f"mc {badge_cls}"
+        else:
+            card_cls = 'mc'
+        
+        mm.append(f"""<div class='{card_cls}' data-stage='{st}' data-home='{h}' data-away='{a}'><div class='mhd'><span class='mcomp'>{lbl} </span><span class='conf {cf_cls}'>{cf_icon}</span><span class='mhkt'>🕐 {hk} HK{plus}</span><span class='mvenue'>🏟️ {city}</span><span class='mchan'>📺 {chan}</span></div><div class='mbody'><div class='mteam'>{fl(h)} {cn(h)}<span class='str'>{hs}</span>{kp(h)}<div class='mr'>{rf_h}</div></div><div class='mscore'>{hsc}⚽{asc}</div><div class='mteam'>{fl(a)} {cn(a)}<span class='str'>{as_}</span>{kp(a)}<div class='mr'>{rf_a}</div></div>{comparison_html}<div class='mfoot'><div class='mbar'><div class='mp' style='width:{hp:.0f}%'><span>H{hp:.0f}%</span></div><div class='mpd' style='width:{dp:.0f}%'><span>D{dp:.0f}%</span></div><div class='mpa' style='width:{ap_:.0f}%'><span>A{ap_:.0f}%</span></div></div><div class='mxg'>xG {xh}-{xa} | O{int(xh+xa+0.5)} | ⚽{int(xh+xa+0.5)}球</div></div></div>""")
 
 all_t=[]
 for ts in GD.values(): all_t.extend(ts)
