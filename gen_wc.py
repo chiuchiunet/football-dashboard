@@ -718,9 +718,10 @@ for idx, m in enumerate(ALL_MATCHES):
     icon=IC[st]
     if day!=cur:
         if day_matches:
-            mm.append("<details open>"+"".join(day_matches)+"</details>")
+            mm.append("<div class='mc-day-matches'>罪"+"".join(day_matches)+"</div>")
+            mm.append("</details>")  # Close previous day
             day_matches=[]
-        mm.append(f"<details><summary class='md' data-stage='{st}'>{icon} {day} <span style='font-size:0.65rem;color:#888;margin-left:6px;'>({lbl})</span></summary>")
+        mm.append(f"<details><summary class='md' data-stage='{st}'>{icon} {day} <span style='font-size:0.65rem;color:#888;margin-left:6px;'>({lbl})</span></summary>")  # Open new day
         cur=day
     if h in TBD or a in TBD:
         day_matches.append(f"<div class='mc' data-stage='{st}' data-home='{h}' data-away='{a}'><div class='mhd'><span class='mcomp'>{lbl} </span><span class='mhkt'>🕐 {hk} HK{plus}</span><span class='mvenue'>🏟️ {city}</span></div><div class='mbody' style='justify-content:center;'><span style='color:#888;font-size:0.75rem;'>⚠️ 待定 - 分組賽後揭曉</span></div></div>")
@@ -759,7 +760,8 @@ for idx, m in enumerate(ALL_MATCHES):
             card_cls = 'mc'
         day_matches.append(f"""<div class='{card_cls}' data-stage='{st}' data-home='{h}' data-away='{a}'><div class='mhd'><span class='mcomp'>{lbl} </span><span class='conf {cf_cls}'>{cf_icon}</span><span class='mhkt'>🕐 {hk} HK{plus}</span><span class='mvenue'>🏟️ {city}</span><span class='mchan'>📺 {chan}</span></div><div class='mbody'><div class='mteam'>{fl(h)} {cn(h)}<span class='str'>{hs}</span>{kp(h)}<div class='mr'>{rf_h}</div></div><div class='mscore'>{hsc}⚽{asc}</div><div class='mteam'>{fl(a)} {cn(a)}<span class='str'>{as_}</span>{kp(a)}<div class='mr'>{rf_a}</div></div>{comparison_html}<div class='mfoot'><div class='mbar'><div class='mp' style='width:{hp:.0f}%'><span>H{hp:.0f}%</span></div><div class='mpd' style='width:{dp:.0f}%'><span>D{dp:.0f}%</span></div><div class='mpa' style='width:{ap_:.0f}%'><span>A{ap_:.0f}%</span></div></div><div class='mxg'>xG {xh}-{xa} | O{int(xh+xa+0.5)} | ⚽{int(xh+xa+0.5)}球</div></div></div>""")
 if day_matches:
-    mm.append("<details open>"+"".join(day_matches)+"</details>")
+    mm.append("<div class='mc-day-matches'>"+"".join(day_matches)+"</div>")
+    mm.append("</details>")  # Close last day
 
 all_t=[]
 for ts in GD.values(): all_t.extend(ts)
