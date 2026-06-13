@@ -74,11 +74,11 @@
     <div class='acc-note'>📊 預測 vs 實際 · 數據更新: 2026-06-12T04:32</div>
 </div>
 <div class='tab-nav' style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
-<button class="tab active" id="btn-groups" onclick="showTab('groups')">📊 48隊 + 實力</button>
-<button class="tab" id="btn-schedule" onclick="showTab('schedule')">📅 104場賽程</button>
-<button class="tab" id="btn-strength" onclick="showTab('strength')">📈 實力分佈</button>
-<button class="tab" id="btn-bracket" onclick="showTab('bracket')">🏆 淘汰賽</button>
-<button class="tab" id="btn-trophy" onclick="showTab('trophy')">🏅 捧盃概率</button>
+<button class="tab active" id="btn-groups" onclick="alert('groups clicked');var t=document.querySelectorAll('.tab');for(var i=0;i<t.length;i++)t[i].classList.remove('active');this.classList.add('active');var c=document.querySelectorAll('.content');for(var i=0;i<c.length;i++)c[i].classList.remove('show');document.getElementById('groups').classList.add('show')">📊 48隊 + 實力</button>
+<button class="tab" id="btn-schedule" onclick="alert('schedule clicked');var t=document.querySelectorAll('.tab');for(var i=0;i<t.length;i++)t[i].classList.remove('active');this.classList.add('active');var c=document.querySelectorAll('.content');for(var i=0;i<c.length;i++)c[i].classList.remove('show');document.getElementById('schedule').classList.add('show')">📅 104場賽程</button>
+<button class="tab" id="btn-strength" onclick="alert('strength clicked');var t=document.querySelectorAll('.tab');for(var i=0;i<t.length;i++)t[i].classList.remove('active');this.classList.add('active');var c=document.querySelectorAll('.content');for(var i=0;i<c.length;i++)c[i].classList.remove('show');document.getElementById('strength').classList.add('show')">📈 實力分佈</button>
+<button class="tab" id="btn-bracket" onclick="alert('bracket clicked');var t=document.querySelectorAll('.tab');for(var i=0;i<t.length;i++)t[i].classList.remove('active');this.classList.add('active');var c=document.querySelectorAll('.content');for(var i=0;i<c.length;i++)c[i].classList.remove('show');document.getElementById('bracket').classList.add('show')">🏆 淘汰賽</button>
+<button class="tab" id="btn-trophy" onclick="alert('trophy clicked');var t=document.querySelectorAll('.tab');for(var i=0;i<t.length;i++)t[i].classList.remove('active');this.classList.add('active');var c=document.querySelectorAll('.content');for(var i=0;i<c.length;i++)c[i].classList.remove('show');document.getElementById('trophy').classList.add('show')">🏅 捧盃概率</button>
 </div>
 <script>
 function showTab(id){
