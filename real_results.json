@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-06-12T11:05:22.400663",
+  "fetched_at": "2026-06-13T08:08:40.336610",
   "matches": {
     "1": {
       "id": "1",
@@ -30,24 +30,24 @@
       "group": "B",
       "type": "group",
       "date": "06/12/2026 15:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Canada",
       "away_team": "Bosnia and Herzegovina",
-      "home_score": null,
-      "away_score": null
+      "home_score": 1,
+      "away_score": 1
     },
     "4": {
       "id": "4",
       "group": "D",
       "type": "group",
       "date": "06/12/2026 18:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "United States",
       "away_team": "Paraguay",
-      "home_score": null,
-      "away_score": null
+      "home_score": 4,
+      "away_score": 1
     },
     "5": {
       "id": "5",
