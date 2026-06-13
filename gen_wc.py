@@ -569,12 +569,12 @@ for idx, m in enumerate(ALL_MATCHES):
             if real_hs == hsc and real_as == asc:
                 acc_correct += 1
                 acc_winner += 1
-                comparison_badge = '<span style="margin-left:6px;color:#22c55e;">✅</span>'
+                comparison_badge = '<span style="margin-left:6px;color:#22c55e;" title="預測正確">✅ ${real_hs}-${real_as}</span>'
             elif (real_hs > real_as) == (hsc > asc) or (real_hs == hsc and real_as == asc):
                 acc_winner += 1
-                comparison_badge = '<span style="margin-left:6px;color:#eab308;">🟡</span>'
+                comparison_badge = '<span style="margin-left:6px;color:#eab308;" title="估中勝方">🟡 ${real_hs}-${real_as}</span>'
             else:
-                comparison_badge = '<span style="margin-left:6px;color:#ef4444;">❌</span>'
+                comparison_badge = '<span style="margin-left:6px;color:#ef4444;">❌ ${real_hs}-${real_as}</span>'
         mm.append(f"<div class='mc' data-stage='{st}'  data-home='{h}' data-away='{a}'><div class='mhd'><span class='mcomp'>{lbl} </span><span class='conf {cf_cls}'>{cf_icon}</span><span class='mhkt'>🕐 {hk} HK{plus}</span><span class='mvenue'>🏟️ {city}</span><span class='mchan'>📺 {chan}</span></div><div class='mbody' style='justify-content:center;'><span style='color:#888;font-size:0.75rem;'>⚠️ 待定 - 分組賽後揭曉</span></div></div>")
     else:
         hs,as_=rt(h),rt(a)
@@ -597,12 +597,12 @@ for idx, m in enumerate(ALL_MATCHES):
             if real_hs == hsc and real_as == asc:
                 acc_correct += 1
                 acc_winner += 1
-                comparison_badge = '<span style="margin-left:6px;color:#22c55e;">✅</span>'
+                comparison_badge = '<span style="margin-left:6px;color:#22c55e;" title="預測正確">✅ ${real_hs}-${real_as}</span>'
             elif (real_hs > real_as) == (hsc > asc) or (real_hs == hsc and real_as == asc):
                 acc_winner += 1
-                comparison_badge = '<span style="margin-left:6px;color:#eab308;">🟡</span>'
+                comparison_badge = '<span style="margin-left:6px;color:#eab308;" title="估中勝方">🟡 ${real_hs}-${real_as}</span>'
             else:
-                comparison_badge = '<span style="margin-left:6px;color:#ef4444;">❌</span>'
+                comparison_badge = '<span style="margin-left:6px;color:#ef4444;">❌ ${real_hs}-${real_as}</span>'
         mm.append(f"<div class='mc' data-stage='{st}'  data-home='{h}' data-away='{a}'><div class='mhd'><span class='mcomp'>{lbl} </span><span class='conf {cf_cls}'>{cf_icon}</span><span class='mhkt'>🕐 {hk} HK{plus}</span><span class='mvenue'>🏟️ {city}</span><span class='mchan'>📺 {chan}</span></div><div class='mbody'><div class='mteam'>{fl(h)} {cn(h)}<span class='str'>{hs}</span>{kp(h)}<div class='mr'>{rf_h}</div></div><div class='mscore'>{hsc}⚽{asc}{comparison_badge}</div><div class='mteam'>{fl(a)} {cn(a)}<span class='str'>{as_}</span>{kp(a)}<div class='mr'>{rf_a}</div></div></div><div class='mfoot'><div class='mbar'><div class='mp' style='width:{hp:.0f}%'><span>H{hp:.0f}%</span></div><div class='mpd' style='width:{dp:.0f}%'><span>D{dp:.0f}%</span></div><div class='mpa' style='width:{ap_:.0f}%'><span>A{ap_:.0f}%</span></div></div><div class='mxg'>xG {xh}-{xa} | O{int(xh+xa+0.5)} | ⚽{int(xh+xa+0.5)}球</div></div></div>")
 
 all_t=[]
