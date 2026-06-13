@@ -84,25 +84,29 @@
 function showTab(id){
   // Update URL hash
   window.location.hash = id;
-  // Update buttons
+  // Update buttons - remove active from all, add to current
   var btns = document.querySelectorAll('.tab');
   for(var i=0;i<btns.length;i++){btns[i].classList.remove('active');}
-  document.getElementById('btn-'+id).classList.add('active');
-  // Update sections
+  var activeBtn = document.getElementById('btn-'+id);
+  if(activeBtn){activeBtn.classList.add('active');}
+  // Update sections - hide all, show current
   var secs = document.querySelectorAll('.content');
   for(var i=0;i<secs.length;i++){secs[i].classList.remove('show');}
-  document.getElementById(id).classList.add('show');
+  var target = document.getElementById(id);
+  if(target){target.classList.add('show');}
 }
+
 // Handle browser back/forward
-window.onhashchange = function(){
-  var id = window.location.hash.replace('#','') || 'groups';
-  showTab(id);
-}
-// Init from hash
-if(window.location.hash){
-  var id = window.location.hash.replace('#','');
-  if(id && id !== 'groups'){showTab(id);}
-}
+window.addEventListener("hashchange", function(){
+  var id = window.location.hash.replace("#", "") || "groups";
+  if(id){showTab(id);}
+});
+
+// Init from URL hash on page load
+(function(){
+  var id = window.location.hash.replace("#", "") || "groups";
+  if(id && id !== "groups"){showTab(id);}
+})();
 </script>
 <div id='groups' class='content show'>
 <h2>📊 12個小組 · 48支球隊</h2>
