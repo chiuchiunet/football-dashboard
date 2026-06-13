@@ -78,11 +78,11 @@
     <div class='acc-note'>📊 預測 vs 實際 · 數據更新: 2026-06-12T11:05</div>
 </div>
 <div style="display:flex;gap:8px;margin:16px 0;flex-wrap:wrap;justify-content:center;">
-<button onclick="showSection('overview')" style="padding:12px 20px;background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;border:none;border-radius:50px;font-size:0.8rem;font-weight:700;cursor:pointer;">🏠 Overview</button>
-<button onclick="showSection('groups')" style="padding:12px 20px;background:rgba(30,30,45,0.9);color:#9ca3af;border:1px solid rgba(255,255,255,0.1);border-radius:50px;font-size:0.8rem;cursor:pointer;">📊 Groups</button>
-<button onclick="showSection('schedule')" style="padding:12px 20px;background:rgba(30,30,45,0.9);color:#9ca3af;border:1px solid rgba(255,255,255,0.1);border-radius:50px;font-size:0.8rem;cursor:pointer;">📅 Schedule</button>
-<button onclick="showSection('knockout')" style="padding:12px 20px;background:rgba(30,30,45,0.9);color:#9ca3af;border:1px solid rgba(255,255,255,0.1);border-radius:50px;font-size:0.8rem;cursor:pointer;">🏆 Knockout</button>
-<button onclick="showSection('trophy')" style="padding:12px 20px;background:rgba(30,30,45,0.9);color:#9ca3af;border:1px solid rgba(255,255,255,0.1);border-radius:50px;font-size:0.8rem;cursor:pointer;">🏅 Trophy</button>
+<button onclick="showSection('overview',this)" style="padding:12px 20px;background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;border:none;border-radius:50px;font-size:0.8rem;font-weight:700;cursor:pointer;">🏠 Overview</button>
+<button onclick="showSection('groups',this)" style="padding:12px 20px;background:rgba(30,30,45,0.9);color:#9ca3af;border:1px solid rgba(255,255,255,0.1);border-radius:50px;font-size:0.8rem;cursor:pointer;">📊 Groups</button>
+<button onclick="showSection('schedule',this)" style="padding:12px 20px;background:rgba(30,30,45,0.9);color:#9ca3af;border:1px solid rgba(255,255,255,0.1);border-radius:50px;font-size:0.8rem;cursor:pointer;">📅 Schedule</button>
+<button onclick="showSection('knockout',this)" style="padding:12px 20px;background:rgba(30,30,45,0.9);color:#9ca3af;border:1px solid rgba(255,255,255,0.1);border-radius:50px;font-size:0.8rem;cursor:pointer;">🏆 Knockout</button>
+<button onclick="showSection('trophy',this)" style="padding:12px 20px;background:rgba(30,30,45,0.9);color:#9ca3af;border:1px solid rgba(255,255,255,0.1);border-radius:50px;font-size:0.8rem;cursor:pointer;">🏅 Trophy</button>
 </div>
 <div id='sec-overview' class='section' style='display:block'><div id='groups'>
 <h2 style='font-size:1.5rem;margin-bottom:20px;'>📊 12個小組 · 48支球隊</h2><div style='margin-bottom:30px;'> · 48支球隊</h2>
@@ -341,7 +341,7 @@
 </div>
 <script>
 
-function showSection(id){
+function showSection(id,btn){
   var secs = document.querySelectorAll(".section");
   for(var i=0;i<secs.length;i++) secs[i].style.display="none";
   document.getElementById("sec-"+id).style.display="block";
@@ -351,9 +351,11 @@ function showSection(id){
     btns[i].style.color="#9ca3af";
     btns[i].style.border="1px solid rgba(255,255,255,0.1)";
   }
-  event.target.style.background="linear-gradient(135deg,#FFD700,#FF8C00)";
-  event.target.style.color="#000";
-  event.target.style.border="none";
+  if(btn){
+    btn.style.background="linear-gradient(135deg,#FFD700,#FF8C00)";
+    btn.style.color="#000";
+    btn.style.border="none";
+  }
 }
 function filterStage(stage,btn){
   var bs=document.querySelectorAll(".sf-btn");
