@@ -985,14 +985,26 @@ function filterStage(stage,btn){{
   }}
 }}
 function expandAll(){{
-  document.querySelectorAll('.md').forEach(function(d){{ d.classList.remove('collapsed'); }});
+  document.querySelectorAll('.md').forEach(function(d){{
+    d.classList.remove('collapsed');
+    var next=d.nextElementSibling;
+    if(next&&next.classList.contains('mc-day-matches')){{ next.style.display='block'; }}
+  }});
 }}
 function collapseAll(){{
-  document.querySelectorAll('.md').forEach(function(d){{ d.classList.add('collapsed'); }});
+  document.querySelectorAll('.md').forEach(function(d){{
+    d.classList.add('collapsed');
+    var next=d.nextElementSibling;
+    if(next&&next.classList.contains('mc-day-matches')){{ next.style.display='none'; }}
+  }});
 }}
 document.querySelectorAll('.md').forEach(function(day){{
   day.addEventListener('click',function(){{
     day.classList.toggle('collapsed');
+    var next=day.nextElementSibling;
+    if(next&&next.classList.contains('mc-day-matches')){{
+      next.style.display=day.classList.contains('collapsed')?'none':'block';
+    }}
   }});
 }});
 function searchTeam(team){{
