@@ -531,13 +531,60 @@ mc_cache={}
 for g in 'ABCDEFGHIJKL':
     mc_cache[g]=mc_prob(g,3000)
 
+# Calculate standings from REAL_RESULTS
+def calc_standings():
+    standings = {}  # team -> {'played':P, 'won':W, 'drawn':D, 'lost':L, 'points':Pts}
+    for g in 'ABCDEFGHIJKL':
+        for t in GD[g]:
+            standings[t] = {'played':0, 'won':0, 'drawn':0, 'lost':0, 'points':0}
+    
+    for mid, m in REAL_RESULTS.items():
+        home = m.get('home_team', '')
+        away = m.get('away_team', '')
+        hs = m.get('home_score')
+        as_ = m.get('away_score')
+        if not all([home, away, hs, as_]):
+            continue
+        if home not in standings or away not in standings:
+            continue
+        
+        # Update played
+        standings[home]['played'] += 1
+        standings[away]['played'] += 1
+        
+        if hs > as_:
+            standings[home]['won'] += 1
+            standings[home]['points'] += 3
+            standings[away]['lost'] += 1
+        elif hs < as_:
+            standings[away]['won'] += 1
+            standings[away]['points'] += 3
+            standings[home]['lost'] += 1
+        else:
+            standings[home]['drawn'] += 1
+            standings[away]['drawn'] += 1
+            standings[home]['points'] += 1
+            standings[away]['points'] += 1
+    
+    return standings
+
+STANDINGS = calc_standings()
+
 gh=[]
 for g in 'ABCDEFGHIJKL':
     qps=mc_cache[g]
     ts=GD[g]
     rows=[]
     for t in sorted(ts,key=lambda x:-rt(x)):
-        rows.append(f"<tr><td>{fl(t)} {cn(t)}</td><td style='text-align:center;font-size:0.65rem;'>{rt(t)}</td><td style='text-align:center;font-size:0.65rem;color:#888;'>—</td><td style='text-align:center;font-size:0.65rem;color:#888;'>—</td><td style='text-align:center;font-size:0.65rem;color:#888;'>—</td><td style='text-align:center;font-size:0.65rem;color:#888;'>—</td><td style='text-align:right;'><span style='font-weight:700;color:#FFD700;'>—</span></td><td style='text-align:center;font-size:0.55rem;color:#888;'>{qps.get(t,'-')}</td></tr>")
+        st = STANDINGS.get(t, {'played':'-', 'won':'-', 'drawn':'-', 'lost':'-', 'points':'-'})
+        p = st.get('played', '-')
+        w = st.get('won', '-')
+        d = st.get('drawn', '-')
+        l = st.get('lost', '-')
+        pts = st.get('points', '-')
+        # Use gray color if no results yet
+        pg = '#888' if p == '-' else '#fff'
+        rows.append(f"<tr><td>{fl(t)} {cn(t)}</td><td style='text-align:center;font-size:0.65rem;'>{rt(t)}</td><td style='text-align:center;font-size:0.65rem;color:{pg}'>{p}</td><td style='text-align:center;font-size:0.65rem;color:{pg}'>{w}</td><td style='text-align:center;font-size:0.65rem;color:{pg}'>{d}</td><td style='text-align:center;font-size:0.65rem;color:{pg}'>{l}</td><td style='text-align:right;'><span style='font-weight:700;color:#FFD700;'>{pts}</span></td><td style='text-align:center;font-size:0.55rem;color:#888;'>{qps.get(t,'-')}</td></tr>")
     gh.append(f"<div class='gc'><div class='gh'>組 {g}</div><table class='gt'><thead><tr><th>球隊</th><th style='text-align:center'>實力</th><th style='text-align:center'>賽</th><th style='text-align:center'>勝</th><th style='text-align:center'>和</th><th style='text-align:center'>負</th><th style='text-align:right'>分</th><th style='text-align:center'>出線%</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div>")
 
 chan_map={'Mexico City':'Now618','Guadalajara':'Now 618','Toronto':'Now638','Los Angeles':'Now 638','San Francisco':'Now 638','New York':'Now638','Boston':'Now 638','Vancouver':'Now638','Houston':'Now 638','Philadelphia':'Now 638','Dallas':'Now 638','Monterrey':'Now 638','Atlanta':'Now 638','Seattle':'Now 638','Miami':'Now 638','Kansas City':'Now 638'}
