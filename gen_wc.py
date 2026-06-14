@@ -901,6 +901,6 @@ initFavs();
 with open('web/index.html', 'w', encoding='utf-8') as f:
     f.write(html)
 
-print(f"OK! Generated 104 matches HTML")
-print(f"File size: {len(html)} bytes")
-print(f"Match count: {len(ALL_MATCHES)}")
+print(f"OK! Generated 104 matches HTML", file=sys.stderr)
+print(f"File size: {len(html)} bytes", file=sys.stderr)
+print(f"Match count: {len(ALL_MATCHES)}", file=sys.stderr)
