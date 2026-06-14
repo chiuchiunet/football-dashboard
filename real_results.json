@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-06-13T11:03:40.827038",
+  "fetched_at": "2026-06-14T04:02:38.836684",
   "matches": {
     "1": {
       "id": "1",
@@ -54,12 +54,12 @@
       "group": "C",
       "type": "group",
       "date": "06/13/2026 21:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Haiti",
       "away_team": "Scotland",
-      "home_score": null,
-      "away_score": null
+      "home_score": 0,
+      "away_score": 1
     },
     "6": {
       "id": "6",
@@ -78,24 +78,24 @@
       "group": "C",
       "type": "group",
       "date": "06/13/2026 18:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Brazil",
       "away_team": "Morocco",
-      "home_score": null,
-      "away_score": null
+      "home_score": 1,
+      "away_score": 1
     },
     "8": {
       "id": "8",
       "group": "B",
       "type": "group",
       "date": "06/13/2026 12:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Qatar",
       "away_team": "Switzerland",
-      "home_score": null,
-      "away_score": null
+      "home_score": 1,
+      "away_score": 1
     },
     "9": {
       "id": "9",
