@@ -66,12 +66,12 @@
       "group": "D",
       "type": "group",
       "date": "06/13/2026 21:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Australia",
       "away_team": "Turkey",
-      "home_score": null,
-      "away_score": null
+      "home_score": 2,
+      "away_score": 1
     },
     "7": {
       "id": "7",
@@ -117,7 +117,7 @@
       "finished": false,
       "time_elapsed": "notstarted",
       "home_team": "Germany",
-      "away_team": "Curaçao",
+      "away_team": "Cura\u00e7ao",
       "home_score": null,
       "away_score": null
     },
@@ -405,7 +405,7 @@
       "finished": false,
       "time_elapsed": "notstarted",
       "home_team": "Ecuador",
-      "away_team": "Curaçao",
+      "away_team": "Cura\u00e7ao",
       "home_score": null,
       "away_score": null
     },
@@ -656,7 +656,7 @@
       "date": "06/25/2026 16:00",
       "finished": false,
       "time_elapsed": "notstarted",
-      "home_team": "Curaçao",
+      "home_team": "Cura\u00e7ao",
       "away_team": "Ivory Coast",
       "home_score": null,
       "away_score": null
