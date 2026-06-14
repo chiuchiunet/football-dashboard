@@ -235,11 +235,21 @@ ALL_MATCHES = [
 
 TBD = set(['Runner-up A','Runner-up B','Winner C','Runner-up F','Winner E','3rd A/B/C/D','Winner F','Runner-up E','Runner-up I','Winner I','3rd C/D/F/G/H','Winner A','3rd C/E/F/H/I','Winner L','3rd E/H/I/J/K','Winner G','3rd A/E/H/I/J','Winner D','3rd B/E/F/I/J','Winner H','Runner-up J','Runner-up K','Runner-up L','Winner B','3rd E/F/G/I/J','Runner-up D','Runner-up G','Winner J','Runner-up H','Winner K','3rd D/E/I/J/L','W37','W38','W41','W42','W39','W40','W43','W44','W45','W46','W47','W48','W49','W50','W51','W52','SF1-W','SF1-L','SF2-W','SF2-L','QF1-W','QF1-L','QF2-W','QF2-L','QF3-W','QF3-L','QF4-W','QF4-L','Semi1-W','Semi1-L','Semi2-W','Semi2-L','Semi1-L','Semi2-L','Final-W1','Final-W2'])
 
-def et_to_hk(et):
-    h,m=map(int,et.split(':'))
-    h+=13
-    if h>=24: h-=24; return f"{h:02}:{m:02}",True
-    return f"{h:02}:{m:02}",False
+# US timezones (DST June): ET=UTC-4, CT=UTC-5, MT=UTC-6, PT=UTC-7
+# HK is UTC+8
+TZ_OFFSET = {
+    'New York': 12, 'Miami': 12,  # ET
+    'Houston': 13, 'Dallas': 13, 'Kansas City': 13, 'Monterrey': 13, 'Guadalajara': 13, 'Mexico City': 13,  # CT
+    'Seattle': 15, 'Los Angeles': 15, 'Vancouver': 15,  # PT
+    'Philadelphia': 12, 'Boston': 12, 'Atlanta': 12,  # ET
+}
+
+def et_to_hk(et, city):
+    h, m = map(int, et.split(':'))
+    offset = TZ_OFFSET.get(city, 13)
+    h += offset
+    if h >= 24: h -= 24; return f"{h:02}:{m:02}", True
+    return f"{h:02}:{m:02}", False
 
 def prob(h,a):
     d=h-a
@@ -608,7 +618,7 @@ mm=[]
 cur=''
 for idx, m in enumerate(ALL_MATCHES):
     day,h,a,et,city=m
-    hk,nd=et_to_hk(et)
+    hk, nd = et_to_hk(et, city)
     plus=' (+1)' if nd else ''
     st=stage_of(day)
     lbl=SN[st]
