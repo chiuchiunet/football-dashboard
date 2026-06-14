@@ -497,7 +497,8 @@ SN={'GS':'分組','R32':'32強','R16':'16強','QF':'8強','SF':'準決','3RD':'�
 IC={'GS':'📅','R32':'🎯','R16':'⚡','QF':'🔥','SF':'🏆','3RD':'🥉','FNL':'🏆'}
 
 # Trophy probability
-print('Running 10000 tournament simulations for trophy probability...')
+import sys
+print('Running 10000 tournament simulations for trophy probability...', file=sys.stderr)
 TROPHY = mc_tournament(10000)
 
 # Group qualified 2nd place helpers for R16 lookup
