@@ -531,6 +531,15 @@ mc_cache={}
 for g in 'ABCDEFGHIJKL':
     mc_cache[g]=mc_prob(g,3000)
 
+# Team name mapping: JSON name -> gen_wc.py name
+TEAM_MAP = {
+    'Czech Republic': 'Czechia',
+    'Bosnia and Herzegovina': 'Bosnia Herz',
+    'United States': 'USA',
+    'Curaçao': 'Curacao',
+    'Democratic Republic of the Congo': 'DR Congo',
+}
+
 # Calculate standings from REAL_RESULTS
 def calc_standings():
     standings = {}  # team -> {'played':P, 'won':W, 'drawn':D, 'lost':L, 'points':Pts}
@@ -545,6 +554,9 @@ def calc_standings():
         as_ = m.get('away_score')
         if not all([home, away, hs, as_]):
             continue
+        # Map team names
+        home = TEAM_MAP.get(home, home)
+        away = TEAM_MAP.get(away, away)
         if home not in standings or away not in standings:
             continue
         
