@@ -552,7 +552,7 @@ def calc_standings():
         away = m.get('away_team', '')
         hs = m.get('home_score')
         as_ = m.get('away_score')
-        if not all([home, away, hs, as_]):
+        if hs is None or as_ is None:
             continue
         # Map team names
         home = TEAM_MAP.get(home, home)
