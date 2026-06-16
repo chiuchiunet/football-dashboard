@@ -593,6 +593,14 @@ def calc_standings():
 
 STANDINGS = calc_standings()
 
+# Build team-pair lookup for real results (API id order ≠ ALL_MATCHES order)
+RESULTS_BY_TEAM_PAIR = {}
+for mid, m in REAL_RESULTS.items():
+    home = TEAM_MAP.get(m.get('home_team', ''), m.get('home_team', ''))
+    away = TEAM_MAP.get(m.get('away_team', ''), m.get('away_team', ''))
+    if home and away:
+        RESULTS_BY_TEAM_PAIR[(home, away)] = m
+
 gh=[]
 for g in 'ABCDEFGHIJKL':
     qps=mc_cache[g]
@@ -627,9 +635,8 @@ for idx, m in enumerate(ALL_MATCHES):
         mm.append(f"<div class='md' data-stage='{st}'>{icon} {day} <span style='font-size:0.65rem;color:#888;margin-left:6px;'>({lbl})</span></div>")
         cur=day
     if h in TBD or a in TBD:
-        # Check real result
-        match_id = str(idx + 1)
-        real = REAL_RESULTS.get(match_id, {})
+        # Check real result via team-pair lookup
+        real = RESULTS_BY_TEAM_PAIR.get((h, a), {})
         real_finished = real.get('finished', False)
         real_hs = real.get('home_score')
         real_as = real.get('away_score')
@@ -655,9 +662,8 @@ for idx, m in enumerate(ALL_MATCHES):
         chan=chan_map.get(city,'Now TV')
         rf_h = get_recent_form_html(h)
         rf_a = get_recent_form_html(a)
-        # Check real result
-        match_id = str(idx + 1)
-        real = REAL_RESULTS.get(match_id, {})
+        # Check real result via team-pair lookup
+        real = RESULTS_BY_TEAM_PAIR.get((h, a), {})
         real_finished = real.get('finished', False)
         real_hs = real.get('home_score')
         real_as = real.get('away_score')

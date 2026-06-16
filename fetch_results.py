@@ -9,12 +9,12 @@ RESULTS_FILE = os.path.join(DATA_DIR, "real_results.json")
 
 def fetch_results():
     """Fetch all match results from worldcup26.ir"""
-    r = requests.get(f"{API_BASE}/get/games", timeout=15)
+    r = requests.get(f"{API_BASE}/get/games", timeout=60)
     r.raise_for_status()
     games = r.json()["games"]
-    
+
     # Fetch teams for name mapping
-    r2 = requests.get(f"{API_BASE}/get/teams", timeout=15)
+    r2 = requests.get(f"{API_BASE}/get/teams", timeout=60)
     teams_data = r2.json() if isinstance(r2.json(), list) else r2.json().get("teams", [])
     team_map = {t["id"]: t["name_en"] for t in teams_data}
     
