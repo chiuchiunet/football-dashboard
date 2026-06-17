@@ -690,6 +690,23 @@ for idx, m in enumerate(ALL_MATCHES):
         if api_hk:
             hk, nd = api_hk, api_nd
     plus=' (+1)' if nd else ''
+    # Build ISO-like string for live banner JS to compute next match
+    if official:
+        hkt_iso = official['date_hkt'] + 'T' + official['time_hkt'] + ':00'
+    else:
+        # fallback: use current HKT date + hk time (less reliable for cross-day)
+        try:
+            from datetime import datetime, timedelta
+            cur_md = day.replace('月', '-').zfill(5)  # '6月17日' → '06-17'
+            year = 2026
+            month, day_num = cur_md.split('-')
+            # If nd (next day) bump by 1
+            base_dt = datetime(int(year), int(month), int(day_num))
+            if nd:
+                base_dt += timedelta(days=1)
+            hkt_iso = base_dt.strftime('%Y-%m-%d') + 'T' + hk + ':00'
+        except Exception:
+            hkt_iso = ''
     st=stage_of(day)
     lbl=SN[st]
     icon=IC[st]
@@ -714,7 +731,7 @@ for idx, m in enumerate(ALL_MATCHES):
                 comparison_badge = f'<span style="margin-left:6px;color:#eab308;" title="估中勝方">🟡 {real_hs}-{real_as}</span>'
             else:
                 comparison_badge = f'<span style="margin-left:6px;color:#ef4444;">❌ {real_hs}-{real_as}</span>'
-        mm.append(f"<div class='mc' data-stage='{st}'  data-home='{h}' data-away='{a}'><div class='mhd'><span class='mcomp'>{lbl} </span><span class='conf {cf_cls}'>{cf_icon}</span><span class='mhkt'>🕐 {hk} HK{plus}</span><span class='mvenue'>🏟️ {city}</span><span class='mchan'>📺 {chan}</span></div><div class='mbody' style='justify-content:center;'><span style='color:#888;font-size:0.75rem;'>⚠️ 待定 - 分組賽後揭曉</span></div></div>")
+        mm.append(f"<div class='mc' data-stage='{st}'  data-home='{h}' data-away='{a}' data-hkt-iso=''><div class='mhd'><span class='mcomp'>{lbl} </span><span class='conf {cf_cls}'>{cf_icon}</span><span class='mhkt'>🕐 {hk} HK{plus}</span><span class='mvenue'>🏟️ {city}</span><span class='mchan'>📺 {chan}</span></div><div class='mbody' style='justify-content:center;'><span style='color:#888;font-size:0.75rem;'>⚠️ 待定 - 分組賽後揭曉</span></div></div>")
     else:
         hs,as_=rt(h),rt(a)
         hp,dp,ap_=prob(hs,as_)
@@ -741,7 +758,7 @@ for idx, m in enumerate(ALL_MATCHES):
                 comparison_badge = f'<span style="margin-left:6px;color:#eab308;" title="估中勝方">🟡 {real_hs}-{real_as}</span>'
             else:
                 comparison_badge = f'<span style="margin-left:6px;color:#ef4444;">❌ {real_hs}-{real_as}</span>'
-        mm.append(f"<div class='mc' data-stage='{st}'  data-home='{h}' data-away='{a}'><div class='mhd'><span class='mcomp'>{lbl} </span><span class='conf {cf_cls}'>{cf_icon}</span><span class='mhkt'>🕐 {hk} HK{plus}</span><span class='mvenue'>🏟️ {city}</span><span class='mchan'>📺 {chan}</span></div><div class='mbody'><div class='mteam'>{fl(h)} {cn(h)}<span class='str'>{hs}</span>{kp(h)}<div class='mr'>{rf_h}</div></div><div class='mscore'>{hsc}⚽{asc}{comparison_badge}</div><div class='mteam'>{fl(a)} {cn(a)}<span class='str'>{as_}</span>{kp(a)}<div class='mr'>{rf_a}</div></div></div><div class='mfoot'><div class='mbar'><div class='mp' style='width:{hp:.0f}%'><span>H{hp:.0f}%</span></div><div class='mpd' style='width:{dp:.0f}%'><span>D{dp:.0f}%</span></div><div class='mpa' style='width:{ap_:.0f}%'><span>A{ap_:.0f}%</span></div></div><div class='mxg'>xG {xh}-{xa} | O{int(xh+xa+0.5)} | ⚽{int(xh+xa+0.5)}球</div></div></div>")
+        mm.append(f"<div class='mc' data-stage='{st}'  data-home='{h}' data-away='{a}' data-hkt-iso='{hkt_iso}'><div class='mhd'><span class='mcomp'>{lbl} </span><span class='conf {cf_cls}'>{cf_icon}</span><span class='mhkt'>🕐 {hk} HK{plus}</span><span class='mvenue'>🏟️ {city}</span><span class='mchan'>📺 {chan}</span></div><div class='mbody'><div class='mteam'>{fl(h)} {cn(h)}<span class='str'>{hs}</span>{kp(h)}<div class='mr'>{rf_h}</div></div><div class='mscore'>{hsc}⚽{asc}{comparison_badge}</div><div class='mteam'>{fl(a)} {cn(a)}<span class='str'>{as_}</span>{kp(a)}<div class='mr'>{rf_a}</div></div></div><div class='mfoot'><div class='mbar'><div class='mp' style='width:{hp:.0f}%'><span>H{hp:.0f}%</span></div><div class='mpd' style='width:{dp:.0f}%'><span>D{dp:.0f}%</span></div><div class='mpa' style='width:{ap_:.0f}%'><span>A{ap_:.0f}%</span></div></div><div class='mxg'>xG {xh}-{xa} | O{int(xh+xa+0.5)} | ⚽{int(xh+xa+0.5)}球</div></div></div>")
 
 all_t=[]
 for ts in GD.values(): all_t.extend(ts)
@@ -790,7 +807,7 @@ medal_html = ''.join(medal)
 
 gs_c=72; r32_c=16; r16_c=8; qf_c=4; sf_c=2; f_c=2
 
-CSS="""*{margin:0;padding:0;box-sizing:border-box;}body{font-family:"Noto Sans HK",sans-serif;background:linear-gradient(160deg,#080812 0%,#0d0d1a 50%,#080812 100%);color:#f5f5f7;padding:12px;min-height:100vh;}.wrap{max-width:1200px;margin:0 auto;}.hero{background:linear-gradient(135deg,rgba(26,26,46,0.95),rgba(22,33,62,0.9));border:1px solid rgba(255,215,0,0.3);border-radius:18px;padding:24px;text-align:center;margin-bottom:16px;backdrop-filter:blur(20px);box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.05);position:relative;overflow:hidden;}.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at center,rgba(255,215,0,0.06) 0%,transparent 60%);pointer-events:none;}.hero h1{font-size:1.9rem;background:linear-gradient(135deg,#FFD700,#FF8C00,#FFD700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;font-weight:800;letter-spacing:-0.5px;}.hero p{color:#9ca3af;font-size:0.78rem;margin-top:4px;}.cd{margin-top:14px;display:flex;justify-content:center;gap:16px;flex-wrap:wrap;}.cdi{text-align:center;padding:8px 16px;background:rgba(255,215,0,0.05);border-radius:12px;border:1px solid rgba(255,215,0,0.1);}.cdn{font-size:1.4rem;font-weight:800;background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}.cdl{font-size:0.5rem;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;}.ctd{font-size:0.6rem;color:#FF8C00;margin-top:4px;}.stats{display:flex;gap:6px;margin-bottom:16px;}.sc{flex:1;background:rgba(22,22,29,0.8);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:10px;text-align:center;cursor:pointer;backdrop-filter:blur(10px);transition:all 0.3s cubic-bezier(0.4,0,0.2,1);}.sc:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(255,215,0,0.15);border-color:rgba(255,215,0,0.3);}.scn{font-size:1.1rem;font-weight:700;background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}.scl{font-size:0.5rem;color:#9ca3af;}.tab-nav{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}.tab{background:rgba(22,22,29,0.6);border:1px solid rgba(255,255,255,0.06);color:#9ca3af;padding:10px 16px;border-radius:50px;cursor:pointer;font-size:0.75rem;transition:all 0.3s;backdrop-filter:blur(10px);}.tab:hover{background:rgba(255,215,0,0.1);border-color:rgba(255,215,0,0.3);color:#FFD700;}.tab.active{background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;font-weight:700;box-shadow:0 4px 16px rgba(255,215,0,0.3);}.content{display:none;}.content.show{display:block;}h2{font-size:0.95rem;color:#FFD700;margin:20px 0 10px;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:6px;font-weight:600;}.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:20px;}.gc{background:rgba(22,22,29,0.7);border:1px solid rgba(255,255,255,0.06);border-radius:14px;overflow:hidden;backdrop-filter:blur(10px);transition:all 0.3s;}.gc:hover{border-color:rgba(255,215,0,0.4);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3);}.gh{background:linear-gradient(90deg,rgba(42,42,58,0.9),rgba(26,26,46,0.9));padding:8px 12px;font-weight:700;font-size:0.75rem;color:#FFD700;border-bottom:1px solid rgba(255,255,255,0.04);}.gt{width:100%;border-collapse:collapse;font-size:0.62rem;}.gt th{text-align:left;padding:5px 8px;color:#9ca3af;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:500;}.gt td{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.02);}.str{color:#9ca3af;font-size:0.7em;margin-left:4px;}.rf{display:flex;gap:3px;margin-top:4px;flex-wrap:wrap;}.rf span{font-size:0.55rem;padding:2px 5px;border-radius:4px;font-weight:600;}.rfw{background:rgba(34,197,94,0.25);color:#22c55e;border:1px solid rgba(34,197,94,0.3);}.rfl{background:rgba(239,68,68,0.25);color:#ef4444;border:1px solid rgba(239,68,68,0.3);}.rfd{background:rgba(148,148,160,0.2);color:#9ca3af;}.rfup{background:rgba(255,215,0,0.15);color:#FFD700;}.rfnil{font-size:0.55rem;color:#555;}.mr{margin-top:4px;}.mteam{line-height:1.4;}.ml{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}.md{background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;font-size:0.72rem;font-weight:700;padding:6px 14px;border-radius:8px;margin:16px 0 8px;box-shadow:0 4px 12px rgba(255,215,0,0.2);}.md.hidden,.mc.hidden{display:none;}.mc{background:rgba(22,22,29,0.75);border:1px solid rgba(255,255,255,0.06);border-radius:14px;overflow:hidden;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);backdrop-filter:blur(12px);}.mc:hover{border-color:rgba(255,215,0,0.4);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3),0 0 20px rgba(255,215,0,0.08);}.mc.fav{border-color:rgba(255,215,0,0.5);box-shadow:0 0 20px rgba(255,215,0,0.2);}.mhd{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:rgba(26,26,46,0.6);border-bottom:1px solid rgba(255,255,255,0.04);gap:8px;flex-wrap:wrap;}.mcomp{font-size:0.65rem;font-weight:700;color:#FFD700;}.conf{font-size:0.6rem;padding:2px 8px;border-radius:50px;font-weight:600;margin-right:6px;}.conf.high{background:rgba(34,197,94,0.2);color:#22c55e;border:1px solid rgba(34,197,94,0.3);}.conf.medium{background:rgba(234,179,8,0.2);color:#eab308;border:1px solid rgba(234,179,8,0.3);}.conf.low{background:rgba(239,68,68,0.2);color:#ef4444;border:1px solid rgba(239,68,68,0.3);}.mhkt{font-size:0.6rem;color:#FF8C00;}.mvenue{font-size:0.6rem;color:#9ca3af;}.mbody{display:flex;align-items:center;padding:14px;gap:12px;flex-wrap:wrap;}.mteam{flex:1;font-size:0.88rem;font-weight:600;min-width:80px;}.mscore{display:flex;align-items:center;font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 14px;white-space:nowrap;}.mfoot{padding:8px 12px;border-top:1px solid rgba(255,255,255,0.04);}.mbar{display:flex;height:22px;border-radius:6px;overflow:hidden;gap:2px;margin-bottom:4px;}.mp{background:linear-gradient(90deg,rgba(34,197,94,0.7),rgba(34,197,94,0.5));display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mpd{background:linear-gradient(90deg,rgba(148,148,160,0.7),rgba(148,148,160,0.5));display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mpa{background:linear-gradient(90deg,rgba(239,68,68,0.7),rgba(239,68,68,0.5));display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mxg{font-size:0.58rem;color:#9ca3af;}.sd{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:20px;}.sb{display:flex;align-items:center;gap:6px;}.sl{font-size:0.65rem;color:#9ca3af;width:32px;text-align:right;}.sb2{flex:1;height:16px;background:rgba(26,26,46,0.8);border-radius:4px;overflow:hidden;}.sbf{height:100%;background:linear-gradient(90deg,#FFD700,#FF6B35,#FF4500);border-radius:4px;}.sn{font-size:0.65rem;color:#FFD700;font-weight:700;width:16px;}.ft{text-align:center;padding:20px 0;color:#9ca3af;font-size:0.6rem;border-top:1px solid rgba(255,255,255,0.04);margin-top:20px;}.sch-bar{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}.sf-btn{background:rgba(22,22,29,0.6);border:1px solid rgba(255,255,255,0.06);color:#9ca3af;padding:6px 12px;border-radius:50px;cursor:pointer;font-size:0.7rem;transition:all 0.3s;backdrop-filter:blur(10px);}.sf-btn:hover{border-color:rgba(255,215,0,0.3);color:#FFD700;}.sf-btn.active{background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;font-weight:700;box-shadow:0 4px 12px rgba(255,215,0,0.2);}.fav-filter.active{background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;}.fav-filter{background:rgba(22,22,29,0.6);border:1px solid rgba(255,215,0,0.4);color:#FFD700;}.kp{font-size:0.55rem;color:#FF8C00;display:block;margin-top:3px;font-weight:500;}
+CSS="""*{margin:0;padding:0;box-sizing:border-box;}body{font-family:"Noto Sans HK",sans-serif;background:linear-gradient(160deg,#080812 0%,#0d0d1a 50%,#080812 100%);color:#f5f5f7;padding:12px;min-height:100vh;}.wrap{max-width:1200px;margin:0 auto;}.hero{background:linear-gradient(135deg,rgba(26,26,46,0.95),rgba(22,33,62,0.9));border:1px solid rgba(255,215,0,0.3);border-radius:18px;padding:24px;text-align:center;margin-bottom:16px;backdrop-filter:blur(20px);box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.05);position:relative;overflow:hidden;}.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at center,rgba(255,215,0,0.06) 0%,transparent 60%);pointer-events:none;}.hero h1{font-size:1.9rem;background:linear-gradient(135deg,#FFD700,#FF8C00,#FFD700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;font-weight:800;letter-spacing:-0.5px;}.hero p{color:#9ca3af;font-size:0.78rem;margin-top:4px;}.cd{margin-top:14px;display:flex;justify-content:center;gap:16px;flex-wrap:wrap;}.cdi{text-align:center;padding:8px 16px;background:rgba(255,215,0,0.05);border-radius:12px;border:1px solid rgba(255,215,0,0.1);}.cdn{font-size:1.4rem;font-weight:800;background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}.cdl{font-size:0.5rem;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;}.ctd{font-size:0.6rem;color:#FF8C00;margin-top:4px;}.stats{display:flex;gap:6px;margin-bottom:16px;}.sc{flex:1;background:rgba(22,22,29,0.8);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:10px;text-align:center;cursor:pointer;backdrop-filter:blur(10px);transition:all 0.3s cubic-bezier(0.4,0,0.2,1);}.sc:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(255,215,0,0.15);border-color:rgba(255,215,0,0.3);}.scn{font-size:1.1rem;font-weight:700;background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}.scl{font-size:0.5rem;color:#9ca3af;}.tab-nav{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}.tab{background:rgba(22,22,29,0.6);border:1px solid rgba(255,255,255,0.06);color:#9ca3af;padding:10px 16px;border-radius:50px;cursor:pointer;font-size:0.75rem;transition:all 0.3s;backdrop-filter:blur(10px);}.tab:hover{background:rgba(255,215,0,0.1);border-color:rgba(255,215,0,0.3);color:#FFD700;}.tab.active{background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;font-weight:700;box-shadow:0 4px 16px rgba(255,215,0,0.3);}.content{display:none;}.content.show{display:block;}h2{font-size:0.95rem;color:#FFD700;margin:20px 0 10px;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:6px;font-weight:600;}.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:20px;}.gc{background:rgba(22,22,29,0.7);border:1px solid rgba(255,255,255,0.06);border-radius:14px;overflow:hidden;backdrop-filter:blur(10px);transition:all 0.3s;}.gc:hover{border-color:rgba(255,215,0,0.4);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3);}.gh{background:linear-gradient(90deg,rgba(42,42,58,0.9),rgba(26,26,46,0.9));padding:8px 12px;font-weight:700;font-size:0.75rem;color:#FFD700;border-bottom:1px solid rgba(255,255,255,0.04);}.gt{width:100%;border-collapse:collapse;font-size:0.62rem;}.gt th{text-align:left;padding:5px 8px;color:#9ca3af;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:500;}.gt td{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.02);}.str{color:#9ca3af;font-size:0.7em;margin-left:4px;}.rf{display:flex;gap:3px;margin-top:4px;flex-wrap:wrap;}.rf span{font-size:0.55rem;padding:2px 5px;border-radius:4px;font-weight:600;}.rfw{background:rgba(34,197,94,0.25);color:#22c55e;border:1px solid rgba(34,197,94,0.3);}.rfl{background:rgba(239,68,68,0.25);color:#ef4444;border:1px solid rgba(239,68,68,0.3);}.rfd{background:rgba(148,148,160,0.2);color:#9ca3af;}.rfup{background:rgba(255,215,0,0.15);color:#FFD700;}.rfnil{font-size:0.55rem;color:#555;}.mr{margin-top:4px;}.mteam{line-height:1.4;}.ml{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}.md{background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;font-size:0.72rem;font-weight:700;padding:6px 14px;border-radius:8px;margin:16px 0 8px;box-shadow:0 4px 12px rgba(255,215,0,0.2);}.md.hidden,.mc.hidden{display:none;}.mc{background:rgba(22,22,29,0.75);border:1px solid rgba(255,255,255,0.06);border-radius:14px;overflow:hidden;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);backdrop-filter:blur(12px);}.mc:hover{border-color:rgba(255,215,0,0.4);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3),0 0 20px rgba(255,215,0,0.08);}.mc.fav{border-color:rgba(255,215,0,0.5);box-shadow:0 0 20px rgba(255,215,0,0.2);}.mhd{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:rgba(26,26,46,0.6);border-bottom:1px solid rgba(255,255,255,0.04);gap:8px;flex-wrap:wrap;}.mcomp{font-size:0.65rem;font-weight:700;color:#FFD700;}.conf{font-size:0.6rem;padding:2px 8px;border-radius:50px;font-weight:600;margin-right:6px;}.conf.high{background:rgba(34,197,94,0.2);color:#22c55e;border:1px solid rgba(34,197,94,0.3);}.conf.medium{background:rgba(234,179,8,0.2);color:#eab308;border:1px solid rgba(234,179,8,0.3);}.conf.low{background:rgba(239,68,68,0.2);color:#ef4444;border:1px solid rgba(239,68,68,0.3);}.mhkt{font-size:0.6rem;color:#FF8C00;}.mvenue{font-size:0.6rem;color:#9ca3af;}.mbody{display:flex;align-items:center;padding:14px;gap:12px;flex-wrap:wrap;}.mteam{flex:1;font-size:0.88rem;font-weight:600;min-width:80px;}.mscore{display:flex;align-items:center;font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 14px;white-space:nowrap;}.mfoot{padding:8px 12px;border-top:1px solid rgba(255,255,255,0.04);}.mbar{display:flex;height:22px;border-radius:6px;overflow:hidden;gap:2px;margin-bottom:4px;}.mp{background:linear-gradient(90deg,rgba(34,197,94,0.7),rgba(34,197,94,0.5));display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mpd{background:linear-gradient(90deg,rgba(148,148,160,0.7),rgba(148,148,160,0.5));display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mpa{background:linear-gradient(90deg,rgba(239,68,68,0.7),rgba(239,68,68,0.5));display:flex;align-items:center;justify-content:center;font-size:0.55rem;color:#fff;font-weight:600;min-width:24px;overflow:hidden;}.mxg{font-size:0.58rem;color:#9ca3af;}.sd{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:20px;}.sb{display:flex;align-items:center;gap:6px;}.sl{font-size:0.65rem;color:#9ca3af;width:32px;text-align:right;}.sb2{flex:1;height:16px;background:rgba(26,26,46,0.8);border-radius:4px;overflow:hidden;}.sbf{height:100%;background:linear-gradient(90deg,#FFD700,#FF6B35,#FF4500);border-radius:4px;}.sn{font-size:0.65rem;color:#FFD700;font-weight:700;width:16px;}.ft{text-align:center;padding:20px 0;color:#9ca3af;font-size:0.6rem;border-top:1px solid rgba(255,255,255,0.04);margin-top:20px;}.sch-bar{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}.sf-btn{background:rgba(22,22,29,0.6);border:1px solid rgba(255,255,255,0.06);color:#9ca3af;padding:6px 12px;border-radius:50px;cursor:pointer;font-size:0.7rem;transition:all 0.3s;backdrop-filter:blur(10px);}.sf-btn:hover{border-color:rgba(255,215,0,0.3);color:#FFD700;}.sf-btn.active{background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;font-weight:700;box-shadow:0 4px 12px rgba(255,215,0,0.2);}.fav-filter.active{background:linear-gradient(135deg,#FFD700,#FF8C00);color:#000;}.fav-filter{background:rgba(22,22,29,0.6);border:1px solid rgba(255,215,0,0.4);color:#FFD700;}.kp{font-size:0.55rem;color:#FF8C00;display:block;margin-top:3px;font-weight:500;}/* Live banner */.live-banner{position:sticky;top:0;z-index:999;background:linear-gradient(90deg,rgba(255,215,0,0.15),rgba(255,140,0,0.15));border:1px solid rgba(255,215,0,0.3);border-radius:14px;padding:12px 16px;margin:0 0 14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;backdrop-filter:blur(12px);box-shadow:0 4px 16px rgba(0,0,0,0.3);cursor:pointer;transition:all 0.3s;}.live-banner:hover{transform:translateY(-1px);border-color:rgba(255,215,0,0.5);box-shadow:0 8px 24px rgba(255,215,0,0.15);}.live-banner.live{background:linear-gradient(90deg,rgba(239,68,68,0.2),rgba(239,68,68,0.1));border-color:rgba(239,68,68,0.5);animation:pulse 2s ease-in-out infinite;}@keyframes pulse{0%,100%{box-shadow:0 4px 16px rgba(239,68,68,0.3);}50%{box-shadow:0 4px 24px rgba(239,68,68,0.6);}}.lb-status{display:flex;align-items:center;gap:8px;font-size:0.78rem;font-weight:700;}.lb-dot{width:10px;height:10px;border-radius:50%;background:#FFD700;box-shadow:0 0 8px #FFD700;}.live-banner.live .lb-dot{background:#ef4444;box-shadow:0 0 12px #ef4444;animation:blink 1s ease-in-out infinite;}@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.4;}}.lb-match{flex:1;font-size:0.85rem;font-weight:600;}.lb-time{font-family:monospace;font-size:0.95rem;font-weight:800;color:#FFD700;letter-spacing:1px;}.live-banner.live .lb-time{color:#ef4444;}.lb-jump{font-size:0.7rem;color:#9ca3af;padding:4px 10px;border:1px solid rgba(255,215,0,0.3);border-radius:6px;transition:all 0.3s;}.live-banner:hover .lb-jump{background:rgba(255,215,0,0.1);border-color:rgba(255,215,0,0.5);color:#FFD700;}/* Tonight filter highlight */.mc.tonight-highlight{border-color:rgba(255,215,0,0.5);box-shadow:0 0 24px rgba(255,215,0,0.15);}
 .mr{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}.medal-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}.medal-card{flex:1;min-width:100px;background:rgba(22,22,29,0.8);border-radius:14px;padding:14px;text-align:center;border:1px solid rgba(255,255,255,0.06);transition:all 0.3s;}.medal-card.gold{border-color:rgba(255,215,0,0.5);background:linear-gradient(135deg,rgba(255,215,0,0.1),rgba(22,22,29,0.8));}.medal-card.silver{border-color:rgba(192,192,192,0.4);}.medal-card.bronze{border-color:rgba(205,127,50,0.4);}.medal-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,0.3);}.mrank{font-size:1.5rem;margin-bottom:6px;}.mflag{font-size:1.8rem;margin-bottom:4px;}.mname{font-size:0.72rem;font-weight:600;color:#f5f5f7;margin-bottom:6px;}.mwin{font-size:1.1rem;font-weight:800;color:#FFD700;}.msf{font-size:0.65rem;color:#9ca3af;}.trophy-legend{display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}.tpc{font-size:0.65rem;padding:2px 8px;border-radius:50px;font-weight:600;}.tw{background:rgba(255,215,0,0.2);color:#FFD700;}.tf{background:rgba(148,163,184,0.2);color:#c0c0c0;}.ts{background:rgba(239,68,68,0.2);color:#ef4444;}.tq{background:rgba(234,179,8,0.2);color:#eab308;}.tr{background:rgba(34,197,94,0.2);color:#22c55e;}.ttbl{width:100%;border-collapse:collapse;font-size:0.65rem;}.ttbl th{text-align:left;padding:8px 10px;color:#9ca3af;border-bottom:1px solid rgba(255,255,255,0.08);font-weight:500;}.ttbl td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.03);}.ttbl tr:hover td{background:rgba(255,215,0,0.05);}.tpbar{display:flex;height:10px;border-radius:5px;overflow:hidden;gap:1px;}.tpw{background:linear-gradient(90deg,#FFD700,#FF8C00);}.tpf{background:rgba(192,192,192,0.6);}.tps{background:rgba(239,68,68,0.6);}.tpq{background:rgba(234,179,8,0.6);}.tpr{background:rgba(34,197,94,0.6);}.mchan{font-size:0.55rem;color:#9ca3af;margin-left:6px;}.bracket{margin-top:10px;}.bround{margin-bottom:20px;}.bround h3{font-size:0.85rem;color:#FFD700;margin:0 0 10px;padding:6px 12px;background:rgba(255,215,0,0.1);border-radius:8px;border-left:3px solid #FFD700;}.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}.bgrid.finals-grid{grid-template-columns:repeat(2,1fr);max-width:500px;}.bmc{background:rgba(22,22,29,0.8);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px;transition:all 0.3s;}.bmc:hover{border-color:rgba(255,215,0,0.4);box-shadow:0 4px 16px rgba(0,0,0,0.2);}.bmc.tbd{opacity:0.5;}.bmtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.04);}.bmlbl{font-size:0.7rem;font-weight:700;color:#FFD700;}.bmhk{font-size:0.6rem;color:#9ca3af;}.bmteams{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;}.btm{flex:1;font-size:0.8rem;font-weight:600;}.bscore{font-size:1.3rem;font-weight:800;background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 8px;white-space:nowrap;}.bmtbd{color:#666;font-size:0.8rem;}.bmbbar{display:flex;height:18px;border-radius:4px;overflow:hidden;gap:1px;}.bmp{flex:0 0 auto;background:linear-gradient(90deg,rgba(34,197,94,0.8),rgba(34,197,94,0.6));display:flex;align-items:center;justify-content:center;font-size:0.5rem;color:#fff;font-weight:600;min-width:20px;}.bmd{flex:0 0 auto;background:rgba(148,148,160,0.6);display:flex;align-items:center;justify-content:center;font-size:0.5rem;color:#fff;font-weight:600;min-width:20px;}.bma{flex:0 0 auto;background:linear-gradient(90deg,rgba(239,68,68,0.8),rgba(239,68,68,0.6));display:flex;align-items:center;justify-content:center;font-size:0.5rem;color:#fff;font-weight:600;min-width:20px;}
 .bnav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(13,13,26,0.95);backdrop-filter:blur(20px);border-top:1px solid rgba(255,215,0,0.2);padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));z-index:1000;box-shadow:0 -4px 20px rgba(0,0,0,0.3);}.bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:#9ca3af;cursor:pointer;padding:4px 8px;transition:all 0.2s;}.bni.active{color:#FFD700;}.bni:hover{color:#FFD700;}.bne{font-size:1.3rem;}.bnl{font-size:0.55rem;font-weight:500;}
 @media(max-width:600px){body{overflow-x:hidden;max-width:100vw;}.bnav{display:flex;}.wrap{padding:8px;padding-bottom:70px;max-width:100vw;overflow-x:hidden;}.hero{padding:12px;border-radius:12px;}.hero h1{font-size:1.2rem;}.cd{gap:8px;}.cdn{font-size:1rem;}.stats{gap:4px;}.sc{padding:6px;}.scn{font-size:0.8rem;}.scl{font-size:0.4rem;}.tab-nav{gap:4px;}.tab{padding:6px 10px;font-size:0.6rem;}.gg{grid-template-columns:1fr;gap:8px;}.gc{font-size:0.85rem;}.gt{font-size:0.5rem;}.gt th,.gt td{padding:3px 4px;}.mhd{flex-wrap:wrap;gap:4px;padding:4px 6px;}.mcomp{font-size:0.5rem;}.mhkt,.mvenue,.mchan{font-size:0.45rem;}.mbody{padding:6px;gap:4px;flex-direction:column;}.mteam{flex:1 1 100%;font-size:0.7rem;min-width:auto;width:100%;}.mscore{font-size:1rem;padding:4px 8px;width:100%;text-align:center;justify-content:center;}.mfoot{padding:4px 6px;}.mxg{font-size:0.45rem;}.mc{padding:6px;margin-bottom:8px;}.ml{gap:6px;}}"""
@@ -805,6 +822,15 @@ html=f"""<!DOCTYPE html>
 <style>{CSS}</style>
 </head>
 <body>
+<div class='live-banner' id='liveBanner' onclick='jumpToNext()'>
+  <div class='lb-status'>
+    <span class='lb-dot'></span>
+    <span id='lbStatus'>下一場</span>
+  </div>
+  <div class='lb-match' id='lbMatch'>🔍 計算中…</div>
+  <div class='lb-time' id='lbTime'>--:--:--</div>
+  <div class='lb-jump' id='lbJump'>跳去 ↗</div>
+</div>
 <div class='wrap'>
 <div class='hero'>
 <h1>🏆 FIFA 世界盃 2026</h1>
@@ -843,6 +869,7 @@ html=f"""<!DOCTYPE html>
 <option value='France'>🇫🇷 法國</option><option value='Argentina'>🇦🇷 阿根廷</option><option value='Spain'>🇪🇸 西班牙</option><option value='Brazil'>🇧🇷 巴西</option><option value='England'>🇬🇧 英格蘭</option><option value='Germany'>🇩🇪 德國</option><option value='Portugal'>🇵🇹 葡萄牙</option><option value='Netherlands'>🇳🇱 荷蘭</option><option value='Belgium'>🇧🇪 比利時</option><option value='Croatia'>🇭🇷 克羅地亞</option><option value='Uruguay'>🇺🇾 烏拉圭</option><option value='Colombia'>🇨🇴 哥倫比亞</option><option value='Mexico'>🇲🇽 墨西哥</option><option value='Morocco'>🇲🇦 摩洛哥</option><option value='USA'>🇺🇸 美國</option><option value='Senegal'>🇸🇳 塞內加爾</option><option value='Switzerland'>🇨🇭 瑞士</option><option value='Japan'>🇯🇵 日本</option><option value='Sweden'>🇸🇪 瑞典</option><option value='Austria'>🇦🇹 奧地利</option><option value='Australia'>🇦🇺 澳洲</option><option value='Ecuador'>🇪🇨 厄瓜多爾</option><option value='Ivory Coast'>🇨🇮 象牙海岸</option><option value='Egypt'>🇪🇬 埃及</option><option value='South Korea'>🇰🇷 南韓</option><option value='Algeria'>🇩🇿 阿爾及利亞</option><option value='Paraguay'>🇵🇾 巴拉圭</option><option value='Norway'>🇳🇴 挪威</option><option value='Ghana'>🇬🇭 加納</option><option value='Scotland'>🏴 蘇格蘭</option><option value='Iraq'>🇮🇶 伊拉克</option><option value='Turkey'>🇹🇷 土耳其</option><option value='Canada'>🇨🇦 加拿大</option><option value='Czechia'>🇨🇿 捷克</option><option value='Tunisia'>🇹🇳 突尼斯</option><option value='Iran'>🏴 伊朗</option><option value='Bosnia Herz'>🇧🇦 波斯尼亞</option><option value='Saudi Arabia'>🇸🇦 沙特阿拉伯</option><option value='Qatar'>🇶🇦 卡塔爾</option><option value='Uzbekistan'>🇺🇿 烏茲別克</option><option value='New Zealand'>🇳🇿 新西蘭</option><option value='Cape Verde'>🇨🇻 佛得角</option><option value='Panama'>🇵🇦 巴拿馬</option><option value='South Africa'>🇿🇦 南非</option><option value='DR Congo'>🇨🇩 剛果</option><option value='Jordan'>🇯🇴 約旦</option><option value='Curacao'>🇨🇼 庫拉索</option><option value='Haiti'>🇭🇹 海地</option>
 </select>
 <button class="sf-btn active" onclick="filterStage('all',this)">全部</button>
+<button class="sf-btn" id="tonightBtn" onclick="filterTonight(this)">🌙 今晚</button>
 <button class="sf-btn" onclick="filterStage('GS',this)">📅 分組</button>
 <button class="sf-btn" onclick="filterStage('R32',this)">🎯 32強</button>
 <button class="sf-btn" onclick="filterStage('R16',this)">⚡ 16強</button>
@@ -972,6 +999,133 @@ function initFavs(){{
 }}
 initFavs();
 
+/* === Live Banner: 下一場倒數 + 一 click 跳去 === */
+function buildLiveBanner(){{
+  const cards = Array.from(document.querySelectorAll('.mc'));
+  const now = new Date();
+  // Find next match (HKT > now) or live match (within 2hr of kickoff)
+  const matches = cards
+    .filter(c => c.getAttribute('data-hkt-iso'))
+    .map(c => ({{
+      el: c,
+      dt: new Date(c.getAttribute('data-hkt-iso')),
+      home: c.getAttribute('data-home'),
+      away: c.getAttribute('data-away'),
+    }}))
+    .filter(m => !isNaN(m.dt.getTime()))
+    .sort((a, b) => a.dt - b.dt);
+  if (matches.length === 0) return;
+  const upcoming = matches.find(m => m.dt > now);
+  const lastFinished = matches.filter(m => m.dt <= now).pop();
+  let target, isLive = false, elapsedMin = 0;
+  if (upcoming) {{
+    target = upcoming;
+    const prev = matches[Math.max(0, matches.indexOf(upcoming) - 1)];
+    if (prev && (target.dt - prev.dt) < 1000*60*60*3 && (target.dt - prev.dt) > 0) {{
+      // Check if prev match finished within 2hr ago → could be live now
+    }}
+  }}
+  // Check if any match is currently live (between kickoff and kickoff+2hr)
+  const liveCandidate = matches.find(m => {{
+    const diffMin = (now - m.dt) / 60000;
+    return diffMin >= 0 && diffMin < 120;
+  }});
+  if (liveCandidate) {{
+    target = liveCandidate;
+    isLive = true;
+    elapsedMin = Math.floor((now - target.dt) / 60000);
+  }} else if (!upcoming) {{
+    // All matches finished (e.g. final done)
+    target = lastFinished || matches[matches.length - 1];
+    isLive = false;
+  }}
+  if (!target) return;
+  // Update DOM
+  document.getElementById('lbMatch').textContent = `🇦 ${{target.home}} vs 🇧 ${{target.away}}`;
+  document.getElementById('lbJump').setAttribute('data-target-home', target.home);
+  const banner = document.getElementById('liveBanner');
+  if (isLive) {{
+    banner.classList.add('live');
+    document.getElementById('lbStatus').textContent = `⚽ 進行中`;
+    document.getElementById('lbTime').textContent = `+${{elapsedMin}}'`;
+  }} else {{
+    banner.classList.remove('live');
+    document.getElementById('lbStatus').textContent = '下一場';
+    const diffMs = target.dt - now;
+    const totalSec = Math.max(0, Math.floor(diffMs / 1000));
+    const days = Math.floor(totalSec / 86400);
+    const hh = String(Math.floor((totalSec % 86400) / 3600)).padStart(2, '0');
+    const mm = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
+    const ss = String(totalSec % 60).padStart(2, '0');
+    document.getElementById('lbTime').textContent = days > 0 ? `T-${{days}}d ${{hh}}:${{mm}}:${{ss}}` : `T-${{hh}}:${{mm}}:${{ss}}`;
+  }}
+  // Store target globally for jumpToNext
+  window.__liveBannerTarget = target;
+  // Highlight target card
+  document.querySelectorAll('.mc').forEach(c => c.classList.remove('fav'));
+  target.el.classList.add('fav');
+}}
+function jumpToNext(){{
+  const t = window.__liveBannerTarget;
+  if (!t || !t.el) return;
+  t.el.scrollIntoView({{behavior: 'smooth', block: 'center'}});
+  t.el.style.transition = 'box-shadow 0.3s';
+  t.el.style.boxShadow = '0 0 32px rgba(255,215,0,0.6)';
+  setTimeout(() => {{ t.el.style.boxShadow = ''; }}, 1200);
+}}
+setInterval(buildLiveBanner, 1000);
+buildLiveBanner();
+
+/* === 今晚 filter: show only tonight's matches === */
+function filterTonight(btn){{
+  // Deactivate other stage buttons
+  document.querySelectorAll('.sf-btn').forEach(b => {{
+    if (b !== btn) b.classList.remove('active');
+  }});
+  btn.classList.toggle('active');
+  if (!btn.classList.contains('active')) {{
+    // Re-enable '全部'
+    document.querySelector('.sf-btn').classList.add('active');
+    document.querySelectorAll('.mc').forEach(c => c.classList.remove('hidden'));
+    document.querySelectorAll('.md').forEach(d => d.classList.remove('hidden'));
+    return;
+  }}
+  // Calculate tonight window: HKT 18:00 today → 12:00 next day
+  const now = new Date();
+  // Convert now to HKT
+  const hktNow = new Date(now.getTime() + 8*60*60*1000);
+  // tonight_start = HKT today 18:00
+  const tonightHkt = new Date(Date.UTC(hktNow.getUTCFullYear(), hktNow.getUTCMonth(), hktNow.getUTCDate(), 18, 0, 0) - 8*60*60*1000);
+  // tomorrow_end = HKT tomorrow 12:00
+  const tomorrowHkt = new Date(tonightHkt.getTime() + 18*60*60*1000);
+  document.querySelectorAll('.mc').forEach(c => {{
+    const iso = c.getAttribute('data-hkt-iso');
+    if (!iso) {{ c.classList.add('hidden'); return; }}
+    const dt = new Date(iso);
+    if (dt >= tonightHkt && dt < tomorrowHkt) {{
+      c.classList.remove('hidden');
+      c.classList.add('tonight-highlight');
+    }} else {{
+      c.classList.add('hidden');
+      c.classList.remove('tonight-highlight');
+    }}
+  }});
+  // Hide day dividers that have no visible matches
+  document.querySelectorAll('.md').forEach(d => {{
+    let next = d.nextElementSibling;
+    let hasVisible = false;
+    while (next && !next.classList.contains('md')) {{
+      if (next.classList.contains('mc') && !next.classList.contains('hidden')) {{
+        hasVisible = true; break;
+      }}
+      next = next.nextElementSibling;
+    }}
+    if (hasVisible) d.classList.remove('hidden');
+    else d.classList.add('hidden');
+  }});
+  // Scroll to schedule
+  document.getElementById('schedule').scrollIntoView({{behavior: 'smooth', block: 'start'}});
+}}
 </script>
 </body>
 </html>"""
