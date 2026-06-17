@@ -242,6 +242,7 @@ TZ_OFFSET = {
     'Houston': 13, 'Dallas': 13, 'Kansas City': 13, 'Monterrey': 13, 'Guadalajara': 13, 'Mexico City': 13,  # CT
     'Seattle': 15, 'Los Angeles': 15, 'Vancouver': 15,  # PT
     'Philadelphia': 12, 'Boston': 12, 'Atlanta': 12,  # ET
+    'Toronto': 12,  # ET (加拿大東部)
 }
 
 def et_to_hk(et, city):
@@ -250,6 +251,30 @@ def et_to_hk(et, city):
     h += offset
     if h >= 24: h -= 24; return f"{h:02}:{m:02}", True
     return f"{h:02}:{m:02}", False
+
+def local_to_hk_from_api(date_str, city):
+    """Convert API local_date (venue local time) to HKT.
+    API date_str format: 'MM/DD/YYYY HH:MM' (no timezone)
+    Treat as venue local time per city timezone offset.
+    Returns (hk_str, is_next_day) or (None, False) on error.
+    """
+    from datetime import datetime, timedelta
+    if not date_str or date_str == 'TBD':
+        return None, False
+    try:
+        dt = datetime.strptime(date_str, '%m/%d/%Y %H:%M')
+    except (ValueError, TypeError):
+        return date_str, False
+    h, m = dt.hour, dt.minute
+    offset = TZ_OFFSET.get(city, 13)
+    new_h = h + offset
+    new_date = dt.date()
+    is_next = False
+    while new_h >= 24:
+        new_h -= 24
+        new_date += timedelta(days=1)
+        is_next = True
+    return f"{new_date.strftime('%m/%d')} {new_h:02}:{m:02}", is_next
 
 def prob(h,a):
     d=h-a
@@ -624,9 +649,46 @@ acc_winner = 0
 acc_total = 0
 mm=[]
 cur=''
+# Load official schedule cache (ET times from sportsbrackets.net → UTC/HKT)
+# This is the SINGLE SOURCE OF TRUTH for group stage kickoff times.
+OFFICIAL_SCHEDULE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'official_schedule_utc.json')
+OFFICIAL_SCHEDULE = {}  # key: (home, away) → {date_hkt, time_hkt, date_et, time_et, ...}
+try:
+    if os.path.exists(OFFICIAL_SCHEDULE_FILE):
+        with open(OFFICIAL_SCHEDULE_FILE, 'r', encoding='utf-8') as f:
+            _os_data = json.load(f)
+        for _m in _os_data:
+            OFFICIAL_SCHEDULE[(_m['home'], _m['away'])] = _m
+            OFFICIAL_SCHEDULE[(_m['away'], _m['home'])] = _m  # reverse lookup
+        print(f"Loaded {len(_os_data)} official schedule entries from {OFFICIAL_SCHEDULE_FILE}", file=sys.stderr)
+    else:
+        print(f"⚠️  Official schedule file not found: {OFFICIAL_SCHEDULE_FILE}", file=sys.stderr)
+except Exception as _e:
+    print(f"⚠️  Failed to load official schedule: {_e}", file=sys.stderr)
+
 for idx, m in enumerate(ALL_MATCHES):
     day,h,a,et,city=m
-    hk, nd = et_to_hk(et, city)
+    # PRIORITY 1: Use official schedule cache (FIFA-accurate ET times → HKT)
+    official = OFFICIAL_SCHEDULE.get((h, a))
+    if official:
+        hk = official['time_hkt']
+        hk_date = official['date_hkt']
+        nd = hk_date != '2026-' + day.replace('月', '-').zfill(2) and not hk_date.endswith(day.split('月')[1].zfill(2)) if '月' in day else False
+        # Simpler: compare month-day only
+        try:
+            cur_md = day.replace('月', '-').zfill(5)  # "6月17日" → "06-17"
+            nd = hk_date[5:] != cur_md
+        except Exception:
+            nd = False
+    else:
+        hk, nd = et_to_hk(et, city)
+    # PRIORITY 2 (legacy): worldcup26.ir local_date fallback
+    real_for_time = RESULTS_BY_TEAM_PAIR.get((h, a), {}) or RESULTS_BY_TEAM_PAIR.get((a, h), {})
+    api_date = real_for_time.get('date', '') if isinstance(real_for_time, dict) else ''
+    if not official and api_date:
+        api_hk, api_nd = local_to_hk_from_api(api_date, city)
+        if api_hk:
+            hk, nd = api_hk, api_nd
     plus=' (+1)' if nd else ''
     st=stage_of(day)
     lbl=SN[st]
