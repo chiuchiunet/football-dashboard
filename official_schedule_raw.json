@@ -1,0 +1,722 @@
+[
+  {
+    "group": "A",
+    "date_raw": "Jun 11",
+    "weekday": "Thu",
+    "home": "Mexico",
+    "away": "South Africa",
+    "venue_stadium": "Mexico City",
+    "venue_city": "Estadio Azteca",
+    "time_et": "15:00"
+  },
+  {
+    "group": "A",
+    "date_raw": "Jun 11",
+    "weekday": "Thu",
+    "home": "South Korea",
+    "away": "Czech Republic",
+    "venue_stadium": "Guadalajara",
+    "venue_city": "Estadio Akron",
+    "time_et": "22:00"
+  },
+  {
+    "group": "A",
+    "date_raw": "Jun 18",
+    "weekday": "Thu",
+    "home": "South Africa",
+    "away": "Czech Republic",
+    "venue_stadium": "Atlanta",
+    "venue_city": "Mercedes-Benz Stadium",
+    "time_et": "12:00"
+  },
+  {
+    "group": "A",
+    "date_raw": "Jun 18",
+    "weekday": "Thu",
+    "home": "Mexico",
+    "away": "South Korea",
+    "venue_stadium": "Guadalajara",
+    "venue_city": "Estadio Akron",
+    "time_et": "21:00"
+  },
+  {
+    "group": "A",
+    "date_raw": "Jun 24",
+    "weekday": "Wed",
+    "home": "Mexico",
+    "away": "Czech Republic",
+    "venue_stadium": "Mexico City",
+    "venue_city": "Estadio Azteca",
+    "time_et": "21:00"
+  },
+  {
+    "group": "A",
+    "date_raw": "Jun 24",
+    "weekday": "Wed",
+    "home": "South Africa",
+    "away": "South Korea",
+    "venue_stadium": "Guadalupe, Nuevo Leon",
+    "venue_city": "Estadio BBVA",
+    "time_et": "21:00"
+  },
+  {
+    "group": "B",
+    "date_raw": "Jun 12",
+    "weekday": "Fri",
+    "home": "Canada",
+    "away": "Bosnia and Herzegovina",
+    "venue_stadium": "Toronto",
+    "venue_city": "BMO Field",
+    "time_et": "15:00"
+  },
+  {
+    "group": "B",
+    "date_raw": "Jun 13",
+    "weekday": "Sat",
+    "home": "Qatar",
+    "away": "Switzerland",
+    "venue_stadium": "Santa Clara",
+    "venue_city": "Levi&#8217;s Stadium",
+    "time_et": "15:00"
+  },
+  {
+    "group": "B",
+    "date_raw": "Jun 18",
+    "weekday": "Thu",
+    "home": "Bosnia and Herzegovina",
+    "away": "Switzerland",
+    "venue_stadium": "Inglewood",
+    "venue_city": "SoFi Stadium",
+    "time_et": "15:00"
+  },
+  {
+    "group": "B",
+    "date_raw": "Jun 18",
+    "weekday": "Thu",
+    "home": "Canada",
+    "away": "Qatar",
+    "venue_stadium": "Vancouver",
+    "venue_city": "BC Place",
+    "time_et": "18:00"
+  },
+  {
+    "group": "B",
+    "date_raw": "Jun 24",
+    "weekday": "Wed",
+    "home": "Switzerland",
+    "away": "Canada",
+    "venue_stadium": "Vancouver",
+    "venue_city": "BC Place",
+    "time_et": "15:00"
+  },
+  {
+    "group": "B",
+    "date_raw": "Jun 24",
+    "weekday": "Wed",
+    "home": "Qatar",
+    "away": "Bosnia and Herzegovina",
+    "venue_stadium": "Seattle",
+    "venue_city": "Lumen Field",
+    "time_et": "15:00"
+  },
+  {
+    "group": "C",
+    "date_raw": "Jun 13",
+    "weekday": "Sat",
+    "home": "Brazil",
+    "away": "Morocco",
+    "venue_stadium": "East Rutherford",
+    "venue_city": "MetLife Stadium",
+    "time_et": "18:00"
+  },
+  {
+    "group": "C",
+    "date_raw": "Jun 13",
+    "weekday": "Sat",
+    "home": "Haiti",
+    "away": "Scotland",
+    "venue_stadium": "Foxborough",
+    "venue_city": "Gillette Stadium",
+    "time_et": "21:00"
+  },
+  {
+    "group": "C",
+    "date_raw": "Jun 19",
+    "weekday": "Fri",
+    "home": "Scotland",
+    "away": "Morocco",
+    "venue_stadium": "Foxborough",
+    "venue_city": "Gillette Stadium",
+    "time_et": "18:00"
+  },
+  {
+    "group": "C",
+    "date_raw": "Jun 19",
+    "weekday": "Fri",
+    "home": "Brazil",
+    "away": "Haiti",
+    "venue_stadium": "Philadelphia",
+    "venue_city": "Lincoln Financial Field",
+    "time_et": "21:00"
+  },
+  {
+    "group": "C",
+    "date_raw": "Jun 24",
+    "weekday": "Wed",
+    "home": "Morocco",
+    "away": "Haiti",
+    "venue_stadium": "Atlanta",
+    "venue_city": "Mercedes-Benz Stadium",
+    "time_et": "18:00"
+  },
+  {
+    "group": "C",
+    "date_raw": "Jun 24",
+    "weekday": "Wed",
+    "home": "Scotland",
+    "away": "Brazil",
+    "venue_stadium": "Miami Gardens",
+    "venue_city": "Hard Rock Stadium",
+    "time_et": "18:00"
+  },
+  {
+    "group": "D",
+    "date_raw": "Jun 12",
+    "weekday": "Fri",
+    "home": "United States",
+    "away": "Paraguay",
+    "venue_stadium": "Inglewood",
+    "venue_city": "SoFi Stadium",
+    "time_et": "21:00"
+  },
+  {
+    "group": "D",
+    "date_raw": "Jun 13",
+    "weekday": "Sat",
+    "home": "Türkiye",
+    "away": "Australia",
+    "venue_stadium": "Vancouver",
+    "venue_city": "BC Place",
+    "time_et": "00:00"
+  },
+  {
+    "group": "D",
+    "date_raw": "Jun 19",
+    "weekday": "Fri",
+    "home": "United States",
+    "away": "Australia",
+    "venue_stadium": "Seattle",
+    "venue_city": "Lumen Field",
+    "time_et": "15:00"
+  },
+  {
+    "group": "D",
+    "date_raw": "Jun 19",
+    "weekday": "Fri",
+    "home": "Paraguay",
+    "away": "Türkiye",
+    "venue_stadium": "Santa Clara",
+    "venue_city": "Levi&#8217;s Stadium",
+    "time_et": "23:00"
+  },
+  {
+    "group": "D",
+    "date_raw": "Jun 25",
+    "weekday": "Thu",
+    "home": "United States",
+    "away": "Türkiye",
+    "venue_stadium": "Inglewood",
+    "venue_city": "SoFi Stadium",
+    "time_et": "22:00"
+  },
+  {
+    "group": "D",
+    "date_raw": "Jun 25",
+    "weekday": "Thu",
+    "home": "Paraguay",
+    "away": "Australia",
+    "venue_stadium": "Santa Clara",
+    "venue_city": "Levi&#8217;s Stadium",
+    "time_et": "22:00"
+  },
+  {
+    "group": "E",
+    "date_raw": "Jun 14",
+    "weekday": "Sun",
+    "home": "Germany",
+    "away": "Curacao",
+    "venue_stadium": "Houston",
+    "venue_city": "NRG Stadium",
+    "time_et": "13:00"
+  },
+  {
+    "group": "E",
+    "date_raw": "Jun 14",
+    "weekday": "Sun",
+    "home": "Ecuador",
+    "away": "Ivory Coast",
+    "venue_stadium": "Philadelphia",
+    "venue_city": "Lincoln Financial Field",
+    "time_et": "19:00"
+  },
+  {
+    "group": "E",
+    "date_raw": "Jun 20",
+    "weekday": "Sat",
+    "home": "Ivory Coast",
+    "away": "Germany",
+    "venue_stadium": "Toronto",
+    "venue_city": "BMO Field",
+    "time_et": "16:00"
+  },
+  {
+    "group": "E",
+    "date_raw": "Jun 20",
+    "weekday": "Sat",
+    "home": "Ecuador",
+    "away": "Curacao",
+    "venue_stadium": "Kansas City",
+    "venue_city": "Arrowhead Stadium",
+    "time_et": "20:00"
+  },
+  {
+    "group": "E",
+    "date_raw": "Jun 25",
+    "weekday": "Thu",
+    "home": "Germany",
+    "away": "Ecuador",
+    "venue_stadium": "East Rutherford",
+    "venue_city": "MetLife Stadium",
+    "time_et": "16:00"
+  },
+  {
+    "group": "E",
+    "date_raw": "Jun 25",
+    "weekday": "Thu",
+    "home": "Ivory Coast",
+    "away": "Curacao",
+    "venue_stadium": "Philadelphia",
+    "venue_city": "Lincoln Financial Field",
+    "time_et": "16:00"
+  },
+  {
+    "group": "F",
+    "date_raw": "Jun 14",
+    "weekday": "Sun",
+    "home": "Netherlands",
+    "away": "Japan",
+    "venue_stadium": "Arlington",
+    "venue_city": "AT&#038;T Stadium",
+    "time_et": "16:00"
+  },
+  {
+    "group": "F",
+    "date_raw": "Jun 14",
+    "weekday": "Sun",
+    "home": "Tunisia",
+    "away": "Sweden",
+    "venue_stadium": "Guadalupe",
+    "venue_city": "Estadio BBVA",
+    "time_et": "22:00"
+  },
+  {
+    "group": "F",
+    "date_raw": "Jun 20",
+    "weekday": "Sat",
+    "home": "Netherlands",
+    "away": "Sweden",
+    "venue_stadium": "Houston",
+    "venue_city": "NRG Stadium",
+    "time_et": "13:00"
+  },
+  {
+    "group": "F",
+    "date_raw": "Jun 21",
+    "weekday": "Sun",
+    "home": "Japan",
+    "away": "Tunisia",
+    "venue_stadium": "Guadalupe",
+    "venue_city": "Estadio BBVA",
+    "time_et": "00:00"
+  },
+  {
+    "group": "F",
+    "date_raw": "Jun 25",
+    "weekday": "Thu",
+    "home": "Netherlands",
+    "away": "Tunisia",
+    "venue_stadium": "Kansas City",
+    "venue_city": "Arrowhead Stadium",
+    "time_et": "19:00"
+  },
+  {
+    "group": "F",
+    "date_raw": "Jun 25",
+    "weekday": "Thu",
+    "home": "Japan",
+    "away": "Sweden",
+    "venue_stadium": "Arlington",
+    "venue_city": "AT&#038;T Stadium",
+    "time_et": "19:00"
+  },
+  {
+    "group": "G",
+    "date_raw": "Jun 15",
+    "weekday": "Mon",
+    "home": "Belgium",
+    "away": "Egypt",
+    "venue_stadium": "Seattle",
+    "venue_city": "Lumen Field",
+    "time_et": "15:00"
+  },
+  {
+    "group": "G",
+    "date_raw": "Jun 15",
+    "weekday": "Mon",
+    "home": "Iran",
+    "away": "New Zealand",
+    "venue_stadium": "Inglewood",
+    "venue_city": "SoFi Stadium",
+    "time_et": "21:00"
+  },
+  {
+    "group": "G",
+    "date_raw": "Jun 21",
+    "weekday": "Sun",
+    "home": "Belgium",
+    "away": "Iran",
+    "venue_stadium": "Inglewood",
+    "venue_city": "SoFi Stadium",
+    "time_et": "12:00"
+  },
+  {
+    "group": "G",
+    "date_raw": "Jun 21",
+    "weekday": "Sun",
+    "home": "Egypt",
+    "away": "New Zealand",
+    "venue_stadium": "Vancouver",
+    "venue_city": "BC Place",
+    "time_et": "18:00"
+  },
+  {
+    "group": "G",
+    "date_raw": "Jun 26",
+    "weekday": "Fri",
+    "home": "Belgium",
+    "away": "New Zealand",
+    "venue_stadium": "Vancouver",
+    "venue_city": "BC Place",
+    "time_et": "23:00"
+  },
+  {
+    "group": "G",
+    "date_raw": "Jun 26",
+    "weekday": "Fri",
+    "home": "Egypt",
+    "away": "Iran",
+    "venue_stadium": "Seattle",
+    "venue_city": "Lumen Field",
+    "time_et": "23:00"
+  },
+  {
+    "group": "H",
+    "date_raw": "Jun 15",
+    "weekday": "Mon",
+    "home": "Spain",
+    "away": "Cape Verde",
+    "venue_stadium": "Atlanta",
+    "venue_city": "Mercedes-Benz Stadium",
+    "time_et": "12:00"
+  },
+  {
+    "group": "H",
+    "date_raw": "Jun 15",
+    "weekday": "Mon",
+    "home": "Saudi Arabia",
+    "away": "Uruguay",
+    "venue_stadium": "Miami Gardens",
+    "venue_city": "Hard Rock Stadium",
+    "time_et": "18:00"
+  },
+  {
+    "group": "H",
+    "date_raw": "Jun 21",
+    "weekday": "Sun",
+    "home": "Spain",
+    "away": "Saudi Arabia",
+    "venue_stadium": "Atlanta",
+    "venue_city": "Mercedes-Benz Stadium",
+    "time_et": "12:00"
+  },
+  {
+    "group": "H",
+    "date_raw": "Jun 21",
+    "weekday": "Sun",
+    "home": "Uruguay",
+    "away": "Cape Verde",
+    "venue_stadium": "Miami Gardens",
+    "venue_city": "Hard Rock Stadium",
+    "time_et": "18:00"
+  },
+  {
+    "group": "H",
+    "date_raw": "Jun 26",
+    "weekday": "Fri",
+    "home": "Cape Verde",
+    "away": "Saudi Arabia",
+    "venue_stadium": "Houston",
+    "venue_city": "NRG Stadium",
+    "time_et": "20:00"
+  },
+  {
+    "group": "H",
+    "date_raw": "Jun 26",
+    "weekday": "Fri",
+    "home": "Uruguay",
+    "away": "Spain",
+    "venue_stadium": "Guadalajara",
+    "venue_city": "Estadio Akron",
+    "time_et": "20:00"
+  },
+  {
+    "group": "I",
+    "date_raw": "Jun 16",
+    "weekday": "Tue",
+    "home": "France",
+    "away": "Senegal",
+    "venue_stadium": "East Rutherford",
+    "venue_city": "MetLife Stadium",
+    "time_et": "15:00"
+  },
+  {
+    "group": "I",
+    "date_raw": "Jun 16",
+    "weekday": "Tue",
+    "home": "Norway",
+    "away": "Iraq",
+    "venue_stadium": "Foxborough",
+    "venue_city": "Gillette Stadium",
+    "time_et": "18:00"
+  },
+  {
+    "group": "I",
+    "date_raw": "Jun 22",
+    "weekday": "Mon",
+    "home": "France",
+    "away": "Iraq",
+    "venue_stadium": "Philadelphia",
+    "venue_city": "Lincoln Financial Field",
+    "time_et": "17:00"
+  },
+  {
+    "group": "I",
+    "date_raw": "Jun 22",
+    "weekday": "Mon",
+    "home": "Senegal",
+    "away": "Norway",
+    "venue_stadium": "East Rutherford",
+    "venue_city": "MetLife Stadium",
+    "time_et": "20:00"
+  },
+  {
+    "group": "I",
+    "date_raw": "Jun 26",
+    "weekday": "Fri",
+    "home": "France",
+    "away": "Norway",
+    "venue_stadium": "Foxborough",
+    "venue_city": "Gillette Stadium",
+    "time_et": "15:00"
+  },
+  {
+    "group": "I",
+    "date_raw": "Jun 26",
+    "weekday": "Fri",
+    "home": "Senegal",
+    "away": "Iraq",
+    "venue_stadium": "Toronto",
+    "venue_city": "BMO Field",
+    "time_et": "15:00"
+  },
+  {
+    "group": "J",
+    "date_raw": "Jun 16",
+    "weekday": "Tue",
+    "home": "Argentina",
+    "away": "Algeria",
+    "venue_stadium": "Kansas City",
+    "venue_city": "Arrowhead Stadium",
+    "time_et": "21:00"
+  },
+  {
+    "group": "J",
+    "date_raw": "Jun 17",
+    "weekday": "Wed",
+    "home": "Austria",
+    "away": "Jordan",
+    "venue_stadium": "Santa Clara",
+    "venue_city": "Levi&#8217;s Stadium",
+    "time_et": "00:00"
+  },
+  {
+    "group": "J",
+    "date_raw": "Jun 22",
+    "weekday": "Mon",
+    "home": "Argentina",
+    "away": "Austria",
+    "venue_stadium": "Arlington",
+    "venue_city": "AT&#038;T Stadium",
+    "time_et": "13:00"
+  },
+  {
+    "group": "J",
+    "date_raw": "Jun 22",
+    "weekday": "Mon",
+    "home": "Algeria",
+    "away": "Jordan",
+    "venue_stadium": "Santa Clara",
+    "venue_city": "Levi&#8217;s Stadium",
+    "time_et": "23:00"
+  },
+  {
+    "group": "J",
+    "date_raw": "Jun 27",
+    "weekday": "Sat",
+    "home": "Argentina",
+    "away": "Jordan",
+    "venue_stadium": "Arlington",
+    "venue_city": "AT&#038;T Stadium",
+    "time_et": "22:00"
+  },
+  {
+    "group": "J",
+    "date_raw": "Jun 27",
+    "weekday": "Sat",
+    "home": "Austria",
+    "away": "Algeria",
+    "venue_stadium": "Kansas City",
+    "venue_city": "Arrowhead Stadium",
+    "time_et": "22:00"
+  },
+  {
+    "group": "K",
+    "date_raw": "Jun 17",
+    "weekday": "Wed",
+    "home": "Portugal",
+    "away": "DR Congo",
+    "venue_stadium": "Houston",
+    "venue_city": "NRG Stadium",
+    "time_et": "13:00"
+  },
+  {
+    "group": "K",
+    "date_raw": "Jun 17",
+    "weekday": "Wed",
+    "home": "Colombia",
+    "away": "Uzbekistan",
+    "venue_stadium": "Mexico City",
+    "venue_city": "Estadio Azteca",
+    "time_et": "22:00"
+  },
+  {
+    "group": "K",
+    "date_raw": "Jun 23",
+    "weekday": "Tue",
+    "home": "Portugal",
+    "away": "Uzbekistan",
+    "venue_stadium": "Houston",
+    "venue_city": "NRG Stadium",
+    "time_et": "13:00"
+  },
+  {
+    "group": "K",
+    "date_raw": "Jun 23",
+    "weekday": "Tue",
+    "home": "Colombia",
+    "away": "DR Congo",
+    "venue_stadium": "Guadalajara",
+    "venue_city": "Estadio Akron",
+    "time_et": "22:00"
+  },
+  {
+    "group": "K",
+    "date_raw": "Jun 27",
+    "weekday": "Sat",
+    "home": "Portugal",
+    "away": "Colombia",
+    "venue_stadium": "Miami",
+    "venue_city": "Hard Rock Stadium",
+    "time_et": "19:30"
+  },
+  {
+    "group": "K",
+    "date_raw": "Jun 27",
+    "weekday": "Sat",
+    "home": "Uzbekistan",
+    "away": "DR Congo",
+    "venue_stadium": "Atlanta",
+    "venue_city": "Mercedes-Benz Stadium",
+    "time_et": "19:30"
+  },
+  {
+    "group": "L",
+    "date_raw": "Jun 17",
+    "weekday": "Wed",
+    "home": "England",
+    "away": "Croatia",
+    "venue_stadium": "Arlington",
+    "venue_city": "AT&#038;T Stadium",
+    "time_et": "16:00"
+  },
+  {
+    "group": "L",
+    "date_raw": "Jun 17",
+    "weekday": "Wed",
+    "home": "Panama",
+    "away": "Ghana",
+    "venue_stadium": "Toronto",
+    "venue_city": "BMO Field",
+    "time_et": "19:00"
+  },
+  {
+    "group": "L",
+    "date_raw": "Jun 23",
+    "weekday": "Tue",
+    "home": "England",
+    "away": "Ghana",
+    "venue_stadium": "Foxborough",
+    "venue_city": "Gillette Stadium",
+    "time_et": "16:00"
+  },
+  {
+    "group": "L",
+    "date_raw": "Jun 23",
+    "weekday": "Tue",
+    "home": "Croatia",
+    "away": "Panama",
+    "venue_stadium": "Toronto",
+    "venue_city": "BMO Field",
+    "time_et": "19:00"
+  },
+  {
+    "group": "L",
+    "date_raw": "Jun 27",
+    "weekday": "Sat",
+    "home": "England",
+    "away": "Panama",
+    "venue_stadium": "East Rutherford",
+    "venue_city": "MetLife Stadium",
+    "time_et": "17:00"
+  },
+  {
+    "group": "L",
+    "date_raw": "Jun 27",
+    "weekday": "Sat",
+    "home": "Croatia",
+    "away": "Ghana",
+    "venue_stadium": "Philadelphia",
+    "venue_city": "Lincoln Financial Field",
+    "time_et": "17:00"
+  }
+]
