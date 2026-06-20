@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-06-19T04:02:13.066564",
+  "fetched_at": "2026-06-20T04:03:38.009328",
   "matches": {
     "1": {
       "id": "1",
@@ -342,36 +342,36 @@
       "group": "C",
       "type": "group",
       "date": "06/19/2026 21:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Brazil",
       "away_team": "Haiti",
-      "home_score": null,
-      "away_score": null
+      "home_score": 3,
+      "away_score": 0
     },
     "30": {
       "id": "30",
       "group": "C",
       "type": "group",
       "date": "06/19/2026 18:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Scotland",
       "away_team": "Morocco",
-      "home_score": null,
-      "away_score": null
+      "home_score": 0,
+      "away_score": 1
     },
     "31": {
       "id": "31",
       "group": "D",
       "type": "group",
       "date": "06/19/2026 12:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "United States",
       "away_team": "Australia",
-      "home_score": null,
-      "away_score": null
+      "home_score": 2,
+      "away_score": 0
     },
     "32": {
       "id": "32",
@@ -379,7 +379,7 @@
       "type": "group",
       "date": "06/19/2026 20:00",
       "finished": false,
-      "time_elapsed": "notstarted",
+      "time_elapsed": "live",
       "home_team": "Turkey",
       "away_team": "Paraguay",
       "home_score": null,
