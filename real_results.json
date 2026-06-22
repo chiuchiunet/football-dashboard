@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-06-21T04:00:40.493049",
+  "fetched_at": "2026-06-22T04:04:15.435881",
   "matches": {
     "1": {
       "id": "1",
@@ -426,60 +426,60 @@
       "group": "F",
       "type": "group",
       "date": "06/20/2026 22:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Tunisia",
       "away_team": "Japan",
-      "home_score": null,
-      "away_score": null
+      "home_score": 0,
+      "away_score": 4
     },
     "37": {
       "id": "37",
       "group": "G",
       "type": "group",
       "date": "06/21/2026 12:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Belgium",
       "away_team": "Iran",
-      "home_score": null,
-      "away_score": null
+      "home_score": 0,
+      "away_score": 0
     },
     "38": {
       "id": "38",
       "group": "G",
       "type": "group",
       "date": "06/21/2026 18:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "New Zealand",
       "away_team": "Egypt",
-      "home_score": null,
-      "away_score": null
+      "home_score": 1,
+      "away_score": 3
     },
     "39": {
       "id": "39",
       "group": "H",
       "type": "group",
       "date": "06/21/2026 12:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Spain",
       "away_team": "Saudi Arabia",
-      "home_score": null,
-      "away_score": null
+      "home_score": 4,
+      "away_score": 0
     },
     "40": {
       "id": "40",
       "group": "H",
       "type": "group",
       "date": "06/21/2026 18:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Uruguay",
       "away_team": "Cape Verde",
-      "home_score": null,
-      "away_score": null
+      "home_score": 2,
+      "away_score": 2
     },
     "41": {
       "id": "41",
@@ -884,8 +884,8 @@
       "date": "06/29/2026 16:30",
       "finished": false,
       "time_elapsed": "notstarted",
-      "home_team": "Winner Group E",
-      "away_team": "3rd Group A/B/C/D/F",
+      "home_team": "Germany",
+      "away_team": "?",
       "home_score": null,
       "away_score": null
     },
