@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-06-25T04:00:19.281743",
+  "fetched_at": "2026-06-26T04:00:18.221864",
   "matches": {
     "6": {
       "id": "6",
@@ -90,12 +90,12 @@
       "group": "F",
       "type": "group",
       "date": "06/25/2026 18:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Japan",
       "away_team": "Sweden",
-      "home_score": null,
-      "away_score": null
+      "home_score": 1,
+      "away_score": 1
     },
     "95": {
       "id": "95",
@@ -222,12 +222,12 @@
       "group": "F",
       "type": "group",
       "date": "06/25/2026 18:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Tunisia",
       "away_team": "Netherlands",
-      "home_score": null,
-      "away_score": null
+      "home_score": 1,
+      "away_score": 3
     },
     "61": {
       "id": "61",
@@ -547,7 +547,7 @@
       "type": "group",
       "date": "06/25/2026 19:00",
       "finished": false,
-      "time_elapsed": "notstarted",
+      "time_elapsed": "live",
       "home_team": "Turkey",
       "away_team": "United States",
       "home_score": null,
@@ -620,8 +620,8 @@
       "date": "06/29/2026 12:00",
       "finished": false,
       "time_elapsed": "notstarted",
-      "home_team": "Winner Group C",
-      "away_team": "Runner-up Group F",
+      "home_team": "Brazil",
+      "away_team": "?",
       "home_score": null,
       "away_score": null
     },
@@ -800,8 +800,8 @@
       "date": "06/28/2026 12:00",
       "finished": false,
       "time_elapsed": "notstarted",
-      "home_team": "Runner-up Group A",
-      "away_team": "Runner-up Group B",
+      "home_team": "South Africa",
+      "away_team": "Canada",
       "home_score": null,
       "away_score": null
     },
@@ -1026,24 +1026,24 @@
       "group": "E",
       "type": "group",
       "date": "06/25/2026 16:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Curaçao",
       "away_team": "Ivory Coast",
-      "home_score": null,
-      "away_score": null
+      "home_score": 0,
+      "away_score": 2
     },
     "56": {
       "id": "56",
       "group": "E",
       "type": "group",
       "date": "06/25/2026 16:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Ecuador",
       "away_team": "Germany",
-      "home_score": null,
-      "away_score": null
+      "home_score": 2,
+      "away_score": 1
     },
     "68": {
       "id": "68",
@@ -1147,7 +1147,7 @@
       "type": "group",
       "date": "06/25/2026 19:00",
       "finished": false,
-      "time_elapsed": "notstarted",
+      "time_elapsed": "live",
       "home_team": "Paraguay",
       "away_team": "Australia",
       "home_score": null,
