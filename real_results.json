@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-06-26T04:00:18.221864",
+  "fetched_at": "2026-06-27T04:00:14.235450",
   "matches": {
     "6": {
       "id": "6",
@@ -234,12 +234,12 @@
       "group": "I",
       "type": "group",
       "date": "06/26/2026 15:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Senegal",
       "away_team": "Iraq",
-      "home_score": null,
-      "away_score": null
+      "home_score": 5,
+      "away_score": 0
     },
     "67": {
       "id": "67",
@@ -273,7 +273,7 @@
       "finished": false,
       "time_elapsed": "notstarted",
       "home_team": "Argentina",
-      "away_team": "?",
+      "away_team": "Cape Verde",
       "home_score": null,
       "away_score": null
     },
@@ -284,8 +284,8 @@
       "date": "07/03/2026 13:00",
       "finished": false,
       "time_elapsed": "notstarted",
-      "home_team": "Runner-up Group D",
-      "away_team": "Runner-up Group G",
+      "home_team": "Australia",
+      "away_team": "?",
       "home_score": null,
       "away_score": null
     },
@@ -546,24 +546,24 @@
       "group": "D",
       "type": "group",
       "date": "06/25/2026 19:00",
-      "finished": false,
-      "time_elapsed": "live",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Turkey",
       "away_team": "United States",
-      "home_score": null,
-      "away_score": null
+      "home_score": 3,
+      "away_score": 2
     },
     "62": {
       "id": "62",
       "group": "I",
       "type": "group",
       "date": "06/26/2026 15:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Norway",
       "away_team": "France",
-      "home_score": null,
-      "away_score": null
+      "home_score": 1,
+      "away_score": 4
     },
     "63": {
       "id": "63",
@@ -571,7 +571,7 @@
       "type": "group",
       "date": "06/26/2026 20:00",
       "finished": false,
-      "time_elapsed": "notstarted",
+      "time_elapsed": "live",
       "home_team": "Egypt",
       "away_team": "Iran",
       "home_score": null,
@@ -582,24 +582,24 @@
       "group": "H",
       "type": "group",
       "date": "06/26/2026 19:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Cape Verde",
       "away_team": "Saudi Arabia",
-      "home_score": null,
-      "away_score": null
+      "home_score": 0,
+      "away_score": 0
     },
     "66": {
       "id": "66",
       "group": "H",
       "type": "group",
       "date": "06/26/2026 18:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Uruguay",
       "away_team": "Spain",
-      "home_score": null,
-      "away_score": null
+      "home_score": 0,
+      "away_score": 1
     },
     "70": {
       "id": "70",
@@ -621,7 +621,7 @@
       "finished": false,
       "time_elapsed": "notstarted",
       "home_team": "Brazil",
-      "away_team": "?",
+      "away_team": "Japan",
       "home_score": null,
       "away_score": null
     },
@@ -812,8 +812,8 @@
       "date": "06/30/2026 17:00",
       "finished": false,
       "time_elapsed": "notstarted",
-      "home_team": "Winner Group I",
-      "away_team": "3rd Group C/D/F/G/H",
+      "home_team": "France",
+      "away_team": "?",
       "home_score": null,
       "away_score": null
     },
@@ -1077,7 +1077,7 @@
       "finished": false,
       "time_elapsed": "notstarted",
       "home_team": "Germany",
-      "away_team": "?",
+      "away_team": "Paraguay",
       "home_score": null,
       "away_score": null
     },
@@ -1089,7 +1089,7 @@
       "finished": false,
       "time_elapsed": "notstarted",
       "home_team": "United States",
-      "away_team": "?",
+      "away_team": "Bosnia and Herzegovina",
       "home_score": null,
       "away_score": null
     },
@@ -1146,12 +1146,12 @@
       "group": "D",
       "type": "group",
       "date": "06/25/2026 19:00",
-      "finished": false,
-      "time_elapsed": "live",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Paraguay",
       "away_team": "Australia",
-      "home_score": null,
-      "away_score": null
+      "home_score": 0,
+      "away_score": 0
     },
     "64": {
       "id": "64",
@@ -1159,7 +1159,7 @@
       "type": "group",
       "date": "06/26/2026 20:00",
       "finished": false,
-      "time_elapsed": "notstarted",
+      "time_elapsed": "live",
       "home_team": "New Zealand",
       "away_team": "Belgium",
       "home_score": null,
@@ -1172,8 +1172,8 @@
       "date": "06/29/2026 19:00",
       "finished": false,
       "time_elapsed": "notstarted",
-      "home_team": "Winner Group F",
-      "away_team": "Runner-up Group C",
+      "home_team": "Netherlands",
+      "away_team": "Morocco",
       "home_score": null,
       "away_score": null
     },
@@ -1184,8 +1184,8 @@
       "date": "06/30/2026 12:00",
       "finished": false,
       "time_elapsed": "notstarted",
-      "home_team": "Runner-up Group E",
-      "away_team": "Runner-up Group I",
+      "home_team": "Ivory Coast",
+      "away_team": "Norway",
       "home_score": null,
       "away_score": null
     },
