@@ -300,6 +300,7 @@ def stage_of(day):
     m_num = int(parts[0])
     d_num = int(parts[1])
     if m_num == 6 and d_num <= 27: return 'GS'
+    if m_num == 6 and d_num >= 28: return 'R32'
     if m_num == 7 and d_num <= 3: return 'R32'
     if m_num == 7 and 4 <= d_num <= 7: return 'R16'
     if m_num == 7 and 9 <= d_num <= 11: return 'QF'
@@ -578,10 +579,10 @@ TEAM_MAP = {
 
 # Calculate standings from REAL_RESULTS
 def calc_standings():
-    standings = {}  # team -> {'played':P, 'won':W, 'drawn':D, 'lost':L, 'points':Pts}
+    standings = {}  # team -> {'played':P, 'won':W, 'drawn':D, 'lost':L, 'points':Pts, 'gd':GD, 'gf':GF}
     for g in 'ABCDEFGHIJKL':
         for t in GD[g]:
-            standings[t] = {'played':0, 'won':0, 'drawn':0, 'lost':0, 'points':0}
+            standings[t] = {'played':0, 'won':0, 'drawn':0, 'lost':0, 'points':0, 'gd':0, 'gf':0}
     
     for mid, m in REAL_RESULTS.items():
         home = m.get('home_team', '')
@@ -599,6 +600,11 @@ def calc_standings():
         # Update played
         standings[home]['played'] += 1
         standings[away]['played'] += 1
+        # Goals
+        standings[home]['gf'] += hs
+        standings[away]['gf'] += as_
+        standings[home]['gd'] += (hs - as_)
+        standings[away]['gd'] += (as_ - hs)
         
         if hs > as_:
             standings[home]['won'] += 1
@@ -617,6 +623,82 @@ def calc_standings():
     return standings
 
 STANDINGS = calc_standings()
+
+# Resolve group stage → R32 placeholders
+# After all GS matches, compute group winners, runners-up, and best 8 3rd-place teams
+def get_group_ranking():
+    """Compute WC2026 group ranking: top 2 + best 8 3rds advance to R32.
+    Returns (winner, runner_up, third, best_3rd_groups)
+    - winner[g]: 1st in group g
+    - runner_up[g]: 2nd in group g
+    - third[g]: 3rd in group g
+    - best_3rd_groups: list of 8 group letters whose 3rd-place teams advance
+    Tiebreak order: points → goal diff → goals for
+    """
+    winner = {}
+    runner_up = {}
+    third = {}
+    third_ranked = []  # [(group_letter, team, pts, gd, gf)]
+    
+    for g in 'ABCDEFGHIJKL':
+        ranked = sorted(
+            GD[g],
+            key=lambda t: (-STANDINGS.get(t, {}).get('points', 0),
+                           -STANDINGS.get(t, {}).get('gd', 0),
+                           -STANDINGS.get(t, {}).get('gf', 0))
+        )
+        winner[g] = ranked[0]
+        runner_up[g] = ranked[1]
+        third[g] = ranked[2]
+        st = STANDINGS.get(ranked[2], {})
+        third_ranked.append((g, ranked[2], st.get('points', 0), st.get('gd', 0), st.get('gf', 0)))
+    
+    # Sort 3rds by points → GD → GF, take top 8
+    third_ranked.sort(key=lambda x: (-x[2], -x[3], -x[4]))
+    best_3rd_groups = [g for g, _, _, _, _ in third_ranked[:8]]
+    
+    return winner, runner_up, third, best_3rd_groups
+
+WINNER_G, RUNNER_UP_G, THIRD_G, BEST_3RD_GROUPS = get_group_ranking()
+
+def resolve_tbd(name):
+    """Resolve WC2026 R32 placeholder to actual team name.
+    Handles:
+      - 'Winner X' → 1st place in group X
+      - 'Runner-up X' → 2nd place in group X
+      - '3rd X/Y/Z/...' → best 3rd-place team from qualifying groups (each 3rd used at most once)
+      - 'W37'/'SF1-W'/etc → leave as-is (later rounds)
+    Uses module-level USED_3RD_GROUPS set to track which 3rd-place groups have been assigned.
+    """
+    global USED_3RD_GROUPS
+    if not name or not isinstance(name, str):
+        return name
+    if name.startswith('Winner '):
+        g = name.split(' ', 1)[1]
+        if g in WINNER_G:
+            return WINNER_G[g]
+        return name
+    if name.startswith('Runner-up '):
+        g = name.split(' ', 1)[1]
+        if g in RUNNER_UP_G:
+            return RUNNER_UP_G[g]
+        return name
+    if name.startswith('3rd '):
+        groups = name.split(' ', 1)[1].split('/')
+        # FIFA bracket rule: pick first group whose 3rd-place team advanced
+        # AND hasn't been used in an earlier R32 match yet
+        for g in groups:
+            if g in BEST_3RD_GROUPS and g not in USED_3RD_GROUPS:
+                USED_3RD_GROUPS.add(g)
+                return THIRD_G[g]
+        # Fallback: first qualifying (may duplicate if all eligible already used)
+        for g in groups:
+            if g in BEST_3RD_GROUPS:
+                return THIRD_G[g]
+        return name
+    return name
+
+USED_3RD_GROUPS = set()  # Track which 3rd-place groups have been assigned to R32 matches
 
 # Build team-pair lookup for real results (API id order ≠ ALL_MATCHES order)
 RESULTS_BY_TEAM_PAIR = {}
@@ -707,6 +789,9 @@ for idx, m in enumerate(ALL_MATCHES):
             hkt_iso = base_dt.strftime('%Y-%m-%d') + 'T' + hk + ':00'
         except Exception:
             hkt_iso = ''
+    # Resolve R32 placeholders to actual teams from group standings
+    h = resolve_tbd(h)
+    a = resolve_tbd(a)
     st=stage_of(day)
     lbl=SN[st]
     icon=IC[st]
