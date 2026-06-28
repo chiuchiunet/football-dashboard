@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-06-27T04:00:14.235450",
+  "fetched_at": "2026-06-28T04:01:41.367134",
   "matches": {
     "6": {
       "id": "6",
@@ -246,24 +246,24 @@
       "group": "L",
       "type": "group",
       "date": "06/27/2026 17:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Panama",
       "away_team": "England",
-      "home_score": null,
-      "away_score": null
+      "home_score": 0,
+      "away_score": 2
     },
     "72": {
       "id": "72",
       "group": "K",
       "type": "group",
       "date": "06/27/2026 19:30",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Democratic Republic of the Congo",
       "away_team": "Uzbekistan",
-      "home_score": null,
-      "away_score": null
+      "home_score": 3,
+      "away_score": 1
     },
     "86": {
       "id": "86",
@@ -285,7 +285,7 @@
       "finished": false,
       "time_elapsed": "notstarted",
       "home_team": "Australia",
-      "away_team": "?",
+      "away_team": "Egypt",
       "home_score": null,
       "away_score": null
     },
@@ -570,12 +570,12 @@
       "group": "G",
       "type": "group",
       "date": "06/26/2026 20:00",
-      "finished": false,
-      "time_elapsed": "live",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Egypt",
       "away_team": "Iran",
-      "home_score": null,
-      "away_score": null
+      "home_score": 1,
+      "away_score": 1
     },
     "65": {
       "id": "65",
@@ -606,12 +606,12 @@
       "group": "J",
       "type": "group",
       "date": "06/27/2026 21:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Jordan",
       "away_team": "Argentina",
-      "home_score": null,
-      "away_score": null
+      "home_score": 1,
+      "away_score": 3
     },
     "76": {
       "id": "76",
@@ -786,12 +786,12 @@
       "group": "K",
       "type": "group",
       "date": "06/27/2026 19:30",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Colombia",
       "away_team": "Portugal",
-      "home_score": null,
-      "away_score": null
+      "home_score": 0,
+      "away_score": 0
     },
     "73": {
       "id": "73",
@@ -1050,24 +1050,24 @@
       "group": "L",
       "type": "group",
       "date": "06/27/2026 17:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Croatia",
       "away_team": "Ghana",
-      "home_score": null,
-      "away_score": null
+      "home_score": 2,
+      "away_score": 1
     },
     "69": {
       "id": "69",
       "group": "J",
       "type": "group",
       "date": "06/27/2026 21:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Algeria",
       "away_team": "Austria",
-      "home_score": null,
-      "away_score": null
+      "home_score": 3,
+      "away_score": 3
     },
     "74": {
       "id": "74",
@@ -1158,12 +1158,12 @@
       "group": "G",
       "type": "group",
       "date": "06/26/2026 20:00",
-      "finished": false,
-      "time_elapsed": "live",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "New Zealand",
       "away_team": "Belgium",
-      "home_score": null,
-      "away_score": null
+      "home_score": 1,
+      "away_score": 5
     },
     "75": {
       "id": "75",
@@ -1208,8 +1208,8 @@
       "date": "07/01/2026 12:00",
       "finished": false,
       "time_elapsed": "notstarted",
-      "home_team": "Winner Group L",
-      "away_team": "3rd Group E/H/I/J/K",
+      "home_team": "Belgium",
+      "away_team": "?",
       "home_score": null,
       "away_score": null
     },
