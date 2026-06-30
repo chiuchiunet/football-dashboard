@@ -517,7 +517,10 @@ def bm(d,h,a,et,city,lbl):
     return "<div class='bmc'><div class='bmtop'><span class='bmlbl'>"+lbl+"</span><span class='conf "+cf+"'>"+cfi+"</span><span class='bmhk'> "+hk+" HK"+pl+"</span></div><div class='bmteams'><div class='btm'>"+fl(h)+" "+cn(h)+" <span class='str'>"+str(hs)+"</span></div><div class='bscore'>"+str(hsc)+" - "+str(asc)+"</div><div class='btm'>"+fl(a)+" "+cn(a)+" <span class='str'>"+str(as_)+"</span></div></div><div class='bmbot'><div class='bmbbar'><div class='bmp' style='width:"+str(hp)+"%'><span>"+str(round(hp))+"%</span></div><div class='bmd' style='width:"+str(dp)+"%'><span>"+str(round(dp))+"%</span></div><div class='bma' style='width:"+str(ap_)+"%'><span>"+str(round(ap_))+"%</span></div></div></div></div>"
 
 def gen_b():
-    h='<div class="bracket"><div class="bround"><h3>16強</h3><div class="bgrid">'
+    R32=[('6月28日','Runner-up A','Runner-up B','15:00','Los Angeles'),('6月29日','Winner C','Runner-up F','13:00','Houston'),('6月29日','Winner E','3rd A/B/C/D','18:30','Boston'),('6月29日','Winner F','Runner-up C','21:00','Monterrey'),('6月30日','Runner-up E','Runner-up I','13:00','Dallas'),('6月30日','Winner I','3rd C/D/F/G/H','17:00','New York'),('6月30日','Winner A','3rd C/E/F/H/I','03:00','Mexico City'),('7月1日','Winner L','3rd E/H/I/J/K','18:00','Atlanta'),('7月1日','Winner G','3rd A/E/H/I/J','22:00','Seattle'),('7月1日','Winner D','3rd B/E/F/I/J','02:00','San Francisco'),('7月2日','Winner H','Runner-up J','21:00','Los Angeles'),('7月2日','Runner-up K','Runner-up L','03:00','Toronto'),('7月2日','Winner B','3rd E/F/G/I/J','11:00','Vancouver'),('7月3日','Runner-up D','Runner-up G','14:00','Dallas'),('7月3日','Winner J','Runner-up H','18:00','Miami'),('7月3日','Winner K','3rd D/E/I/J/L','21:30','Kansas City')]
+    h='<div class="bracket"><div class="bround"><h3>32強</h3><div class="bgrid">'
+    for i,m in enumerate(R32): h+=bm(m[0],m[1],m[2],m[3],m[4],'M'+str(i+73))
+    h+='</div></div><div class="bround"><h3>16強</h3><div class="bgrid">'
     for i,m in enumerate(R16): h+=bm(m[0],m[1],m[2],m[3],m[4],'M'+str(i+49))
     h+='</div></div><div class="bround"><h3>8強</h3><div class="bgrid">'
     for i,m in enumerate(QF): h+=bm(m[0],m[1],m[2],m[3],m[4],'QF'+str(i+1))
@@ -959,7 +962,9 @@ html=f"""<!DOCTYPE html>
 <button class="sf-btn" onclick="filterStage('R32',this)">🎯 32強</button>
 <button class="sf-btn" onclick="filterStage('R16',this)">⚡ 16強</button>
 <button class="sf-btn" onclick="filterStage('QF',this)">🔥 8強</button>
-<button class="sf-btn" onclick="filterStage('SF',this)">🏆 決賽</button>
+<button class="sf-btn" onclick="filterStage('SF',this)">🏆 準決</button>
+<button class="sf-btn" onclick="filterStage('3RD',this)">🥉 季軍</button>
+<button class="sf-btn" onclick="filterStage('FNL',this)">🏆 決賽</button>
 <button class="sf-btn fav-filter" onclick="toggleFavFilter(this)" style="margin-left:auto;">⭐ 我的最愛</button>
 </div>
 <div class='ml'>{''.join(mm)}</div>
