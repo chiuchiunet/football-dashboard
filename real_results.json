@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-06-29T04:03:09.839052",
+  "fetched_at": "2026-06-30T04:02:53.126140",
   "matches": {
     "6": {
       "id": "6",
@@ -618,12 +618,12 @@
       "group": "R32",
       "type": "r32",
       "date": "06/29/2026 12:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Brazil",
       "away_team": "Japan",
-      "home_score": null,
-      "away_score": null
+      "home_score": 2,
+      "away_score": 1
     },
     "83": {
       "id": "83",
@@ -836,8 +836,8 @@
       "date": "07/04/2026 12:00",
       "finished": false,
       "time_elapsed": "notstarted",
-      "home_team": "Winner Match 73",
-      "away_team": "Winner Match 75",
+      "home_team": "Canada",
+      "away_team": "Morocco",
       "home_score": null,
       "away_score": null
     },
@@ -920,8 +920,8 @@
       "date": "07/05/2026 16:00",
       "finished": false,
       "time_elapsed": "notstarted",
-      "home_team": "Winner Match 76",
-      "away_team": "Winner Match 78",
+      "home_team": "Brazil",
+      "away_team": "?",
       "home_score": null,
       "away_score": null
     },
@@ -1074,12 +1074,12 @@
       "group": "R32",
       "type": "r32",
       "date": "06/29/2026 16:30",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Germany",
       "away_team": "Paraguay",
-      "home_score": null,
-      "away_score": null
+      "home_score": 1,
+      "away_score": 1
     },
     "81": {
       "id": "81",
@@ -1170,12 +1170,12 @@
       "group": "R32",
       "type": "r32",
       "date": "06/29/2026 19:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Netherlands",
       "away_team": "Morocco",
-      "home_score": null,
-      "away_score": null
+      "home_score": 1,
+      "away_score": 1
     },
     "78": {
       "id": "78",
@@ -1232,8 +1232,8 @@
       "date": "07/04/2026 17:00",
       "finished": false,
       "time_elapsed": "notstarted",
-      "home_team": "Winner Match 74",
-      "away_team": "Winner Match 77",
+      "home_team": "Paraguay",
+      "away_team": "?",
       "home_score": null,
       "away_score": null
     },
