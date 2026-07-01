@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-06-30T04:02:53.126140",
+  "fetched_at": "2026-07-01T04:02:48.104788",
   "matches": {
     "6": {
       "id": "6",
@@ -810,12 +810,12 @@
       "group": "R32",
       "type": "r32",
       "date": "06/30/2026 17:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "France",
       "away_team": "Sweden",
-      "home_score": null,
-      "away_score": null
+      "home_score": 3,
+      "away_score": 0
     },
     "84": {
       "id": "84",
@@ -921,7 +921,7 @@
       "finished": false,
       "time_elapsed": "notstarted",
       "home_team": "Brazil",
-      "away_team": "?",
+      "away_team": "Norway",
       "home_score": null,
       "away_score": null
     },
@@ -1182,12 +1182,12 @@
       "group": "R32",
       "type": "r32",
       "date": "06/30/2026 12:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Ivory Coast",
       "away_team": "Norway",
-      "home_score": null,
-      "away_score": null
+      "home_score": 1,
+      "away_score": 2
     },
     "79": {
       "id": "79",
@@ -1195,7 +1195,7 @@
       "type": "r32",
       "date": "06/30/2026 19:00",
       "finished": false,
-      "time_elapsed": "notstarted",
+      "time_elapsed": "live",
       "home_team": "Mexico",
       "away_team": "Ecuador",
       "home_score": null,
@@ -1233,7 +1233,7 @@
       "finished": false,
       "time_elapsed": "notstarted",
       "home_team": "Paraguay",
-      "away_team": "?",
+      "away_team": "France",
       "home_score": null,
       "away_score": null
     },
