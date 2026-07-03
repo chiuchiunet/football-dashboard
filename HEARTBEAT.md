@@ -1,5 +1,19 @@
 # HEARTBEAT.md
 
+## ⚠️ Timezone Lesson (重要！2026-07-03)
+
+**唔同地區有唔同時間！** 任何 World Cup schedule 處理都要小心：
+- `real_results.json` 嘅 `date` 字段係 **venue local time** (EDT/CDT/MDT/PDT)
+- **唔可以照搬**呢個 field 當 HKT 寫 message
+- HKT = UTC+8，EDT = UTC-4，CDT = UTC-5，MDT = UTC-6，PDT = UTC-7
+- **DST 期間 (6-11月)**：HKT = venue + 12 (EDT) / + 13 (CDT) / + 14 (MDT) / + 15 (PDT)
+
+**Solution:** 用 `gen_hkt_schedule.py` pre-compute HKT time，sub-agent 直接 read `hkt_schedule.json` 入面 `hkt_display` 字段。
+- Group Stage: 從 `official_schedule_utc.json` 攞 FIFA 官方 HKT
+- R32+: hardcoded venue mapping + zoneinfo convert (見 gen_hkt_schedule.py R32_VENUES)
+
+**Cron job:** `World Cup Daily Consolidated (12:00 HKT)` (jobId: `ce1867d0-1f2f-4059-a983-9b6bd3cb0454`)
+
 ## Pending Tasks
 
 ### Football Dashboard Enhancement (完整版)
