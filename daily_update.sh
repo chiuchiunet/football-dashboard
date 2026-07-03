@@ -13,13 +13,19 @@ FETCH_EXIT=$?
 echo "[$(date '+%H:%M:%S')] fetch_results.py exit: $FETCH_EXIT"
 
 # Step 2: Generate dashboard HTML
-echo "[$(date '+%H:%M:%S')] Step 2/3: Generating dashboard HTML..."
+echo "[$(date '+%H:%M:%S')] Step 2/4: Generating dashboard HTML..."
 python3 gen_wc.py
 GEN_EXIT=$?
 echo "[$(date '+%H:%M:%S')] gen_wc.py exit: $GEN_EXIT"
 
-# Step 3: Git commit + push
-echo "[$(date '+%H:%M:%S')] Step 3/3: Commit + push to GitHub..."
+# Step 3: Generate HKT-converted schedule for sub-agent
+echo "[$(date '+%H:%M:%S')] Step 3/4: Generating HKT schedule..."
+python3 gen_hkt_schedule.py
+HKT_EXIT=$?
+echo "[$(date '+%H:%M:%S')] gen_hkt_schedule.py exit: $HKT_EXIT"
+
+# Step 4: Git commit + push
+echo "[$(date '+%H:%M:%S')] Step 4/4: Commit + push to GitHub..."
 git add -A
 if ! git diff --cached --quiet; then
     git commit -m "Auto update: $(date '+%m%d')"
