@@ -87,9 +87,20 @@ def main():
             if m["finished"]:
                 print(f"  {m['date'][:10]} | {m['home_team']} {m['home_score']}-{m['away_score']} {m['away_team']}")
         
+        return 0
     except Exception as e:
-        print(f"Error: {e}")
-        sys.exit(1)
+        # API 唔穩定 (e.g. 502 Bad Gateway) — 唔好 crash cron
+        # 用舊 cache 嘅 real_results.json 繼續行 gen_wc.py
+        print(f"⚠️  Fetch failed: {e}")
+        print(f"⚠️  Will use cached {os.path.basename(RESULTS_FILE)} (if exists)")
+        cached = load_results()
+        if cached:
+            finished = sum(1 for m in cached.values() if m.get("finished"))
+            print(f"📦 Cached: {len(cached)} matches | Finished: {finished}")
+            return 0
+        # 連 cache 都冇，先 exit 1
+        print("❌ No cached data available")
+        return 1
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
