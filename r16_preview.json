@@ -1,0 +1,58 @@
+[
+  {
+    "match_id": "M49",
+    "time_hkt": "7月4日 13:00 HKT",
+    "venue": "Houston",
+    "home": "Canada",
+    "away": "Brazil"
+  },
+  {
+    "match_id": "M50",
+    "time_hkt": "7月4日 17:00 HKT",
+    "venue": "Philadelphia",
+    "home": "Germany (DRAW→home)",
+    "away": "Norway"
+  },
+  {
+    "match_id": "M51",
+    "time_hkt": "7月5日 22:00 HKT",
+    "venue": "New York",
+    "home": "Netherlands (DRAW→home)",
+    "away": "Mexico"
+  },
+  {
+    "match_id": "M52",
+    "time_hkt": "7月5日 02:00 HKT",
+    "venue": "Mexico City",
+    "home": "France",
+    "away": "England"
+  },
+  {
+    "match_id": "M53",
+    "time_hkt": "7月6日 15:00 HKT",
+    "venue": "Dallas",
+    "home": "United States",
+    "away": "Switzerland"
+  },
+  {
+    "match_id": "M54",
+    "time_hkt": "7月6日 20:00 HKT",
+    "venue": "Seattle",
+    "home": "Belgium",
+    "away": "Colombia"
+  },
+  {
+    "match_id": "M55",
+    "time_hkt": "7月7日 04:00 HKT",
+    "venue": "Atlanta",
+    "home": "Portugal",
+    "away": "Australia (DRAW→home)"
+  },
+  {
+    "match_id": "M56",
+    "time_hkt": "7月7日 16:00 HKT",
+    "venue": "Vancouver",
+    "home": "Spain",
+    "away": "Argentina"
+  }
+]

@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-07-04T04:00:45.296813",
+  "fetched_at": "2026-07-05T04:03:41.143596",
   "matches": {
     "1": {
       "id": "1",
@@ -1062,24 +1062,24 @@
       "group": "R16",
       "type": "r16",
       "date": "07/04/2026 17:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Paraguay",
       "away_team": "France",
-      "home_score": null,
-      "away_score": null
+      "home_score": 0,
+      "away_score": 1
     },
     "90": {
       "id": "90",
       "group": "R16",
       "type": "r16",
       "date": "07/04/2026 12:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Canada",
       "away_team": "Morocco",
-      "home_score": null,
-      "away_score": null
+      "home_score": 0,
+      "away_score": 3
     },
     "91": {
       "id": "91",
@@ -1160,8 +1160,8 @@
       "date": "07/09/2026 16:00",
       "finished": false,
       "time_elapsed": "notstarted",
-      "home_team": "Winner Match 89",
-      "away_team": "Winner Match 90",
+      "home_team": "France",
+      "away_team": "Morocco",
       "home_score": null,
       "away_score": null
     },
