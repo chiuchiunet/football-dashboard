@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-07-05T04:03:41.143596",
+  "fetched_at": "2026-07-06T04:05:29.662136",
   "matches": {
     "1": {
       "id": "1",
@@ -1086,24 +1086,24 @@
       "group": "R16",
       "type": "r16",
       "date": "07/05/2026 16:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Brazil",
       "away_team": "Norway",
-      "home_score": null,
-      "away_score": null
+      "home_score": 1,
+      "away_score": 2
     },
     "92": {
       "id": "92",
       "group": "R16",
       "type": "r16",
       "date": "07/05/2026 18:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Mexico",
       "away_team": "England",
-      "home_score": null,
-      "away_score": null
+      "home_score": 2,
+      "away_score": 3
     },
     "93": {
       "id": "93",
@@ -1184,8 +1184,8 @@
       "date": "07/11/2026 17:00",
       "finished": false,
       "time_elapsed": "notstarted",
-      "home_team": "Winner Match 91",
-      "away_team": "Winner Match 92",
+      "home_team": "Norway",
+      "away_team": "England",
       "home_score": null,
       "away_score": null
     },
