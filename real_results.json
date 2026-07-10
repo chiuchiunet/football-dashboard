@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-07-09T04:05:24.346727",
+  "fetched_at": "2026-07-10T04:04:02.040147",
   "matches": {
     "1": {
       "id": "1",
@@ -1158,12 +1158,12 @@
       "group": "QF",
       "type": "qf",
       "date": "07/09/2026 16:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "France",
       "away_team": "Morocco",
-      "home_score": null,
-      "away_score": null
+      "home_score": 2,
+      "away_score": 0
     },
     "98": {
       "id": "98",
