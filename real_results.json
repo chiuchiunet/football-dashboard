@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-07-14T04:03:21.214190",
+  "fetched_at": "2026-07-15T04:02:54.196422",
   "matches": {
     "1": {
       "id": "1",
@@ -1206,12 +1206,12 @@
       "group": "SF",
       "type": "sf",
       "date": "07/14/2026 14:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "France",
       "away_team": "Spain",
-      "home_score": null,
-      "away_score": null
+      "home_score": 0,
+      "away_score": 2
     },
     "102": {
       "id": "102",
