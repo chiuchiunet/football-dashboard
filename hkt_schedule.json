@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-15T04:02:56.529099",
+  "generated_at": "2026-07-16T04:04:00.347714",
   "matches": {
     "1": {
       "id": "1",
@@ -1622,12 +1622,12 @@
       "group": "SF",
       "type": "sf",
       "date": "07/15/2026 15:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "England",
       "away_team": "Argentina",
-      "home_score": null,
-      "away_score": null,
+      "home_score": 1,
+      "away_score": 2,
       "hkt_iso": "",
       "hkt_display": "07/15/2026 15:00",
       "venue": "",
