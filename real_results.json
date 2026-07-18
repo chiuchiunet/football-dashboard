@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-07-17T04:02:50.625597",
+  "fetched_at": "2026-07-18T04:03:22.218807",
   "matches": {
     "6": {
       "id": "6",
@@ -944,8 +944,8 @@
       "date": "07/19/2026 15:00",
       "finished": false,
       "time_elapsed": "notstarted",
-      "home_team": "Winner Match 101",
-      "away_team": "Winner Match 102",
+      "home_team": "Spain",
+      "away_team": "Argentina",
       "home_score": null,
       "away_score": null
     },
@@ -1100,8 +1100,8 @@
       "date": "07/18/2026 17:00",
       "finished": false,
       "time_elapsed": "notstarted",
-      "home_team": "Loser Match 101",
-      "away_team": "Loser Match 102",
+      "home_team": "France",
+      "away_team": "England",
       "home_score": null,
       "away_score": null
     },
