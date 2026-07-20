@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-07-18T04:03:22.218807",
+  "fetched_at": "2026-07-20T04:04:37.194875",
   "matches": {
     "6": {
       "id": "6",
@@ -942,12 +942,12 @@
       "group": "FINAL",
       "type": "final",
       "date": "07/19/2026 15:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "Spain",
       "away_team": "Argentina",
-      "home_score": null,
-      "away_score": null
+      "home_score": 1,
+      "away_score": 0
     },
     "3": {
       "id": "3",
@@ -1098,12 +1098,12 @@
       "group": "3RD",
       "type": "third",
       "date": "07/18/2026 17:00",
-      "finished": false,
-      "time_elapsed": "notstarted",
+      "finished": true,
+      "time_elapsed": "finished",
       "home_team": "France",
       "away_team": "England",
-      "home_score": null,
-      "away_score": null
+      "home_score": 4,
+      "away_score": 6
     },
     "15": {
       "id": "15",
